@@ -13,7 +13,7 @@ A specialized Agentic Project Management (APM) instance for academic manuscript 
      --output-root "/path/to/reviews" \
      --non-interactive
    ```
-   - Omit `--output-root` to place the workspace inside `rigorous_apm_reviews/` next to the manuscript.
+   - Omit `--output-root` to place the workspace inside `rigorous-apm/` next to the manuscript.
    - Add `--copy-manuscript` to stage `.bib/.cls/.sty/.bst` companions and common figure folders under `manuscript_assets/`.
    - Remove `--non-interactive` if you prefer guided prompts.
 
