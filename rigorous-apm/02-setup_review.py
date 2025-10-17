@@ -303,11 +303,11 @@ def extract_agent_title(path: Path) -> str:
 
 
 def agent_sort_key(agent_id: str) -> Tuple[str, int]:
-    match = re.match(r"([a-z]+)(\d+)$", agent_id)
+    match = re.match(r"([a-z]+)(\d+)$", agent_id.lower())
     if match:
         prefix, number = match.groups()
         return prefix, int(number)
-    return agent_id, 0
+    return agent_id.lower(), 0
 
 
 def collect_agent_templates() -> OrderedDict[str, List[AgentTemplate]]:
