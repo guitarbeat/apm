@@ -8,10 +8,14 @@ A specialized Agentic Project Management (APM) instance for academic manuscript 
 
 1. **Bootstrap a dedicated workspace**
    ```bash
+   # POSIX / macOS / Linux (line continuation)
    python 02-setup_review.py \
      --manuscript "/path/to/manuscript.tex" \
      --output-root "/path/to/reviews" \
      --non-interactive
+
+   # Windows (PowerShell / cmd) single-line
+   python 02-setup_review.py --manuscript "C:\path\to\manuscript.tex" --output-root "C:\path\to\reviews" --non-interactive
    ```
    - Omit `--output-root` to place the workspace inside `rigorous-apm/` next to the manuscript.
    - Add `--copy-manuscript` to stage `.bib/.cls/.sty/.bst` companions and common figure folders under `manuscript_assets/`.
