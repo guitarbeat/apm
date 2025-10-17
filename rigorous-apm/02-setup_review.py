@@ -211,15 +211,23 @@ def copy_manuscript_assets(manuscript_file: Path, review_dir_path: Path, force: 
             return
 
     destination.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(manuscript_file, destination / manuscript_file.name)
+    try:
+        shutil.copy2(manuscript_file, destination / manuscript_file.name)
+    except OSError as exc:
+        print(f"\033[91mError copying manuscript file '{manuscript_file}': {exc}\033[0m")
+        return
 
     copied_paths = [manuscript_file]
     for sibling in summarize_supporting_assets(manuscript_file):
         target = destination / sibling.name
-        if sibling.is_dir():
-            shutil.copytree(sibling, target)
-        else:
-            shutil.copy2(sibling, target)
+        try:
+            if sibling.is_dir():
+                shutil.copytree(sibling, target)
+            else:
+                shutil.copy2(sibling, target)
+        except OSError as exc:
+            print(f"\033[93mWarning: Failed to copy '{sibling}' -> '{target}': {exc}\033[0m")
+            continue
         copied_paths.append(sibling)
 
     copied_list = ", ".join(path.name for path in copied_paths)
