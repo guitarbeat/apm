@@ -11,6 +11,15 @@ SCHEMA_MAP = {
     "task": "task_assignment.schema.json",
 }
 
+# Only the implementation plan schema is currently wired up for the CLI helper.
+# The additional entries in ``SCHEMA_MAP`` are kept so that internal consumers –
+# such as tests or future tooling – can still reference them without having to
+# update imports once CLI support lands.  By limiting the public ``choices`` to
+# the stable set we ensure that ``argparse`` fails with the standard
+# ``invalid choice`` message that downstream tooling expects while we finish
+# validating the remaining schemas.
+SUPPORTED_ARTIFACT_TYPES = ("plan",)
+
 
 def load_json_file(file_path):
     """Load and return JSON data from a file."""
@@ -74,8 +83,11 @@ def parse_args():
     
     parser.add_argument(
         "artifact_type",
-        choices=SCHEMA_MAP.keys(),
-        help=f"The type of artifact to validate. Choices: {list(SCHEMA_MAP.keys())}"
+        choices=SUPPORTED_ARTIFACT_TYPES,
+        help=(
+            "The type of artifact to validate. Choices: "
+            f"{list(SUPPORTED_ARTIFACT_TYPES)}"
+        ),
     )
     
     parser.add_argument(
