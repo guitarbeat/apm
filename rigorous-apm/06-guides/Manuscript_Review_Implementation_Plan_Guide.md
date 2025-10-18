@@ -32,6 +32,11 @@ graph TD
     L --> M[End];
 ```
 
+## Generating the Plan
+
+- Run `python 02-setup_review.py --plan-detail-level descriptive` to populate the default checklist with each agent's specialization (sourced from `06-guides/Agent_Cheat_Sheet.md`).
+- Use the `concise` default when you only need agent IDs and titles for rapid plan drafting.
+
 ## Extending the Framework
 
 This framework is designed to be extensible. You can add new, custom Implementation Agents to perform specialized analysis tasks. To add a new agent:

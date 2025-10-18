@@ -25,6 +25,114 @@ AUTOMATION_SNIPPETS = {
 }
 
 
+AGENT_METADATA = {
+    "s1": {
+        "label": "S1 Title & Keywords Agent",
+        "specialization": "Analyzes title clarity, keyword relevance, and discoverability.",
+    },
+    "s2": {
+        "label": "S2 Abstract Agent",
+        "specialization": "Evaluates abstract structure, focus, and completeness.",
+    },
+    "s3": {
+        "label": "S3 Introduction Agent",
+        "specialization": "Reviews problem framing, motivation, and literature positioning.",
+    },
+    "s4": {
+        "label": "S4 Literature Review Agent",
+        "specialization": "Assesses literature coverage, synthesis quality, and gaps.",
+    },
+    "s5": {
+        "label": "S5 Methodology Agent",
+        "specialization": "Examines research design, reproducibility, and methodological rigor.",
+    },
+    "s6": {
+        "label": "S6 Results Agent",
+        "specialization": "Analyzes data presentation, interpretation, and evidence strength.",
+    },
+    "s7": {
+        "label": "S7 Discussion Agent",
+        "specialization": "Evaluates discussion depth, implications, and limitations coverage.",
+    },
+    "s8": {
+        "label": "S8 Conclusion Agent",
+        "specialization": "Checks conclusion strength, alignment with findings, and outlook.",
+    },
+    "s9": {
+        "label": "S9 References Agent",
+        "specialization": "Reviews citation accuracy, completeness, and formatting.",
+    },
+    "s10": {
+        "label": "S10 Supplementary Materials Agent",
+        "specialization": "Assesses supplementary content completeness and accessibility.",
+    },
+    "r1": {
+        "label": "R1 Originality & Contribution Agent",
+        "specialization": "Assesses research novelty, contribution clarity, and significance.",
+    },
+    "r2": {
+        "label": "R2 Impact & Significance Agent",
+        "specialization": "Evaluates potential impact, importance, and broader implications.",
+    },
+    "r3": {
+        "label": "R3 Ethics & Compliance Agent",
+        "specialization": "Reviews ethical considerations, compliance, and consent procedures.",
+    },
+    "r4": {
+        "label": "R4 Data & Code Availability Agent",
+        "specialization": "Checks data sharing, code availability, and reproducibility assets.",
+    },
+    "r5": {
+        "label": "R5 Statistical Rigor Agent",
+        "specialization": "Evaluates statistical methods, analyses, and power adequacy.",
+    },
+    "r6": {
+        "label": "R6 Technical Accuracy Agent",
+        "specialization": "Verifies technical correctness, methodology soundness, and calculations.",
+    },
+    "r7": {
+        "label": "R7 Consistency Agent",
+        "specialization": "Checks internal consistency, coherence, and logical flow.",
+    },
+    "w1": {
+        "label": "W1 Language & Style Agent",
+        "specialization": "Evaluates academic tone, clarity, and presentation quality.",
+    },
+    "w2": {
+        "label": "W2 Narrative Structure Agent",
+        "specialization": "Reviews narrative flow, transitions, and story coherence.",
+    },
+    "w3": {
+        "label": "W3 Clarity & Conciseness Agent",
+        "specialization": "Assesses clarity, brevity, and reader accessibility.",
+    },
+    "w4": {
+        "label": "W4 Terminology Consistency Agent",
+        "specialization": "Checks terminology usage, definitions, and field alignment.",
+    },
+    "w5": {
+        "label": "W5 Inclusive Language Agent",
+        "specialization": "Evaluates inclusive language, bias, and accessibility.",
+    },
+    "w6": {
+        "label": "W6 Citation Formatting Agent",
+        "specialization": "Reviews citation style compliance and formatting consistency.",
+    },
+    "w7": {
+        "label": "W7 Target Audience Alignment Agent",
+        "specialization": "Assesses alignment with the target audience's expectations.",
+    },
+    "qc": {
+        "label": "QC Quality Control Agent",
+        "specialization": "Synthesizes findings to surface gaps, blockers, and follow-ups.",
+    },
+    "es": {
+        "label": "ES Executive Summary Agent",
+        "specialization": "Builds the decision-ready executive summary package.",
+    },
+}
+
+
 @dataclass(frozen=True)
 class AgentTemplate:
     agent_id: str
@@ -72,6 +180,15 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
         choices=["json", "markdown"],
         default="json",
         help="File format to use when saving the generated system state (default: json).",
+    )
+    parser.add_argument(
+        "--plan-detail-level",
+        choices=["concise", "descriptive"],
+        default="concise",
+        help=(
+            "Choose how much context to include for each Implementation Agent checklist entry. "
+            "Use 'descriptive' to append each agent's specialization from the cheat sheet."
+        ),
     )
     return parser.parse_args(argv)
 
@@ -417,8 +534,24 @@ def collect_agent_templates() -> OrderedDict[str, List[AgentTemplate]]:
     return groups
 
 
+def describe_agent(agent_id: str, fallback_title: str, detail_level: str) -> str:
+    metadata = AGENT_METADATA.get(agent_id.lower())
+    if not metadata:
+        return fallback_title
+
+    label = metadata["label"]
+    if detail_level == "descriptive":
+        specialization = metadata.get("specialization")
+        if specialization:
+            return f"{label} — {specialization}"
+    return label
+
+
 def build_implementation_plan(
-    manuscript_name: str, review_dir_path: Path, assets_copied: bool
+    manuscript_name: str,
+    review_dir_path: Path,
+    assets_copied: bool,
+    detail_level: str,
 ) -> str:
     lines: List[str] = [
         f"# {manuscript_name} - Implementation Plan",
@@ -449,7 +582,8 @@ def build_implementation_plan(
         lines.append(f"## {phase}")
         lines.append("")
         for template in templates:
-            lines.append(f"- [ ] {template.title} │ `{template.agent_id}`")
+            label = describe_agent(template.agent_id, template.title, detail_level)
+            lines.append(f"- [ ] {label} │ `{template.agent_id}`")
         lines.append("")
 
     lines.append("---")
@@ -516,7 +650,10 @@ def main(argv: List[str] | None = None) -> None:
         system_state, args.system_state_format
     )
     implementation_plan_content = build_implementation_plan(
-        manuscript_name, review_dir_path, assets_copied=args.copy_manuscript
+        manuscript_name,
+        review_dir_path,
+        assets_copied=args.copy_manuscript,
+        detail_level=args.plan_detail_level,
     )
 
     write_file(
