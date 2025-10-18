@@ -19,11 +19,12 @@ A specialized Agentic Project Management (APM) instance for academic manuscript 
    ```
    - Omit `--output-root` to place the workspace inside `rigorous-apm/` next to the manuscript.
    - Add `--copy-manuscript` to stage `.bib/.cls/.sty/.bst` companions and common figure folders under `manuscript_assets/`.
+   - Add `--system-state-format markdown` if you prefer a Markdown snapshot instead of JSON.
    - Remove `--non-interactive` if you prefer guided prompts.
 
    **The helper generates**
-   - `Implementation_Plan.md` – pre-filled checklist covering every Rigorous APM agent.
-   - `system_state.json` – baseline workspace state for resuming a review.
+  - `Implementation_Plan.md` – pre-filled checklist covering every Rigorous APM agent.
+  - `system_state.json` (or `system_state.md` when using Markdown output) – baseline workspace state for resuming a review.
    - `agent_outputs/` – storage for per-agent deliverables.
    - Optional `manuscript_assets/` when `--copy-manuscript` is used.
 
@@ -76,6 +77,7 @@ Drag these snippets directly into your IDE instead of recreating `/load` command
 | `--non-interactive` | Fail fast when required information is missing. |
 | `--force` | Overwrite existing scaffold files in the review directory. |
 | `--copy-manuscript` | Stage the manuscript file plus common support assets inside `manuscript_assets/`. |
+| `--system-state-format {json,markdown}` | Choose whether the generated system state file is JSON (default) or Markdown. |
 
 ---
 

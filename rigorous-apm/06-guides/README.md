@@ -18,7 +18,7 @@ This directory contains comprehensive documentation for understanding and custom
 - Context engineering: operational boundaries and workflows
 - Prompt engineering: Markdown formatting and YAML frontmatter
 - Meta-prompts and dynamic asset generation
-- JSON format experimental preview
+- Guidance on JSON vs. Markdown system state outputs
 
 **Why read this**: Understanding these principles helps you diagnose issues, optimize workflows, and make informed customization decisions.
 
@@ -37,7 +37,7 @@ This directory contains comprehensive documentation for understanding and custom
 
 **Read**: `Memory_System_Guide.md`
 - Data structures for project state tracking
-- `system_state.json` schema and usage
+- System state file (`system_state.json` or `.md`) schema and usage
 - Agent output format specifications
 - Memory log conventions
 

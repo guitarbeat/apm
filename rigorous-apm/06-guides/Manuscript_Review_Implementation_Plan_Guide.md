@@ -12,7 +12,7 @@ This guide defines the Implementation Plan structure for academic manuscript rev
 - **Setup Agent:** The initial agent responsible for gathering manuscript details and creating the Implementation Plan.
 - **Manager Agent:** The agent responsible for executing the Implementation Plan, coordinating the Implementation Agents, and managing the review process.
 - **Implementation Agent:** A specialized agent that performs a specific analysis task (e.g., Section, Rigor, or Writing analysis).
-- **Memory System:** The `system_state.json` file and the `agent_outputs/` directory.
+- **Memory System:** The system state file (`system_state.json` by default, `system_state.md` when Markdown output is selected) and the `agent_outputs/` directory.
 
 ### Workflow Diagram
 ```mermaid

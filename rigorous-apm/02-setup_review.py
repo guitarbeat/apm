@@ -67,6 +67,12 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
             "into the generated workspace under 'manuscript_assets/'."
         ),
     )
+    parser.add_argument(
+        "--system-state-format",
+        choices=["json", "markdown"],
+        default="json",
+        help="File format to use when saving the generated system state (default: json).",
+    )
     return parser.parse_args(argv)
 
 
@@ -245,8 +251,8 @@ def write_file(path: Path, content: str, overwrite: bool) -> None:
     print(f"\033[92mWrote: {path}\033[0m")
 
 
-def build_system_state(manuscript_name: str) -> str:
-    system_state = {
+def build_system_state(manuscript_name: str) -> dict:
+    return {
         "manuscript_context": {
             "title": manuscript_name,
             "target_outlet": "To be filled by Setup Agent",
@@ -287,7 +293,68 @@ def build_system_state(manuscript_name: str) -> str:
         "agent_outputs_summary": {},
         "last_action": "Initial setup complete.",
     }
-    return json.dumps(system_state, indent=2, ensure_ascii=False)
+
+
+def format_system_state(system_state: dict, output_format: str) -> tuple[str, str]:
+    if output_format == "json":
+        return "system_state.json", json.dumps(system_state, indent=2, ensure_ascii=False)
+
+    if output_format == "markdown":
+        lines: List[str] = [
+            "# System State",
+            "",
+            "## Manuscript Context",
+        ]
+
+        manuscript_context = system_state.get("manuscript_context", {})
+        lines.extend(
+            [
+                f"- **Title:** {manuscript_context.get('title', '')}",
+                f"- **Target outlet:** {manuscript_context.get('target_outlet', '')}",
+                f"- **Current stage:** {manuscript_context.get('current_stage', '')}",
+                "",
+            ]
+        )
+
+        review_progress = system_state.get("review_progress", {})
+        lines.extend(
+            [
+                "## Review Progress",
+                f"- **Current phase:** {review_progress.get('current_phase', '')}",
+                "- **Completed agents:**",
+            ]
+        )
+
+        completed_agents = review_progress.get("completed_agents", [])
+        if completed_agents:
+            lines.extend([f"  - {agent}" for agent in completed_agents])
+        else:
+            lines.append("  - _None yet_")
+
+        lines.append("- **Pending agents:**")
+        pending_agents = review_progress.get("pending_agents", [])
+        if pending_agents:
+            lines.extend([f"  - {agent}" for agent in pending_agents])
+        else:
+            lines.append("  - _None_")
+        lines.append("")
+
+        lines.append("## Agent Outputs Summary")
+        agent_outputs_summary = system_state.get("agent_outputs_summary", {})
+        if agent_outputs_summary:
+            for agent, summary in agent_outputs_summary.items():
+                lines.append(f"- **{agent}:** {summary}")
+        else:
+            lines.append("- _No agent outputs recorded yet._")
+        lines.append("")
+
+        lines.append("## Last Action")
+        lines.append(system_state.get("last_action", ""))
+        lines.append("")
+
+        return "system_state.md", "\n".join(lines)
+
+    raise ValueError(f"Unsupported system state format: {output_format}")
 
 
 def extract_agent_title(path: Path) -> str:
@@ -394,13 +461,15 @@ def build_implementation_plan(
     return "\n".join(lines)
 
 
-def print_post_run_summary(review_dir_path: Path, assets_copied: bool) -> None:
+def print_post_run_summary(
+    review_dir_path: Path, assets_copied: bool, system_state_filename: str
+) -> None:
     print("\033[92mReview workspace ready.\033[0m")
 
     summary_items = [
         ("Workspace", review_dir_path),
         ("Implementation plan", review_dir_path / "Implementation_Plan.md"),
-        ("System state", review_dir_path / "system_state.json"),
+        ("System state", review_dir_path / system_state_filename),
     ]
 
     if assets_copied:
@@ -442,18 +511,29 @@ def main(argv: List[str] | None = None) -> None:
     review_dir_path = determine_review_directory(manuscript_dir, manuscript_name, args)
     ensure_workspace(review_dir_path, force=args.force)
 
-    system_state_content = build_system_state(manuscript_name)
+    system_state = build_system_state(manuscript_name)
+    system_state_filename, system_state_content = format_system_state(
+        system_state, args.system_state_format
+    )
     implementation_plan_content = build_implementation_plan(
         manuscript_name, review_dir_path, assets_copied=args.copy_manuscript
     )
 
-    write_file(review_dir_path / "system_state.json", system_state_content, overwrite=args.force)
+    write_file(
+        review_dir_path / system_state_filename,
+        system_state_content,
+        overwrite=args.force,
+    )
     write_file(review_dir_path / "Implementation_Plan.md", implementation_plan_content, overwrite=args.force)
 
     if args.copy_manuscript:
         copy_manuscript_assets(manuscript_file, review_dir_path, force=args.force)
 
-    print_post_run_summary(review_dir_path, assets_copied=args.copy_manuscript)
+    print_post_run_summary(
+        review_dir_path,
+        assets_copied=args.copy_manuscript,
+        system_state_filename=system_state_filename,
+    )
 
 
 if __name__ == "__main__":

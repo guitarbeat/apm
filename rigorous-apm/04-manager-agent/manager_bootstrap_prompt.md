@@ -39,8 +39,8 @@
 **Dependencies**: All section agents can run in parallel.
 
 ## Next Steps
-1.  Review the `system_state.json` file and the `Implementation Plan`.
+1.  Review the system state file (`system_state.json` by default, `system_state.md` when Markdown output is selected) and the `Implementation Plan`. The review workspace helper sets the starting format through `--system-state-format`.
 2.  Begin Phase 1: Section Analysis coordination by executing the 10 section agents.
 3.  Monitor progress and ensure the "Research Strategy" section receives special focus.
-4.  Update the `system_state.json` file after each agent completes its task.
+4.  Update the system state file after each agent completes its task.
 5.  Deliver the consolidated analysis reports.

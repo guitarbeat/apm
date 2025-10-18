@@ -10,10 +10,11 @@ Use this single asset to move smoothly from workspace prep to Setup and Manager 
    ```bash
    python 02-setup_review.py \
      --manuscript "/path/to/manuscript.tex" \
-     --output-root "/path/to/reviews"
+     --output-root "/path/to/reviews" \
+     --system-state-format markdown  # switch to Markdown; omit for JSON
    ```
 2. Open the workspace and confirm:
-   - `Implementation_Plan.md` and `system_state.json` exist.
+   - `Implementation_Plan.md` and the generated system state file (`system_state.json` by default, `system_state.md` when Markdown output is selected) exist.
    - `agent_outputs/` is empty and ready.
    - `manuscript_assets/` contains staged files when `--copy-manuscript` was provided.
 
@@ -56,5 +57,5 @@ Use this single asset to move smoothly from workspace prep to Setup and Manager 
 ## 4. During Execution
 
 - Monitor the `agent_outputs/` directory for per-agent deliverables.
-- Update `system_state.json` if you pause or resume the review manually.
+- Update the system state file (`system_state.json` or `.md`) if you pause or resume the review manually.
 - After all agents finish, inspect the `quality_control` and `executive_summary` outputs to prepare your decision package.
