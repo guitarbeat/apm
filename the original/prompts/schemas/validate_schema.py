@@ -110,9 +110,6 @@ def parse_args():
 
 
 def main():
-    if len(sys.argv) < 3:
-        print_usage_and_exit()
-
     args = parse_args()
     schema_path = get_schema_path(args.artifact_type)
     schema = load_json_file(schema_path)
