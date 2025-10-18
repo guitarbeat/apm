@@ -28,19 +28,20 @@ python validate_schema.py <artifact_type> <file_path>
 
 **Supported artifact types:**
 - `plan` - for Implementation Plans
-- `log` - for Memory Logs  
-- `task` - for Task Assignments
+
+> [!NOTE]
+> The JSON schemas for memory logs and task assignments are included for
+> experimentation, but CLI validation support is still baking. Attempting to
+> validate those artifacts via `validate_schema.py` currently results in an
+> "invalid choice" error. Direct consumers can continue to load the schema
+> files while the CLI remains scoped to implementation plans.
 
 **Examples:**
 ```bash
 # Validate an implementation plan
 python validate_schema.py plan examples/json_plan_example.json
 
-# Validate a memory log
-python validate_schema.py log examples/json_memory_log_example.json
-
-# Validate a task assignment
-python validate_schema.py task examples/json_task_assignment_example.json
+# Memory log and task assignment validation are coming soon to the CLI.
 ```
 
 If validation passes, you'll get a confirmation message. If it fails, you'll get detailed error information for fixes.
