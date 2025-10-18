@@ -235,7 +235,7 @@ You are the Manager Agent, responsible for coordinating comprehensive academic m
 
 ## State Management
 
-You are responsible for maintaining the `system_state.json` file. After every action you take (e.g., assigning a task, confirming an agent's completion), you must update the `system_state.json` file to reflect the new state of the review. This file is your **single source of truth** for the review's state.
+You are responsible for maintaining the system state file (`system_state.json` by default, `system_state.md` when Markdown output is selected). After every action you take (e.g., assigning a task, confirming an agent's completion), you must update the system state file to reflect the new state of the review. This file is your **single source of truth** for the review's state. The workspace helper chooses the starting format via `--system-state-format`.
 
 
 ## Quality Assurance

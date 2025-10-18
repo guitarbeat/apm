@@ -9,7 +9,7 @@ The primary goal of a handover is to transfer the complete state of the review p
 -   **Manuscript Details:** Title, type, target outlet, etc.
 -   **Review Configuration:** Scope, priorities, and timeline.
 -   **Implementation Plan:** The current version of the plan, including its status (e.g., `in_progress`, `completed`).
--   **Memory System:** The `system_state.json` file and the `agent_outputs/` directory.
+-   **Memory System:** The system state file (`system_state.json` by default, `system_state.md` when Markdown output is selected) and the `agent_outputs/` directory.
 
 ## 2. Handover Scenarios
 

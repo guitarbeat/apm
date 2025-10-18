@@ -319,24 +319,46 @@ This standardization enables:
 
 **Memory System Integration**
 
-The `system_state.json` file uses YAML-like JSON structure for quick state assessment:
+The system state file (`system_state.json` by default, `system_state.md` when Markdown output is selected) is designed for quick assessment without wading through every agent deliverable. Choose the format that best fits your tooling:
 
-```json
-{
-  "manuscript_context": {
-    "title": "String",
-    "target_outlet": "String",
-    "current_stage": "String"
-  },
-  "review_progress": {
-    "current_phase": "String",
-    "completed_agents": ["Agent IDs"],
-    "pending_agents": ["Agent IDs"]
-  }
-}
-```
+- **JSON format** – Structured for downstream automations and scriptable tooling:
 
-This provides the Manager Agent with instant context without reading detailed agent outputs.
+    ```json
+    {
+      "manuscript_context": {
+        "title": "String",
+        "target_outlet": "String",
+        "current_stage": "String"
+      },
+      "review_progress": {
+        "current_phase": "String",
+        "completed_agents": ["Agent IDs"],
+        "pending_agents": ["Agent IDs"]
+      }
+    }
+    ```
+
+- **Markdown format** – Human-friendly headings and bullet lists for quick scanning in plain-text editors:
+
+    ```markdown
+    # System State
+
+    ## Manuscript Context
+    - **Title:** ...
+    - **Target outlet:** ...
+    - **Current stage:** ...
+
+    ## Review Progress
+    - **Current phase:** ...
+    - **Completed agents:**
+      - ...
+    - **Pending agents:**
+      - ...
+    ```
+
+Both representations give the Manager Agent instant context without reading detailed agent outputs.
+
+When bootstrapping a workspace with `02-setup_review.py`, choose the format upfront using `--system-state-format markdown` or the default JSON by omitting the flag.
 
 ---
 

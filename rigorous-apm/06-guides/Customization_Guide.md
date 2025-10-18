@@ -667,7 +667,7 @@ This instance demonstrates several customization principles in action:
 
 ### Custom Memory System
 
-Consolidated state management via `system_state.json`:
+Consolidated state management via the system state file (`system_state.json` by default, `system_state.md` when Markdown output is selected):
 - Manuscript context tracking
 - Review progress monitoring
 - Agent output summaries

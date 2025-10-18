@@ -2,11 +2,15 @@
 
 This guide defines the canonical data structures for the memory system used in the Rigorous APM framework.
 
-## 1. The `system_state.json` File
+## 1. The System State File
 
-This file is the **single source of truth** for the entire state of the review project. It is created by the `02-setup_review.sh` script and is continuously updated by the `Manager Agent` after every action.
+This file is the **single source of truth** for the entire state of the review project. It is created by the `02-setup_review.py` helper and is continuously updated by the `Manager Agent` after every action.
 
-By consolidating the state into a single file, we make it much easier for an LLM agent to quickly and accurately understand the current state of the review.
+You can generate the system state in either JSON or Markdown format depending on your downstream tooling needs. Both versions contain the same information. Pass `--system-state-format markdown` (or omit the flag for JSON) when running `02-setup_review.py` to choose the initial file type.
+
+### JSON Format (`system_state.json`)
+
+Optimized for automation, scripting, and direct ingestion by other tools.
 
 ```json
 {
@@ -34,11 +38,38 @@ By consolidating the state into a single file, we make it much easier for an LLM
 }
 ```
 
+### Markdown Format (`system_state.md`)
+
+Optimized for quick human scanning in plain-text editors, Git diffs, or documentation bundles.
+
+```markdown
+# System State
+
+## Manuscript Context
+- **Title:** String
+- **Target outlet:** String
+- **Current stage:** String
+
+## Review Progress
+- **Current phase:** String
+- **Completed agents:**
+  - String (Agent ID)
+- **Pending agents:**
+  - String (Agent ID)
+
+## Agent Outputs Summary
+- **s1:** Status completed; overall_score 4.5
+- **s2:** Status pending; overall_score null
+
+## Last Action
+String (A description of the last action taken by the Manager Agent)
+```
+
 ## 2. The `agent_outputs/` Directory
 
 This directory contains the detailed markdown output from each `Implementation Agent`. Each file is named after the agent's ID (e.g., `s1.md`).
 
-While the `system_state.json` file provides a summary of the agent outputs, these files contain the full, detailed analysis.
+While the system state file provides a summary of the agent outputs, these files contain the full, detailed analysis.
 
 ## 4. Standard Agent Output Markdown Schema
 
