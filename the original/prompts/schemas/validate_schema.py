@@ -7,8 +7,8 @@ from jsonschema import validate, ValidationError
 
 SCHEMA_MAP = {
     "plan": "implementation_plan.schema.json",
-    # "log": "memory_log.schema.json", # TBD
-    # "task": "task_assignment.schema.json", # TBD
+    "log": "memory_log.schema.json",
+    "task": "task_assignment.schema.json",
 }
 
 
