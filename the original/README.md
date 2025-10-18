@@ -6,7 +6,15 @@
 
 ## What is APM?
 
-**Agentic Project Management (APM)** is a AI workflow framework that brings real-world project management principles into your AI-assisted workflows. It addresses a fundamental challenge of LLMs: **context window limitations**. 
+**Agentic Project Management (APM)** is a AI workflow framework that brings real-world project management principles into your AI-assisted workflows. It addresses a fundamental challenge of LLMs: **context window limitations**.
+
+### Audience Legend
+
+- **👤 Human-only** – Reference material meant for operators, facilitators, or contributors.
+- **🤖 Agent-ready** – Prompts and templates that can be pasted directly into an AI assistant.
+- **🔁 Shared** – Assets that humans trigger or curate and that agents subsequently consume or update.
+
+These icons also show up in generated automation outputs (for example, Rigorous APM's implementation plans and system-state files) so humans and agents see the same cues across tooling and documentation. The Rigorous workspace helper now auto-upgrades existing assets whenever it encounters an older file that is missing the shared legend.
 
 APM uses various context retention techniques, coordinating a team of specialized AI agents in a structured way so that you can maintain productive AI-assisted work for longer periods before facing model hallucinations and needing to start over. When context window does fill up, APM ensures a smooth transition to a "fresh" chat session without important context loss.
 
@@ -20,35 +28,37 @@ Think of it like having a project manager, developers, ad-hoc specialists, and a
 
 **Accessing APM Assets:** You have a few options to get the APM prompts, guides and protocol definitions:
 
-1.  **Use the APM Template (Recommended for Custom Projects):**
+1.  **👤 Use the APM Template (Recommended for Custom Projects):**
     *   Click the "Use this template" button on the [APM GitHub Repository](https://github.com/sdi2200262/agentic-project-management).
     *   This creates *your own repository* pre-filled with the entire APM structure.
     *   **Ideal Setup:** Clone *your new repository*, ideally at the root of your project workspace.
 
-2.  **Clone the Official APM Repository (Recommended for Direct Use & Updates):**
+2.  **👤 Clone the Official APM Repository (Recommended for Direct Use & Updates):**
     *   Clone the main [APM GitHub Repository](https://github.com/sdi2200262/agentic-project-management) directly into your project workspace, ideally at the root.
     *   This gives you direct access to the latest version and all assets.
 
-3.  **Manual Copy-Pasting (Basic Usage):**
-    *   You can manually copy and paste prompt content from the official APM GitHub repository into your AI assistant as needed. While this approach works, it involves more manual labor and does not fully leverage the agentic capabilities of the framework.
+3.  **🤖 Manual Copy-Pasting (Basic Usage):**
+    *   You can manually copy and paste prompt content (🤖) from the official APM GitHub repository into your AI assistant as needed. While this approach works, it involves more manual labor and does not fully leverage the agentic capabilities of the framework.
 
 **Next Steps:** 
-1) See [Getting Started Guide](docs/Getting_Started.md) for complete setup instructions and your first APM session.
-2) See [Workflow_Overview.md](docs/Workflow_Overview.md) for a complete understanding of all workflow protocols, procedures, and concepts.
+1) See [Getting Started Guide](docs/Getting_Started.md) (👤) for complete setup instructions and your first APM session.
+2) See [Workflow_Overview.md](docs/Workflow_Overview.md) (👤/🔁) for a complete understanding of all workflow protocols, procedures, and concepts.
 
 
 ## Documentation
 
-APM v0.4 includes comprehensive documentation covering all aspects of the framework:
+APM v0.4 includes comprehensive documentation covering all aspects of the framework. Use the legend to decide what to read versus what to hand to an agent:
 
-*   **[Introduction](docs/Introduction.md)** - Overview of APM concepts, goals, and core framework
-*   **[Getting Started Guide](docs/Getting_Started.md)** - Step-by-step setup and first session
-*   **[Agent Types](docs/Agent_Types.md)** - Understanding the different agent roles  
-*   **[Workflow Overview](docs/Workflow_Overview.md)** - Complete workflow walkthrough
-*   **[Token Consumption Tips](docs/Token_Consumption_Tips.md)** - Cost optimization strategies
-*   **[Modifying APM](docs/Modifying_APM.md)** - Customization and advanced features
-*   **[Context & Memory Management](docs/Context_and_Memory_Management.md)** *(Advanced)* - How APM handles agent context and preserves key information.
-*   **[Context & Prompt Engineering](docs/Context_and_Prompt_Engineering.md)** *(Advanced)* - Prompt and Context Engineering techniques used throughout the APM v0.4 framework.
+| Audience | Asset | Summary |
+| --- | --- | --- |
+| 👤 | **[Introduction](docs/Introduction.md)** | Overview of APM concepts, goals, and core framework. |
+| 👤 | **[Getting Started Guide](docs/Getting_Started.md)** | Step-by-step setup and first session. |
+| 👤 | **[Agent Types](docs/Agent_Types.md)** | Understanding the different agent roles. |
+| 👤 / 🔁 | **[Workflow Overview](docs/Workflow_Overview.md)** | Complete workflow walkthrough including operator rituals and shared-state expectations. |
+| 👤 | **[Token Consumption Tips](docs/Token_Consumption_Tips.md)** | Cost optimization strategies. |
+| 👤 | **[Modifying APM](docs/Modifying_APM.md)** | Customization and advanced features. |
+| 🔁 | **[Context & Memory Management](docs/Context_and_Memory_Management.md)** *(Advanced)* | How APM handles agent context and preserves key information. |
+| 👤 / 🤖 | **[Context & Prompt Engineering](docs/Context_and_Prompt_Engineering.md)** *(Advanced)* | Prompt and Context Engineering techniques, including drag-and-drop agent snippets. |
 
 ## Contributing
 

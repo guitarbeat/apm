@@ -11,7 +11,7 @@ import sys
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Sequence, Tuple
+from typing import Callable, List, Sequence, Tuple
 
 DEFAULT_COLLECTION_DIR_NAME = "rigorous_apm_reviews"
 AGENT_LIBRARY_ROOT = Path(__file__).resolve().parent / "05-implementation-agents"
@@ -23,6 +23,36 @@ AUTOMATION_SNIPPETS = {
     / "03-review-kickoff"
     / "manager_load_plan.apm",
 }
+
+
+AUDIENCE_DEFINITIONS: OrderedDict[str, dict[str, str]] = OrderedDict(
+    [
+        (
+            "human",
+            {
+                "icon": "👤",
+                "label": "Human-only",
+                "description": "Operators and reviewers execute this themselves.",
+            },
+        ),
+        (
+            "agent",
+            {
+                "icon": "🤖",
+                "label": "Agent-ready",
+                "description": "Paste directly into an AI agent or IDE without edits.",
+            },
+        ),
+        (
+            "shared",
+            {
+                "icon": "🔁",
+                "label": "Shared",
+                "description": "Humans trigger or configure it; agents consume or update it.",
+            },
+        ),
+    ]
+)
 
 
 AGENT_METADATA = {
@@ -137,6 +167,69 @@ AGENT_METADATA = {
 class AgentTemplate:
     agent_id: str
     title: str
+
+
+def audience_icon(audience: str) -> str:
+    try:
+        return AUDIENCE_DEFINITIONS[audience]["icon"]
+    except KeyError as exc:
+        raise ValueError(f"Unknown audience '{audience}'") from exc
+
+
+def audience_legend_lines() -> List[str]:
+    lines: List[str] = []
+    for definition in AUDIENCE_DEFINITIONS.values():
+        lines.append(
+            f"- {definition['icon']} {definition['label']} – {definition['description']}"
+        )
+    return lines
+
+
+def requires_audience_metadata(existing_content: str) -> bool:
+    lowered = existing_content.casefold()
+    expected_icons = {definition["icon"] for definition in AUDIENCE_DEFINITIONS.values()}
+    expected_labels = {
+        definition["label"].casefold() for definition in AUDIENCE_DEFINITIONS.values()
+    }
+
+    if "audience_legend" in lowered:
+        try:
+            parsed = json.loads(existing_content)
+        except json.JSONDecodeError:
+            parsed = None
+
+        if isinstance(parsed, dict):
+            legend_entries = parsed.get("metadata", {}).get("audience_legend")
+            if isinstance(legend_entries, list):
+                icons_in_json = set()
+                labels_in_json = set()
+                for entry in legend_entries:
+                    if not isinstance(entry, dict):
+                        continue
+                    icon = entry.get("icon")
+                    label = entry.get("label")
+                    if isinstance(icon, str):
+                        icons_in_json.add(icon)
+                    if isinstance(label, str):
+                        labels_in_json.add(label.casefold())
+
+                if expected_icons.issubset(icons_in_json) and expected_labels.issubset(
+                    labels_in_json
+                ):
+                    return False
+
+    if "audience legend" in lowered:
+        icons_present = all(icon in existing_content for icon in expected_icons)
+        labels_present = all(label in lowered for label in expected_labels)
+        if icons_present and labels_present:
+            return False
+
+    return True
+
+
+def format_checklist_item(description: str, audience: str) -> str:
+    icon = audience_icon(audience)
+    return f"- [ ] {icon} {description}"
 
 
 def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
@@ -357,19 +450,52 @@ def copy_manuscript_assets(manuscript_file: Path, review_dir_path: Path, force: 
     print(f"\033[92mCopied manuscript assets -> {destination} ({copied_list})\033[0m")
 
 
-def write_file(path: Path, content: str, overwrite: bool) -> None:
+def write_file(
+    path: Path,
+    content: str,
+    overwrite: bool,
+    upgrade_detector: Callable[[str], bool] | None = None,
+) -> str:
     if path.exists() and not overwrite:
+        if upgrade_detector is not None:
+            try:
+                existing = path.read_text(encoding="utf-8")
+            except OSError as exc:
+                print(
+                    f"\033[93mWarning: Could not read existing file to check for audience metadata: {path} ({exc})\033[0m"
+                )
+            else:
+                if upgrade_detector(existing):
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    with open(path, "w", encoding="utf-8") as handle:
+                        handle.write(content.rstrip() + "\n")
+                    print(
+                        "\033[92mUpgraded existing file with audience legend: "
+                        f"{path}\033[0m"
+                    )
+                    return "upgraded"
         print(f"\033[93mSkipped existing file (use --force to overwrite): {path}\033[0m")
-        return
+        return "skipped"
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as handle:
         handle.write(content.rstrip() + "\n")
     print(f"\033[92mWrote: {path}\033[0m")
+    return "written"
 
 
 def build_system_state(manuscript_name: str) -> dict:
     return {
+        "metadata": {
+            "audience_legend": [
+                {
+                    "icon": entry["icon"],
+                    "label": entry["label"],
+                    "description": entry["description"],
+                }
+                for entry in AUDIENCE_DEFINITIONS.values()
+            ]
+        },
         "manuscript_context": {
             "title": manuscript_name,
             "target_outlet": "To be filled by Setup Agent",
@@ -420,9 +546,27 @@ def format_system_state(system_state: dict, output_format: str) -> tuple[str, st
         lines: List[str] = [
             "# System State",
             "",
-            "## Manuscript Context",
+            "## Audience Legend",
         ]
 
+        legend_entries = (
+            system_state.get("metadata", {}).get("audience_legend") or []
+        )
+        if legend_entries:
+            for entry in legend_entries:
+                lines.append(
+                    f"- {entry.get('icon', '')} {entry.get('label', '')} – {entry.get('description', '')}"
+                )
+        else:
+            lines.extend(audience_legend_lines())
+
+        lines.extend(
+            [
+                "",
+                "## Manuscript Context",
+            ]
+        )
+    
         manuscript_context = system_state.get("manuscript_context", {})
         lines.extend(
             [
@@ -558,22 +702,49 @@ def build_implementation_plan(
         "",
         "**Generated automatically by `02-setup_review.py`. Customize before handing to the Rigorous Setup Agent.**",
         "",
-        "## Review Kickoff Checklist",
-        "- [ ] Confirm manuscript scope and target outlet details with the Setup Agent",
-        "- [ ] Provide manuscript files and supporting assets to the Setup Agent",
-        "- [ ] Capture the refined Implementation Plan for Manager handoff",
-        "",
-        "## Phase 0: Workspace Preparation",
-        f"- [ ] Verify project workspace at `{review_dir_path}`",
+        "## Audience Legend",
     ]
+
+    lines.extend(audience_legend_lines())
+
+    lines.extend(
+        [
+            "",
+            "## Review Kickoff Checklist",
+        ]
+    )
+
+    kickoff_items = [
+        ("Confirm manuscript scope and target outlet details with the Setup Agent", "human"),
+        ("Provide manuscript files and supporting assets to the Setup Agent", "shared"),
+        ("Capture the refined Implementation Plan for Manager handoff", "shared"),
+    ]
+    lines.extend(format_checklist_item(text, audience) for text, audience in kickoff_items)
+
+    lines.extend(
+        [
+            "",
+            "## Phase 0: Workspace Preparation",
+            format_checklist_item(
+                f"Verify project workspace at `{review_dir_path}`",
+                "human",
+            ),
+        ]
+    )
 
     if assets_copied:
         lines.append(
-            "- [ ] Confirm staged manuscript package inside `manuscript_assets/` (copied by the helper)."
+            format_checklist_item(
+                "Confirm staged manuscript package inside `manuscript_assets/` (copied by the helper).",
+                "shared",
+            )
         )
     else:
         lines.append(
-            "- [ ] Stage manuscript files so they are ready to share with the Setup Agent."
+            format_checklist_item(
+                "Stage manuscript files so they are ready to share with the Setup Agent.",
+                "human",
+            )
         )
 
     lines.append("")
@@ -583,7 +754,12 @@ def build_implementation_plan(
         lines.append("")
         for template in templates:
             label = describe_agent(template.agent_id, template.title, detail_level)
-            lines.append(f"- [ ] {label} │ `{template.agent_id}`")
+            lines.append(
+                format_checklist_item(
+                    f"{label} │ `{template.agent_id}`",
+                    "agent",
+                )
+            )
         lines.append("")
 
     lines.append("---")
@@ -596,33 +772,60 @@ def build_implementation_plan(
 
 
 def print_post_run_summary(
-    review_dir_path: Path, assets_copied: bool, system_state_filename: str
+    review_dir_path: Path,
+    assets_copied: bool,
+    system_state_filename: str,
+    legend_upgraded_targets: List[Path] | None = None,
 ) -> None:
     print("\033[92mReview workspace ready.\033[0m")
 
     summary_items = [
-        ("Workspace", review_dir_path),
-        ("Implementation plan", review_dir_path / "Implementation_Plan.md"),
-        ("System state", review_dir_path / system_state_filename),
+        ("Workspace", review_dir_path, "human"),
+        (
+            "Implementation plan",
+            review_dir_path / "Implementation_Plan.md",
+            "shared",
+        ),
+        ("System state", review_dir_path / system_state_filename, "shared"),
     ]
 
     if assets_copied:
-        summary_items.append(("Manuscript assets", review_dir_path / "manuscript_assets"))
+        summary_items.append(
+            ("Manuscript assets", review_dir_path / "manuscript_assets", "shared")
+        )
 
-    label_width = max(len(label) for label, _ in summary_items)
-    for label, path in summary_items:
-        print(f"  {label:<{label_width}} : {path}")
+    label_width = max(len(label) for label, _, _ in summary_items)
+    for label, path, audience in summary_items:
+        icon = audience_icon(audience)
+        print(f"  {label:<{label_width}} : {icon} {path}")
 
     print("")
     print("Next steps:")
     next_steps = [
-        "Drag '03-review-kickoff/review_kickoff_prompt.md' into your agentic IDE.",
-        "Use the 'share_plan_with_setup.apm' automation snippet to give the plan to the Setup Agent.",
-        "After revisions, run 'manager_load_plan.apm' so the Manager imports the latest plan.",
+        (
+            "Drag '03-review-kickoff/review_kickoff_prompt.md' into your agentic IDE.",
+            "shared",
+        ),
+        (
+            "Use the 'share_plan_with_setup.apm' automation snippet to give the plan to the Setup Agent.",
+            "shared",
+        ),
+        (
+            "After revisions, run 'manager_load_plan.apm' so the Manager imports the latest plan.",
+            "shared",
+        ),
     ]
 
-    for index, step in enumerate(next_steps, start=1):
-        print(f"  {index}. {step}")
+    for index, (step, audience) in enumerate(next_steps, start=1):
+        icon = audience_icon(audience)
+        print(f"  {index}. {icon} {step}")
+
+    if legend_upgraded_targets:
+        print("")
+        print("Legend upgraded automatically:")
+        for target in legend_upgraded_targets:
+            print(f"  - {target}")
+        print("Existing files were refreshed to include the shared audience legend.")
 
     missing_snippets = [
         name for name, snippet in AUTOMATION_SNIPPETS.items() if not snippet.exists()
@@ -656,12 +859,27 @@ def main(argv: List[str] | None = None) -> None:
         detail_level=args.plan_detail_level,
     )
 
-    write_file(
-        review_dir_path / system_state_filename,
+    legend_upgraded_targets: List[Path] = []
+
+    system_state_path = review_dir_path / system_state_filename
+    system_state_status = write_file(
+        system_state_path,
         system_state_content,
         overwrite=args.force,
+        upgrade_detector=requires_audience_metadata,
     )
-    write_file(review_dir_path / "Implementation_Plan.md", implementation_plan_content, overwrite=args.force)
+    if system_state_status == "upgraded":
+        legend_upgraded_targets.append(system_state_path)
+
+    implementation_plan_path = review_dir_path / "Implementation_Plan.md"
+    implementation_plan_status = write_file(
+        implementation_plan_path,
+        implementation_plan_content,
+        overwrite=args.force,
+        upgrade_detector=requires_audience_metadata,
+    )
+    if implementation_plan_status == "upgraded":
+        legend_upgraded_targets.append(implementation_plan_path)
 
     if args.copy_manuscript:
         copy_manuscript_assets(manuscript_file, review_dir_path, force=args.force)
@@ -670,6 +888,7 @@ def main(argv: List[str] | None = None) -> None:
         review_dir_path,
         assets_copied=args.copy_manuscript,
         system_state_filename=system_state_filename,
+        legend_upgraded_targets=legend_upgraded_targets,
     )
 
 

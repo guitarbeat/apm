@@ -8,19 +8,25 @@ This README replaces the standalone guidebook so that all navigation lives in a 
 2. Follow the inline links to the underlying files—each points to the canonical asset in the `rigorous-apm/` tree.
 3. Return here whenever you need to understand how the parts fit together or to locate the next asset in your workflow.
 
+### Audience Legend
+
+- **👤 Human-only** – Operator-facing guidance, walkthroughs, or checklists.
+- **🤖 Agent-ready** – Drag-and-drop prompts or files meant to be ingested by an AI agent without rewriting.
+- **🔁 Shared** – Humans trigger or configure the asset, and agents consume or update the results.
+
 ---
 
 ## 1. Onboarding & Review Kickoff
 
-| Purpose | Read This | Why It Matters |
-| --- | --- | --- |
-| Launch a new review workspace | [`../01-START_HERE.md`](../01-START_HERE.md) | Walks through the 26-agent operating model, directory layout, and the order of operations for new operators. |
-| Spin up a review workspace from the CLI | [`../02-setup_review.py`](../02-setup_review.py) | Provides the automation entry point; review the docstring examples before running the script. |
-| Bootstrap the reviewer and manager agents | [`../03-review-kickoff/review_kickoff_prompt.md`](../03-review-kickoff/review_kickoff_prompt.md), [`../03-setup-agent/setup_agent_initiation_prompt.md`](../03-setup-agent/setup_agent_initiation_prompt.md) | Supplies the initial prompts you will paste into your IDE/assistant to start the coordination loop. |
-| Align the manager before handing off to implementation | [`../04-manager-agent/manager_bootstrap_prompt.md`](../04-manager-agent/manager_bootstrap_prompt.md), [`../04-manager-agent/manager_agent_initiation_prompt.md`](../04-manager-agent/manager_agent_initiation_prompt.md) | Ensures the manager agent captures project goals, constraints, and deliverables before delegating work. |
-| Select the right implementation prompt | [`../05-implementation-agents/`](../05-implementation-agents/) | Contains the execution templates (base, quality control, executive summary) for implementation specialists. |
+| Purpose | Audience | Read This | Why It Matters |
+| --- | --- | --- | --- |
+| Launch a new review workspace | 👤 | [`../01-START_HERE.md`](../01-START_HERE.md) | Walks through the 26-agent operating model, directory layout, and the order of operations for new operators. |
+| Spin up a review workspace from the CLI | 🔁 | [`../02-setup_review.py`](../02-setup_review.py) | Provides the automation entry point and now auto-tags generated assets with the shared audience legend. |
+| Bootstrap the reviewer and manager agents | 🤖 | [`../03-review-kickoff/review_kickoff_prompt.md`](../03-review-kickoff/review_kickoff_prompt.md), [`../03-setup-agent/setup_agent_initiation_prompt.md`](../03-setup-agent/setup_agent_initiation_prompt.md) | Supplies the initial prompts you will paste into your IDE/assistant to start the coordination loop. |
+| Align the manager before handing off to implementation | 🔁 | [`../04-manager-agent/manager_bootstrap_prompt.md`](../04-manager-agent/manager_bootstrap_prompt.md), [`../04-manager-agent/manager_agent_initiation_prompt.md`](../04-manager-agent/manager_agent_initiation_prompt.md) | Ensures the manager agent captures project goals, constraints, and deliverables before delegating work. |
+| Select the right implementation prompt | 🤖 | [`../05-implementation-agents/`](../05-implementation-agents/) | Contains the execution templates (base, quality control, executive summary) for implementation specialists. |
 
-**Quick Start Flow**: Start with `01-START_HERE.md`, run `02-setup_review.py` if you need automation, seed the review kickoff prompt, then progress through the manager and implementation prompts.
+**Quick Start Flow**: Start with `01-START_HERE.md` (👤), run `02-setup_review.py` (🔁) if you need automation, seed the review kickoff prompt (🤖), then progress through the manager (🔁) and implementation prompts (🤖). When you re-run the helper it auto-patches older outputs with the legend, so reserve `--force` for full regenerations after safeguarding manual edits.
 
 ---
 
@@ -52,9 +58,9 @@ Keep this section in view when you are editing prompts under the `03-` through `
 
 Reliable state management underpins multi-session reviews.
 
-- **Memory Files** – [`Memory_System_Guide.md`](Memory_System_Guide.md) documents the schema for `system_state.json`/`.md`, memory logs, and interim artifacts. Use it to understand what each field means and how to add safe extensions.
-- **Session Continuity** – [`Handover_Guide.md`](Handover_Guide.md) specifies when to create a `handover.md`, how to summarize pending work, and how to brief a follow-up operator.
-- **Quality Gates** – Combine the above with the quality-control prompt in [`../05-implementation-agents/quality_control_agent_prompt.md`](../05-implementation-agents/quality_control_agent_prompt.md) to ensure deliverables stay aligned with the saved state.
+- **Memory Files** (🔁) – [`Memory_System_Guide.md`](Memory_System_Guide.md) documents the schema for `system_state.json`/`.md`, memory logs, and interim artifacts. Use it to understand what each field means and how to add safe extensions.
+- **Session Continuity** (🔁) – [`Handover_Guide.md`](Handover_Guide.md) specifies when to create a `handover.md`, how to summarize pending work, and how to brief a follow-up operator.
+- **Quality Gates** (🤖/👤) – Combine the above with the quality-control prompt in [`../05-implementation-agents/quality_control_agent_prompt.md`](../05-implementation-agents/quality_control_agent_prompt.md) to ensure deliverables stay aligned with the saved state.
 
 When in doubt, update the memory log first, then trigger a handover to keep every agent aligned with the latest decisions.
 
@@ -64,9 +70,9 @@ When in doubt, update the memory log first, then trigger a handover to keep ever
 
 The IDE playbooks in [`IDE_and_AI_Assistant_Guide.md`](IDE_and_AI_Assistant_Guide.md) outline how to operate Cursor, Kiro, VS Code, and Gemini alongside the APM prompts. Use this condensed checklist:
 
-- **Baseline Setup** – Establish a shared folder structure, sync `system_state.*` files, and configure autosave before delegating tasks.
-- **Assistant Pairing** – Match the assistant to the phase of work (e.g., Cursor for implementation bursts, Gemini for wide exploration) as described in the guide’s heuristic tables.
-- **Context Refresh** – After each major change, re-run the assistant-specific “state sync” ritual from the guide to keep prompts and handovers current.
+- **Baseline Setup** (👤) – Establish a shared folder structure, sync `system_state.*` files, and configure autosave before delegating tasks.
+- **Assistant Pairing** (👤) – Match the assistant to the phase of work (e.g., Cursor for implementation bursts, Gemini for wide exploration) as described in the guide’s heuristic tables.
+- **Context Refresh** (🔁) – After each major change, re-run the assistant-specific “state sync” ritual from the guide to keep prompts and handovers current.
 
 ---
 
@@ -96,38 +102,38 @@ If you build additional domain playbooks, append a short synopsis and link in th
 
 ## 8. Quick Reference Tables
 
-| Need | Jump To |
-| --- | --- |
-| Full agent directory | [`Agent_Cheat_Sheet.md`](Agent_Cheat_Sheet.md) |
-| Prompt architecture patterns | [`Context_and_Prompt_Engineering_Guide.md`](Context_and_Prompt_Engineering_Guide.md) |
-| Memory schema & field meanings | [`Memory_System_Guide.md`](Memory_System_Guide.md) |
-| Handover templates | [`Handover_Guide.md`](Handover_Guide.md) |
-| IDE operating checklists | [`IDE_and_AI_Assistant_Guide.md`](IDE_and_AI_Assistant_Guide.md) |
-| Customization recipes | [`Customization_Guide.md`](Customization_Guide.md) |
-| Manuscript review timeline | [`Manuscript_Review_Implementation_Plan_Guide.md`](Manuscript_Review_Implementation_Plan_Guide.md) |
+| Need | Audience | Jump To |
+| --- | --- | --- |
+| Full agent directory | 👤 | [`Agent_Cheat_Sheet.md`](Agent_Cheat_Sheet.md) |
+| Prompt architecture patterns | 👤 | [`Context_and_Prompt_Engineering_Guide.md`](Context_and_Prompt_Engineering_Guide.md) |
+| Memory schema & field meanings | 🔁 | [`Memory_System_Guide.md`](Memory_System_Guide.md) |
+| Handover templates | 🔁 | [`Handover_Guide.md`](Handover_Guide.md) |
+| IDE operating checklists | 👤 | [`IDE_and_AI_Assistant_Guide.md`](IDE_and_AI_Assistant_Guide.md) |
+| Customization recipes | 👤 | [`Customization_Guide.md`](Customization_Guide.md) |
+| Manuscript review timeline | 🔁 | [`Manuscript_Review_Implementation_Plan_Guide.md`](Manuscript_Review_Implementation_Plan_Guide.md) |
 
 ---
 
 ## Navigation by Operator Goal
 
-| Your Goal | Primary Guide | Why It Matters |
-| --- | --- | --- |
-| Understand the 26-agent roster | [`Agent_Cheat_Sheet.md`](Agent_Cheat_Sheet.md) | Provides IDs, specialties, and coverage so you know who to delegate to. |
-| Master context & prompt design | [`Context_and_Prompt_Engineering_Guide.md`](Context_and_Prompt_Engineering_Guide.md) | Explains the layered prompt format, state contracts, and meta-prompt patterns that keep agents interoperable. |
-| Customize the framework | [`Customization_Guide.md`](Customization_Guide.md) | Walks through domain extensions, MCP integrations, and release management practices. |
-| Sync IDEs & assistants | [`IDE_and_AI_Assistant_Guide.md`](IDE_and_AI_Assistant_Guide.md) | Offers environment-specific checklists for Cursor, Kiro, VS Code, and Gemini. |
-| Maintain shared state | [`Memory_System_Guide.md`](Memory_System_Guide.md) | Defines the `system_state.*` schema, memory log format, and update rituals. |
-| Perform context handovers | [`Handover_Guide.md`](Handover_Guide.md) | Details when and how to compose `handover.md` files to keep multi-session work aligned. |
-| Execute manuscript reviews end-to-end | [`Manuscript_Review_Implementation_Plan_Guide.md`](Manuscript_Review_Implementation_Plan_Guide.md) | Provides a phased implementation plan, quality gates, and reporting templates tailored for academic manuscripts. |
+| Your Goal | Audience | Primary Guide | Why It Matters |
+| --- | --- | --- | --- |
+| Understand the 26-agent roster | 👤 | [`Agent_Cheat_Sheet.md`](Agent_Cheat_Sheet.md) | Provides IDs, specialties, and coverage so you know who to delegate to. |
+| Master context & prompt design | 👤 | [`Context_and_Prompt_Engineering_Guide.md`](Context_and_Prompt_Engineering_Guide.md) | Explains the layered prompt format, state contracts, and meta-prompt patterns that keep agents interoperable. |
+| Customize the framework | 👤 | [`Customization_Guide.md`](Customization_Guide.md) | Walks through domain extensions, MCP integrations, and release management practices. |
+| Sync IDEs & assistants | 👤 | [`IDE_and_AI_Assistant_Guide.md`](IDE_and_AI_Assistant_Guide.md) | Offers environment-specific checklists for Cursor, Kiro, VS Code, and Gemini. |
+| Maintain shared state | 🔁 | [`Memory_System_Guide.md`](Memory_System_Guide.md) | Defines the `system_state.*` schema, memory log format, and update rituals. |
+| Perform context handovers | 🔁 | [`Handover_Guide.md`](Handover_Guide.md) | Details when and how to compose `handover.md` files to keep multi-session work aligned. |
+| Execute manuscript reviews end-to-end | 🔁 | [`Manuscript_Review_Implementation_Plan_Guide.md`](Manuscript_Review_Implementation_Plan_Guide.md) | Provides a phased implementation plan, quality gates, and reporting templates tailored for academic manuscripts. |
 
 ---
 
 ## Suggested Reading Paths
 
-- **Quick Start**: `01-START_HERE.md` → `Agent_Cheat_Sheet.md` → `Memory_System_Guide.md`
-- **Deep Architecture Study**: `01-START_HERE.md` → `Context_and_Prompt_Engineering_Guide.md` → `Customization_Guide.md`
-- **Customization Sprint**: `Customization_Guide.md` → `Context_and_Prompt_Engineering_Guide.md` (reference) → `Memory_System_Guide.md`
-- **Tooling Setup**: `IDE_and_AI_Assistant_Guide.md` → `Handover_Guide.md`
+- **Quick Start**: `01-START_HERE.md` (👤) → `Agent_Cheat_Sheet.md` (👤) → `Memory_System_Guide.md` (🔁)
+- **Deep Architecture Study**: `01-START_HERE.md` (👤) → `Context_and_Prompt_Engineering_Guide.md` (👤) → `Customization_Guide.md` (👤)
+- **Customization Sprint**: `Customization_Guide.md` (👤) → `Context_and_Prompt_Engineering_Guide.md` (👤, reference) → `Memory_System_Guide.md` (🔁)
+- **Tooling Setup**: `IDE_and_AI_Assistant_Guide.md` (👤) → `Handover_Guide.md` (🔁)
 
 ---
 
