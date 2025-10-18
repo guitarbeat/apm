@@ -40,7 +40,7 @@ python validate_schema.py plan examples/json_plan_example.json
 python validate_schema.py log examples/json_memory_log_example.json
 
 # Validate a task assignment
-python validate_schema.py task examples/json_task_example.json
+python validate_schema.py task examples/json_task_assignment_example.json
 ```
 
 If validation passes, you'll get a confirmation message. If it fails, you'll get detailed error information for fixes.
@@ -51,7 +51,7 @@ The `examples/` folder contains sample JSON files demonstrating proper schema co
 ### What's In Examples
 - **`json_plan_example.json`** - Sample phased project (Vite app with Shadcn components)
 - **`json_memory_log_example.json`** - Sample Dynamic-JSON memory log for Task 1.1
-- **`json_task_example.json`** - Sample Task Assignment Prompt in JSON format
+- **`json_task_assignment_example.json`** - Sample Task Assignment Prompt in JSON format
 
 These examples demonstrate exactly how JSON variants should be structured for schema compliance.
 
