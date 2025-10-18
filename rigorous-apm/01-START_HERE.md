@@ -20,6 +20,7 @@ A specialized Agentic Project Management (APM) instance for academic manuscript 
    - Omit `--output-root` to place the workspace inside `rigorous-apm/` next to the manuscript.
    - Add `--copy-manuscript` to stage `.bib/.cls/.sty/.bst` companions and common figure folders under `manuscript_assets/`.
    - Add `--system-state-format markdown` if you prefer a Markdown snapshot instead of JSON.
+   - Add `--plan-detail-level descriptive` to embed each agent's specialization alongside checklist items.
    - Remove `--non-interactive` if you prefer guided prompts.
 
    **The helper generates**
@@ -78,6 +79,7 @@ Drag these snippets directly into your IDE instead of recreating `/load` command
 | `--force` | Overwrite existing scaffold files in the review directory. |
 | `--copy-manuscript` | Stage the manuscript file plus common support assets inside `manuscript_assets/`. |
 | `--system-state-format {json,markdown}` | Choose whether the generated system state file is JSON (default) or Markdown. |
+| `--plan-detail-level {concise,descriptive}` | Control how much agent metadata is embedded in `Implementation_Plan.md`. |
 
 ---
 
