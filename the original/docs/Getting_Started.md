@@ -145,7 +145,7 @@ The Setup Agent will offer systematic review of the Implementation Plan:
 - **Recommended**: For complex projects or first-time APM users
 - **Optional**: If you're satisfied with the plan quality
 
-> **Tip for Implementation Plan AI-driven Review:** This AI-driven review will focus on AI-specific planning issues in your Implementaiton Plan (task packing, classification errors, dependencies). Any potential requirement gaps or constraints not specified will likely be missed by the Setup Agent.
+> **Tip for Implementation Plan AI-driven Review:** This AI-driven review will focus on AI-specific planning issues in your Implementation Plan (task packing, classification errors, dependencies). Any potential requirement gaps or constraints not specified will likely be missed by the Setup Agent.
 
 ### Enhancement & Memory Initialization
 
