@@ -88,6 +88,16 @@ If you are interested in contributing to or collaborating on IDE adaptation work
 - Update documentation for user-facing changes.
 - Follow established patterns in existing APM assets.
 
+### Running Tests
+
+Run the automated tests with [pytest](https://docs.pytest.org/) from the repository root:
+
+```bash
+pytest tests/test_validate_schema.py
+```
+
+This suite exercises the schema validation CLI against the sample JSON artifacts to ensure the validator continues to report successes and failures as expected.
+
 ## License Requirements
 
 APM uses Mozilla Public License 2.0 (MPL-2.0). By contributing, you agree that:
