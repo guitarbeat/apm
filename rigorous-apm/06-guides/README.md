@@ -33,6 +33,15 @@ This directory contains comprehensive documentation for understanding and custom
 
 **Why read this**: This guide provides concrete examples and step-by-step instructions for tailoring APM to your specific project requirements.
 
+### For IDE and AI Assistant Integration
+
+**Read**: `IDE_and_AI_Assistant_Guide.md`
+- Universal integration baseline plus selection heuristics for Cursor, Kiro, VS Code, and Gemini
+- Setup checklists, operate loops, and abstract thinking cues for each environment
+- Guidance for keeping `system_state.*` and `handover.md` synchronized while context-switching
+
+**Why read this**: Apply the playbooks to choose the right tool for the moment, then drive deliberate agent delegation inside that IDE or assistant.
+
 ### For Understanding State Management
 
 **Read**: `Memory_System_Guide.md`
