@@ -120,10 +120,11 @@ When `dependency_context: true` appears in YAML frontmatter:
 ### Delegation Steps
 1. **STOP debugging immediately**
 2. Read `ad-hoc/Debug_Delegation_Guide.md`
-3. Create delegation prompt using guide template
-4. Include all context: errors, reproduction steps, failed attempts
-5. Notify User: "Delegating this debugging per protocol"
-6. Wait for delegation results
+3. Review any applicable troubleshooting resources referenced in `rigorous-apm/06-guides/README.md` (e.g., `rigorous-apm/06-guides/Troubleshooting_Playbook.md` for React `useState` null errors) so you can summarize diagnostics already attempted.
+4. Create delegation prompt using guide template
+5. Include all context: errors, reproduction steps, failed attempts, and cite which troubleshooting guidance you followed
+6. Notify User: "Delegating this debugging per protocol"
+7. Wait for delegation results
 
 ### Post-Delegation Actions
 When User returns with findingns:

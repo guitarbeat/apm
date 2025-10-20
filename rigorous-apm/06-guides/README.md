@@ -95,6 +95,7 @@ Some projects require deep domain instructions beyond the general-purpose prompt
 
 - **Manuscript Review Execution** – The end-to-end implementation plan in [`Manuscript_Review_Implementation_Plan_Guide.md`](Manuscript_Review_Implementation_Plan_Guide.md) combines agent orchestration, timeline planning, and quality checks tailored for academic manuscripts.
 - **Executive & Summary Outputs** – Pair that playbook with [`../05-implementation-agents/executive_summary_agent_prompt.md`](../05-implementation-agents/executive_summary_agent_prompt.md) when stakeholders expect condensed deliverables.
+- **Frontend Troubleshooting Recipes** – Use [`Troubleshooting_Playbook.md`](Troubleshooting_Playbook.md) to diagnose runtime errors such as `TypeError: Cannot read properties of null (reading 'useState')` and to brief operators on the resolution.
 
 If you build additional domain playbooks, append a short synopsis and link in this section.
 
