@@ -21,6 +21,12 @@ More schemas will be added as new JSON variants are developed for the framework.
 The included `validate_schema.py` script checks your JSON files against these schemas, catching structural issues without requiring full APM workflow execution. Manager Agents should use this for Implementation Plan validation when using JSON variants.
 
 ### How to Use the Script
+Install the optional runtime dependency first:
+
+```bash
+pip install jsonschema
+```
+
 Run from command line with the artifact type and file path:
 ```bash
 python validate_schema.py <artifact_type> <file_path>

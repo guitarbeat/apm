@@ -1,6 +1,8 @@
+import os
 import sys
 from pathlib import Path
 
+import subprocess
 import types
 
 import pytest
@@ -75,3 +77,49 @@ def test_plan_invalid_json(monkeypatch, tmp_path, capsys):
     assert excinfo.value.code == 1
     captured = capsys.readouterr()
     assert "Error: Invalid JSON" in captured.err
+
+
+def test_help_succeeds_without_jsonschema():
+    script_path = ROOT_DIR / "prompts" / "schemas" / "validate_schema.py"
+
+    result = subprocess.run(
+        [sys.executable, str(script_path), "--help"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert "Validate a JSON file against a predefined APM schema." in result.stdout
+
+
+def test_validation_requires_jsonschema_dependency(tmp_path):
+    script_path = ROOT_DIR / "prompts" / "schemas" / "validate_schema.py"
+    example_path = ROOT_DIR / "prompts" / "schemas" / "examples" / "json_plan_example.json"
+
+    fake_site = tmp_path / "fake_site"
+    fake_site.mkdir()
+    package_dir = fake_site / "jsonschema"
+    package_dir.mkdir()
+    (package_dir / "__init__.py").write_text(
+        "raise ModuleNotFoundError('jsonschema intentionally unavailable')\n",
+        encoding="utf-8",
+    )
+
+    env = os.environ.copy()
+    env["PYTHONNOUSERSITE"] = "1"
+    existing_path = env.get("PYTHONPATH")
+    env["PYTHONPATH"] = str(fake_site)
+    if existing_path:
+        env["PYTHONPATH"] += os.pathsep + existing_path
+
+    result = subprocess.run(
+        [sys.executable, str(script_path), "plan", str(example_path)],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+    )
+
+    assert result.returncode == 1
+    assert "optional 'jsonschema'" in result.stderr

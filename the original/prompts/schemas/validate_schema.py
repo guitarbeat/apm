@@ -2,7 +2,30 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from jsonschema import validate, ValidationError
+from typing import Callable, Type, cast
+
+try:
+    from jsonschema import ValidationError, validate
+except ModuleNotFoundError:  # pragma: no cover - exercised via subprocess test
+    ValidationError = Exception
+    validate = None
+
+
+def require_jsonschema() -> tuple[Callable[..., None], Type[BaseException]]:
+    """Return the jsonschema.validate function or exit with guidance."""
+
+    if validate is None:
+        print(
+            "Error: The optional 'jsonschema' dependency is required to validate schemas.",
+            file=sys.stderr,
+        )
+        print(
+            "Install it with `pip install jsonschema` and re-run the command.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    return cast(Callable[..., None], validate), cast(Type[BaseException], ValidationError)
 
 
 SCHEMA_MAP = {
@@ -51,12 +74,14 @@ def get_schema_path(artifact_type):
 
 def validate_json(instance, schema, file_path, artifact_type):
     """Validate the JSON instance against the schema."""
-    
+
+    validator, error_type = require_jsonschema()
+
     try:
-        validate(instance=instance, schema=schema)
+        validator(instance=instance, schema=schema)
         print(f"Validation successful: '{file_path}' conforms to the '{artifact_type}' schema.")
-    
-    except ValidationError as e:
+
+    except error_type as e:  # type: ignore[misc]
         print(f"Validation failed for '{file_path}'!", file=sys.stderr)
         print("---Error Details---", file=sys.stderr)
         print(f"Message: {e.message}", file=sys.stderr)
