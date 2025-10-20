@@ -3,7 +3,7 @@
 This repository hosts two complementary Agentic Project Management (APM) systems. Every change should improve one or both of these systems while keeping their goals aligned.
 
 ## Shared Expectations
-- Follow the existing file organization; do not rename the top-level `rigorous-apm/` or `the original/` directories.
+- Follow the existing file organization; document any renames of the top-level `rigorous-apm/` or `the original/` directories so collaborators can update scripts accordingly.
 - Keep instructions actionable for agent operators and contributors. When you add or edit guidance, mention the relevant file path so readers can navigate quickly.
 - Prefer incremental updates that maintain compatibility with existing prompts, automation snippets, and scaffolding scripts.
 - Run targeted checks (unit tests, schema validation, linting, or dry-run scripts) whenever you touch executable assets. Documentation-only updates do not require tests.
