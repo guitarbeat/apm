@@ -37,7 +37,7 @@ Use the condensed view below before diving into the detailed tables in [`Agent_C
 - **Section Analysts (S1-S10)**: Ten agents that examine every manuscript section from title to supplementary materials to guarantee complete coverage.
 - **Rigor Reviewers (R1-R7)**: Specialists that validate originality, ethics, reproducibility, statistics, and overall consistency.
 - **Writing Coaches (W1-W7)**: Improve clarity, structure, accessibility, and journal alignment.
-- **Integration Leads (X1-X2)**: Combine insights into unified recommendations and ensure deliverables align with APM standards.
+- **Synthesis Leads (QC & ES)**: Combine insights into unified recommendations using the quality control and executive summary prompts in [`../05-implementation-agents/`](../05-implementation-agents/).
 
 ---
 
