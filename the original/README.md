@@ -6,7 +6,7 @@
 
 ## What is APM?
 
-**Agentic Project Management (APM)** is a AI workflow framework that brings real-world project management principles into your AI-assisted workflows. It addresses a fundamental challenge of LLMs: **context window limitations**.
+**Agentic Project Management (APM)** is an AI workflow framework that brings real-world project management principles into your AI-assisted workflows. It addresses a fundamental challenge of LLMs: **context window limitations**.
 
 ### Audience Legend
 
