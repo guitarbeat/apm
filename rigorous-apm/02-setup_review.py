@@ -415,7 +415,9 @@ def ensure_workspace(review_dir_path: Path, force: bool) -> None:
     print(f"\033[92mWorkspace ready: {review_dir_path}\033[0m")
 
 
-def copy_manuscript_assets(manuscript_file: Path, review_dir_path: Path, force: bool) -> None:
+def copy_manuscript_assets(
+    manuscript_file: Path, review_dir_path: Path, force: bool
+) -> bool:
     destination = review_dir_path / "manuscript_assets"
     if destination.exists():
         if force:
@@ -424,14 +426,14 @@ def copy_manuscript_assets(manuscript_file: Path, review_dir_path: Path, force: 
             print(
                 f"\033[93mSkipped copying manuscript assets (use --force to refresh): {destination}\033[0m"
             )
-            return
+            return False
 
     destination.mkdir(parents=True, exist_ok=True)
     try:
         shutil.copy2(manuscript_file, destination / manuscript_file.name)
     except OSError as exc:
         print(f"\033[91mError copying manuscript file '{manuscript_file}': {exc}\033[0m")
-        return
+        return False
 
     copied_paths = [manuscript_file]
     for sibling in summarize_supporting_assets(manuscript_file):
@@ -448,6 +450,7 @@ def copy_manuscript_assets(manuscript_file: Path, review_dir_path: Path, force: 
 
     copied_list = ", ".join(path.name for path in copied_paths)
     print(f"\033[92mCopied manuscript assets -> {destination} ({copied_list})\033[0m")
+    return True
 
 
 def write_file(
@@ -742,7 +745,7 @@ def build_implementation_plan(
     else:
         lines.append(
             format_checklist_item(
-                "Stage manuscript files so they are ready to share with the Setup Agent.",
+                "Copy skipped — stage manuscript files so they are ready to share with the Setup Agent.",
                 "human",
             )
         )
@@ -852,10 +855,16 @@ def main(argv: List[str] | None = None) -> None:
     system_state_filename, system_state_content = format_system_state(
         system_state, args.system_state_format
     )
+    assets_copied = False
+    if args.copy_manuscript:
+        assets_copied = copy_manuscript_assets(
+            manuscript_file, review_dir_path, force=args.force
+        )
+
     implementation_plan_content = build_implementation_plan(
         manuscript_name,
         review_dir_path,
-        assets_copied=args.copy_manuscript,
+        assets_copied=assets_copied,
         detail_level=args.plan_detail_level,
     )
 
@@ -881,12 +890,9 @@ def main(argv: List[str] | None = None) -> None:
     if implementation_plan_status == "upgraded":
         legend_upgraded_targets.append(implementation_plan_path)
 
-    if args.copy_manuscript:
-        copy_manuscript_assets(manuscript_file, review_dir_path, force=args.force)
-
     print_post_run_summary(
         review_dir_path,
-        assets_copied=args.copy_manuscript,
+        assets_copied=assets_copied,
         system_state_filename=system_state_filename,
         legend_upgraded_targets=legend_upgraded_targets,
     )
