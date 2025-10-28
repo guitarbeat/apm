@@ -79,6 +79,18 @@ def test_plan_invalid_json(monkeypatch, tmp_path, capsys):
     assert "Error: Invalid JSON" in captured.err
 
 
+def test_plan_missing_json_file(monkeypatch, tmp_path, capsys):
+    missing_json_path = tmp_path / "missing_plan.json"
+    monkeypatch.setattr(sys, "argv", ["validate_schema.py", "plan", str(missing_json_path)])
+
+    with pytest.raises(SystemExit) as excinfo:
+        validate_schema.main()
+
+    assert excinfo.value.code == 1
+    captured = capsys.readouterr()
+    assert f"Error: File not found - {missing_json_path}" in captured.err
+
+
 def test_help_succeeds_without_jsonschema():
     script_path = ROOT_DIR / "prompts" / "schemas" / "validate_schema.py"
 
