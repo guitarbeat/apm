@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from pathlib import Path
@@ -29,6 +30,16 @@ from prompts.schemas import validate_schema
 
 
 EXAMPLES_DIR = ROOT_DIR / "prompts" / "schemas" / "examples"
+
+
+@pytest.fixture
+def utf8_plan_file(tmp_path):
+    example_path = EXAMPLES_DIR / "json_plan_example.json"
+    plan_data = json.loads(example_path.read_text(encoding="utf-8"))
+    plan_data["projectOverview"] = "Plan includes serving crème brûlée to celebrate."
+    utf8_file = tmp_path / "utf8_plan.json"
+    utf8_file.write_text(json.dumps(plan_data), encoding="utf-8")
+    return utf8_file
 
 
 def test_plan_example_valid(monkeypatch, capsys):
@@ -77,6 +88,16 @@ def test_plan_invalid_json(monkeypatch, tmp_path, capsys):
     assert excinfo.value.code == 1
     captured = capsys.readouterr()
     assert "Error: Invalid JSON" in captured.err
+
+
+def test_plan_utf8_file(monkeypatch, capsys, utf8_plan_file):
+    monkeypatch.setattr(sys, "argv", ["validate_schema.py", "plan", str(utf8_plan_file)])
+
+    validate_schema.main()
+
+    captured = capsys.readouterr()
+    assert "Validation successful" in captured.out
+    assert captured.err == ""
 
 
 def test_plan_missing_json_file(monkeypatch, tmp_path, capsys):
