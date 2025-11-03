@@ -46,15 +46,23 @@ SUPPORTED_ARTIFACT_TYPES = ("plan",)
 
 def load_json_file(file_path):
     """Load and return JSON data from a file."""
-    
+
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding="utf-8") as f:
             return json.load(f)
-    
+
     except FileNotFoundError:
         print(f"Error: File not found - {file_path}", file=sys.stderr)
         sys.exit(1)
-    
+
+    except UnicodeDecodeError as e:
+        print(
+            "Error: Could not decode file "
+            f"'{file_path}' as UTF-8 - {e}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     except json.JSONDecodeError as e:
         print(f"Error: Invalid JSON in file '{file_path}' - {e}", file=sys.stderr)
         sys.exit(1)
