@@ -374,18 +374,33 @@ def resolve_manuscript(manuscript_input: Path, args: argparse.Namespace) -> Tupl
 
 
 def summarize_supporting_assets(manuscript_file: Path) -> List[Path]:
-    siblings = []
+    siblings: List[Path] = []
+    seen: set[Path] = set()
+
+    def record(path: Path) -> None:
+        resolved = path.resolve()
+        if resolved not in seen:
+            siblings.append(path)
+            seen.add(resolved)
+
     related_extensions = [".bib", ".bst", ".cls", ".sty"]
     for extension in related_extensions:
         candidate = manuscript_file.with_suffix(extension)
         if candidate.exists():
-            siblings.append(candidate)
+            record(candidate)
 
-    sibling_directories = ["figures", "figure", "imgs", "images", "img", "tables"]
-    for directory_name in sibling_directories:
-        candidate_dir = manuscript_file.parent / directory_name
-        if candidate_dir.exists() and candidate_dir.is_dir():
-            siblings.append(candidate_dir)
+    allowed_directory_names = ["figures", "figure", "imgs", "images", "img", "tables"]
+    directories_by_alias: dict[str, List[Path]] = {alias: [] for alias in allowed_directory_names}
+
+    for entry in manuscript_file.parent.iterdir():
+        if entry.is_dir():
+            lowered = entry.name.lower()
+            if lowered in directories_by_alias:
+                directories_by_alias[lowered].append(entry)
+
+    for alias in allowed_directory_names:
+        for directory in sorted(directories_by_alias[alias], key=lambda path: path.name):
+            record(directory)
 
     return siblings
 
