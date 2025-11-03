@@ -42,3 +42,30 @@ def test_summary_omits_manuscript_assets_when_copy_skipped(
     output = capsys.readouterr().out
     assert "Manuscript assets" not in output
     assert "Workspace" in output
+
+
+def test_case_insensitive_asset_directories_are_copied(tmp_path: Path) -> None:
+    manuscript_dir = tmp_path / "source"
+    manuscript_dir.mkdir()
+
+    manuscript_file = manuscript_dir / "paper.tex"
+    manuscript_file.write_text("\\documentclass{article}")
+
+    (manuscript_dir / "Figures").mkdir()
+    (manuscript_dir / "Tables").mkdir()
+
+    review_dir = tmp_path / "review"
+    copied = setup_review.copy_manuscript_assets(manuscript_file, review_dir, force=False)
+
+    assert copied is True
+    destination = review_dir / "manuscript_assets"
+    assert (destination / "paper.tex").is_file()
+    assert (destination / "Figures").is_dir()
+    assert (destination / "Tables").is_dir()
+
+    discovered = setup_review.summarize_supporting_assets(manuscript_file)
+    discovered_names = [path.name for path in discovered]
+
+    assert "Figures" in discovered_names
+    assert "Tables" in discovered_names
+    assert len(discovered_names) == len(set(discovered_names))
