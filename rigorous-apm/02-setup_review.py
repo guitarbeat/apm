@@ -459,8 +459,8 @@ def copy_manuscript_assets(
             else:
                 shutil.copy2(sibling, target)
         except OSError as exc:
-            print(f"\033[93mWarning: Failed to copy '{sibling}' -> '{target}': {exc}\033[0m")
-            continue
+            print(f"\033[91mError: Failed to copy '{sibling}' -> '{target}': {exc}\033[0m")
+            return False
         copied_paths.append(sibling)
 
     copied_list = ", ".join(path.name for path in copied_paths)
@@ -875,6 +875,9 @@ def main(argv: List[str] | None = None) -> None:
         assets_copied = copy_manuscript_assets(
             manuscript_file, review_dir_path, force=args.force
         )
+        if not assets_copied:
+            print("\033[91mExiting due to file copy failure.\033[0m")
+            sys.exit(1)
 
     implementation_plan_content = build_implementation_plan(
         manuscript_name,
