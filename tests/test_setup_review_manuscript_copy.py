@@ -69,3 +69,29 @@ def test_case_insensitive_asset_directories_are_copied(tmp_path: Path) -> None:
     assert "Figures" in discovered_names
     assert "Tables" in discovered_names
     assert len(discovered_names) == len(set(discovered_names))
+
+
+def test_copy_returns_false_when_asset_is_unreadable(tmp_path: Path) -> None:
+    """Verify that the copy operation returns False if a supporting file is unreadable."""
+    manuscript_dir = tmp_path / "source"
+    manuscript_dir.mkdir()
+
+    manuscript_file = manuscript_dir / "paper.tex"
+    manuscript_file.write_text("\\documentclass{article}")
+
+    # Create a supporting file and make it unreadable
+    unreadable_asset = manuscript_dir / "paper.bib"
+    unreadable_asset.write_text("@misc{key, {}}")
+    unreadable_asset.chmod(0o000)
+
+    review_dir = tmp_path / "review"
+    try:
+        copied = setup_review.copy_manuscript_assets(
+            manuscript_file, review_dir, force=False
+        )
+        assert (
+            copied is False
+        ), "The copy operation should have returned False due to permissions"
+    finally:
+        # Restore permissions so the temp directory can be cleaned up
+        unreadable_asset.chmod(0o666)
