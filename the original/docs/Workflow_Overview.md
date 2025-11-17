@@ -1,4 +1,4 @@
-# Workflow Overview - APM v0.4
+# Workflow Overview - APM v0.5
 
 APM operates through two workflow phases:
 1. **Setup Phase**: Comprehensive project discovery and planning
@@ -6,22 +6,46 @@ APM operates through two workflow phases:
 
 Plus **Handover Procedures** as distinct events when agents approach memory limits.
 
+## Table of Contents
+
+- [Notes for specific AI IDEs](#notes-for-specific-ai-ides)
+- [Setup Phase](#setup-phase)
+  - [Setup Agent Initialization](#setup-agent-initialization)
+  - [1. Context Synthesis & Project Discovery](#1-context-synthesis--project-discovery)
+  - [2. Project Breakdown & Implementation Plan Creation](#2-project-breakdown--implementation-plan-creation)
+  - [3. Implementation Plan Review (Optional)](#3-implementation-plan-review-optional)
+  - [4. Implementation Plan Enhancement & Finalization](#4-implementation-plan-enhancement--finalization)
+  - [5. Manager Bootstrap Creation](#5-manager-bootstrap-creation)
+- [Task Loop Phase](#task-loop-phase)
+  - [Manager Agent Initialization](#manager-agent-initialization)
+  - [Task Assignment Prompt Creation](#task-assignment-prompt-creation)
+  - [Implementation Agent Task Execution](#implementation-agent-task-execution)
+  - [Error Handling & Ad-Hoc Debugger Delegation](#error-handling--ad-hoc-debugger-delegation)
+  - [Memory Logging & Review](#memory-logging--review)
+- [Handover Procedures](#handover-procedures)
+  - [When to Consider Handovers](#when-to-consider-handovers)
+  - [Handover Eligibility Requirements](#handover-eligibility-requirements)
+
 ---
 
-## Setup Phase
+## Notes for specific AI IDEs
 
-> **Notes for specific AI IDEs:**
+> **As of August 2025, GitHub Copilot does not provide a context window consumption visualization.** Instead, it uses an internal "summarizing conversation history" mechanism that is known to be buggy and can break cached context, disrupting APM workflows.
+>   - **Setup Phase**: If the summarization mechanism triggers, the agent may lose track of guides and procedures. **Stop the response immediately**, then re-provide the required prompts and guides (e.g., Setup Agent initiation prompt, planning guides) before continuing.
+>   - **Task Loop Phase**: The cycle is more resilient, but the same issue can occur. If summarization mechanism triggers, and you noticed degrading response quality **stop the response**, re-provide the necessary prompts/guides or task context, and verify the agent has re-established understanding before proceeding.
 >
-> **As of August 2025 GitHub Copilot does not provide a context window consumption visualization.** Instead, it uses an internal "summarizing conversation history" mechanism, which is known to be buggy and unreliable. In most cases, this mechanism breaks cached context and disrupts the APM workflow during the Setup Phase. If this occurs during the Setup Phase, you **must stop the response immediately after the summarization mechanism triggers** and manually re-provide the required prompts and guides to get the agent back on track.
+> **Tip:** Consider disabling the summarization mechanism by setting `github.copilot.chat.summarizeAgentConversationHistory.enabled` to `false` in your Copilot settings.
 >
 > > Additional notes for specific IDEs will be added here as new releases occur and user feedback is collected.
+
+---
+## Setup Phase
 
 The Setup Agent conducts comprehensive project initialization through systematic progression gates. Each step must complete before advancing to the next. **Use powerful frontier models with agentic capabilities for the Setup Agent, like Claude Sonnet 4.** 
 
 ```mermaid
 graph LR
-    A[User Initializes<br/>Setup Agent] --> B[Asset<br/>Verification]
-    B --> C[Context<br/>Synthesis]
+    A[User Initializes<br/>Setup Agent] --> C[Context<br/>Synthesis]
     C --> D[Project<br/>Breakdown]
     D --> E{User Chooses<br/>Review?}
     E -->|Yes| F[Systematic<br/>Review]
@@ -36,40 +60,25 @@ graph LR
 
 ### Setup Agent Initialization
 
-The Setup Phase begins when the User initiates the Setup Agent, which then starts a comprehensive 6-step sequence defined below.
+The Setup Phase begins when the User initiates the Setup Agent, which then starts a comprehensive 5-step sequence defined below.
 
-### 1. Asset Verification & Workspace Setup
-The Asset Verification step ensures that all necessary APM assets are available and the project workspace is properly structured before proceeding.
-
-**User Actions:**
-- Clone the APM repository or access the prompts manually
-- Choose the workspace directory and storage approach
-- Initialize the Setup Agent with the initiation prompt
-
-**Setup Agent Actions:**
-- Verify APM asset availability
-- Establish workflow strategy: GitHub repository vs. other (describe if 'other')
-- Create the `<workspace_root>/apm/` directory structure
-
-### 2. Context Synthesis & Project Discovery
-After Asset Verification, the Setup Agent proceeds to Context Synthesis for project discovery:
+### 1. Context Synthesis & Project Discovery
+The Setup Agent proceeds to Context Synthesis for project discovery:
 
 **User Actions:**
-- Respond to a structured discovery questionnaire across four phases
+- Respond to a structured discovery questionnaire across three phases
 - Provide detailed project information, requirements, and constraints
 - Validate the Setup Agent's understanding or expand
-- Select asset format (Markdown or JSON — Testing Preview) and approve proceeding to the breakdown
 
 **Setup Agent Actions:**
-- Conduct systematic discovery through a four-phase methodology:
+- Conduct systematic discovery through a three-phase methodology:
   - **Phase 1**: Existing materials, PRDs, project vision, and scope assessment
   - **Phase 2**: Targeted inquiry across technical requirements, dependencies, constraints
   - **Phase 3**: Process requirements, workflow preferences, quality standards  
-  - **Phase 4**: User validation and asset format selection
 - Use mandatory follow-up cycles for each discovery phase until understanding is complete
 - Retain insights for the systematic breakdown phase
 
-### 3. Project Breakdown & Implementation Plan Creation
+### 2. Project Breakdown & Implementation Plan Creation
 After complete contextual understanding has been achieved in Context Synthesis, the Setup Agent proceeds to Project Breakdown using a systematic chat-to-file procedure:
 
 **User Actions:**
@@ -98,11 +107,11 @@ Execute systematic progression through the mandatory gates:
 
 **Important:** Some AI IDE system prompts or even certain "thinking" models may not follow this chat-to-file procedure as intended. For example, they might split the process into multiple responses, or their two-pane (thinking/response) architecture may disrupt the intended flow. If this occurs, please ensure the entire sequence is completed as described.
 
-**This approach is intentionally crafted for robust, agentic non-thinking models, which are the default in most AI IDEs.** If you encounter issues with multi-step or fragmented outputs, prompt the agent to deliver the full systematic sequence in a single, unified response. 
+**This approach is intentionally crafted for robust, agentic non-thinking models, which are the default in most AI IDEs.** 
 
-> If you experience any issues during this process, be sure to thoroughly review the provided Implementation Plan before proceeding, making sure it matches your and APM's standards.
+> **Note:** If you encounter any issues during this process, please refer to the relevant section of the [Troubleshooting Guide](./docs/Troubleshooting_Guide.pdf) for detailed assistance.
 
-### 4. Implementation Plan Review (Optional)
+### 3. Implementation Plan Review (Optional)
 If the User opts for a systematic review, the Setup Agent highlights plan sections needing extra attention. For the areas the User selects, the Setup Agent reviews for AI-specific planning issues—like task-packing, misclassified tasks, or other LLM-related errors, rather than rechecking the entire project context. Major context gaps may still be flagged if found. This agent-driven review is optional and is intended to optimize workflow clarity, smoothness, and AI-oriented planning practices, rather than to ensure the Implementation Plan fully and accurately reflects the project's actual requirements. **The User should always conduct their own comprehensive review of the Implementation Plan before relying on the Agent's review.**
 
 **User Actions:**
@@ -115,23 +124,19 @@ If the User opts for a systematic review, the Setup Agent highlights plan sectio
 - Challenge previous planning decisions through structured questioning
 - Apply improvements identified through the review process
 
-### 5. Enhancement & Memory System Initialization
-In this exchange, the Setup Agent transforms the Implementation Plan into a detailed APM artifact and initializes the Memory System accordingly.
+### 4. Implementation Plan Enhancement & Finalization
+In this exchange, the Setup Agent transforms the Implementation Plan into a detailed APM artifact.
 
 **User Actions:**
 - Review the enhanced Implementation Plan with detailed task specifications
-- Review the selected memory system strategy and initialization
 - Request modifications to any artifacts, if needed
 
 **Setup Agent Actions:**
 - Transform the simple plan into a detailed APM artifact with comprehensive task specifications
-- Select a memory system strategy based on project complexity:
-  - **Simple**: ≤8 tasks, single-file Memory Bank
-  - **Dynamic-MD**: >8 tasks or multiple phases, directory structure with phase folders
-  - **Dynamic-JSON (Testing Preview)**: Designed for advanced testing/validation scenarios (higher token consumption)
-- Initialize memory structure and create Memory Root based on selected strategy
 
-### 6. Manager Bootstrap Creation
+> **Note:** If you encounter any issues during this process, please refer to the relevant section of the [Troubleshooting Guide](./docs/Troubleshooting_Guide.pdf) for detailed assistance.
+
+### 5. Manager Bootstrap Creation
 The final step of the Setup Agent workflow is to generate a comprehensive Bootstrap Prompt for initializing the first Manager Agent chat session.
 
 **User Actions:**
@@ -141,7 +146,7 @@ The final step of the Setup Agent workflow is to generate a comprehensive Bootst
 
 **Setup Agent Actions:**
 - Generate a comprehensive Bootstrap Prompt containing:
-  - YAML frontmatter with asset locations and format specifications
+  - YAML frontmatter 
   - User intent and requirements summary  
   - Implementation Plan overview and execution guidance
   - Memory system initialization instructions
@@ -152,14 +157,7 @@ The final step of the Setup Agent workflow is to generate a comprehensive Bootst
 
 ## Task Loop Phase
 
-> **Notes for specific AI IDEs:**
->
-> **As of August 2025, GitHub Copilot does not provide a context window consumption visualization.** Instead, it uses an internal "summarizing conversation history" mechanism, which is known to be buggy and unreliable. This mechanism can also disrupt the APM workflow during the Task Loop Phase, potentially breaking cached context and causing agents to lose track of project state or prior decisions. However, because the Task Loop Phase is highly repetitive, it is generally more resilient to these context breaks than the Setup Phase. If you notice the summarization mechanism has triggered, **you should stop the response**, re-provide the necessary prompts, guides or context, and verify that the agent has correctly re-established its understanding before continuing.
->
-> > Additional notes for specific IDEs will be added here as new releases occur and user feedback is collected.
-
-
-Manager and Implementation Agents coordinate through structured task assignment and review cycles until project completion. **While powerful models can enhance performance for these agent instances, APM v0.4 also works effectively with more economical alternatives such as Cursor's Auto model mixture or Copilot's GPT-4.1 base model, providing a viable cost-effective option.**
+Manager and Implementation Agents coordinate through structured task assignment and review cycles until project completion. **While powerful models can enhance performance for these agent instances, APM v0.5 also works effectively with more economical alternatives such as Cursor's Auto model mixture or Copilot's GPT-4.1 base model, providing a viable cost-effective option.**
 
 ```mermaid
 graph LR
@@ -419,12 +417,8 @@ graph LR
 - **Model Variations**: Different models may interpret handover context differently; be prepared to provide clarifications
 - **Working Relationship**: Replacement agents need to rebuild understanding of your communication style and preferences
 
-**Recovery Protocol:**
-If handover verification reveals significant context gaps or misunderstandings:
-1. Provide specific clarifications to address gaps
-2. Reference relevant Memory Logs or project files for additional context
-3. If gaps are extensive, consider returning to the previous agent session (if still available) for improved handover artifacts
-4. In extreme cases, restart from a recent phase boundary with clear context establishment
+> **Note:** For guidance on how to recover from common Handover issues, refer to the relevant paragraph of the `Troubleshooting` section of the [APM User Guide](../guides/APM_User_Guide.pdf).
+
 
 ---
 

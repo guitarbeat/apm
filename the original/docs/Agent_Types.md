@@ -1,16 +1,25 @@
-# Agent Types - APM v0.4
+# Agent Types - APM v0.5
 
 APM employs four distinct agent types, each with clear responsibilities and carefully scoped context. These agents are **not** "personas" or role-playing characters; they are functional specializations that **leverage modern LLMs' built-in expert capabilities** through focused task assignments and targeted context management.
 
+## Table of Contents
+
+- [Agent Specialization Architecture](#agent-specialization-architecture)
+- [Quick Agent Comparison](#quick-agent-comparison)
+- [1. Setup Agent](#1-setup-agent)
+- [2. Manager Agent](#2-manager-agent)
+- [3. Implementation Agents](#3-implementation-agents)
+- [4. Ad-Hoc Agents](#4-ad-hoc-agents)
+
 ## Agent Specialization Architecture
 
-Modern LLMs like GPT, Claude, and others utilize **Mixture of Experts (MoE) architecture** with specialized sub-models that automatically route to different capabilities. APM's agent design leverages this existing infrastructure instead of wasting tokens on persona descriptions.
+**APM achieves agent specialization by providing each agent with carefully scoped, task-relevant context**, rather than relying on artificial personas. Agents develop expertise organically from the information and responsibilities assigned to them, without relying on character-based role-play.
 
 **APM's Approach:**
-- **Responsibility-Driven**: Each agent is defined by specific functions, not personality traits
-- **Context-Scoped**: Agents receive only information relevant to their work domain  
-- **Task-Focused**: Natural LLM specialization activates through targeted task assignment
-- **Token-Efficient**: No persona token overhead; just direct, technical instruction
+- **Context-Driven Specialization**: Agents develop domain expertise through exposure to focused, relevant context; not personalitty traits
+- **Responsibility-Based Emergence**: Specialization emerges from the specific tasks and decisions each agent handles
+- **Natural Adaptation**: Models naturally adapt their responses based on the scoped context they receive
+- **Token-Efficient**: No wasted tokens on persona descriptions; every token serves the actual work needed
 
 ## Quick Agent Comparison
 
@@ -31,14 +40,13 @@ Modern LLMs like GPT, Claude, and others utilize **Mixture of Experts (MoE) arch
 
 ### Core Responsibilities
 
-1. **Asset Verification**: Establish project storage strategy and workspace organization
-2. **Context Synthesis**: Conduct systematic project discovery through guided, strategic questionnaire methodology
-3. **Project Breakdown**: Transform project goals & requirements into structured Implementation Plan draft using systematic analysis
-4. **Implementation Plan Review (Optional)**: Apply targeted systematic review on User-selected sections of the Implementation Plan draft for quality assurance and task optimization
-5. **Enhancement & Memory Root Creation**: Generate detailed APM Implementation Plan artifact and initialize Memory System
-6. **Manager Bootstrap**: Create initialization prompt for Manager Agent handoff
+1. **Context Synthesis**: Conduct systematic project discovery through guided, strategic questionnaire methodology
+2. **Project Breakdown**: Transform project goals & requirements into structured Implementation Plan draft using systematic analysis
+3. **Implementation Plan Review (Optional)**: Apply targeted systematic review on User-selected sections of the Implementation Plan draft for quality assurance and task optimization
+4. **Implementation Plan Enhancement & Finalization**: Generate detailed APM Implementation Plan artifact.
+5. **Manager Bootstrap**: Create initialization prompt for Manager Agent handoff
 
-### Workflow Pattern
+### Operational Workflow
 
 **Sequential Process**: Setup Agent operates through mandatory progression gates; each phase must complete before advancing to the next. This prevents incomplete planning and ensures comprehensive project foundation.
 
@@ -66,7 +74,7 @@ Modern LLMs like GPT, Claude, and others utilize **Mixture of Experts (MoE) arch
 5. **Cross-Agent Coordination**: Manage context dependencies between different Implementation Agent instances
 6. **Handover Execution**: Transfer context to replacement Manager Agent instances when approaching context limits
 
-### Workflow Pattern
+### Operational Workflow
 
 **Task Loop Management**: Manager Agent operates in Task Loop cycles. This continues until project completion or context handover requirements.
 > Issues Task Assignment → Reviews Memory Log → Makes Next Action Decision

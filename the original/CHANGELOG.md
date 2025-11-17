@@ -1,8 +1,53 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning (SemVer)](https://semver.org/spec/v2.0.0.html) for the **core CLI package** published on NPM.
+
+> **Note:** APM uses a dual versioning system. Updates to the **agent templates** (prompts and guides) might be released more frequently via GitHub Releases using build metadata appended to the current CLI version (e.g., `v0.5.0+templates.1`). This changelog primarily tracks changes related to the SemVer-managed CLI package, but major template releases or changes may also be noted. See [VERSIONING.md](VERSIONING.md) for full details.
+
+---
+
+## [0.5.0] - 2025-10-29
+
+### Added
+
+* **NPM CLI Tool (`agentic-pm`):** Introduced a command-line interface for managing APM installations.
+* **`apm init` Command:** Automates project setup, including AI assistant selection, asset download from GitHub Releases, and creation of the `.apm` directory structure (`.apm/guides`, `.apm/Memory`, `.apm/Implementation_Plan.md`, `.apm/metadata.json`). By default, automatically finds and installs the latest template version compatible with the current CLI version. Supports `--tag <tag>` option for installing specific template versions (e.g., `apm init --tag v0.5.0+templates.1`).
+* **`apm update` Command:** Allows users to update their local APM installation to the latest compatible template version. Includes intelligent version compatibility checking that compares installed templates against available releases, only updating if a newer compatible build exists. Informs users when newer templates require a CLI update via `npm update -g agentic-pm`. Includes backup and restore functionality for safe updates.
+* **Version Compatibility System:** Dynamic CLI version reading from `package.json` with automatic template version matching. The CLI automatically finds templates compatible with the running CLI version and compares build numbers for update decisions.
+* **Support for 10 AI Assistants:** CLI downloads and installs specific bundles tailored for Cursor, GitHub Copilot, Claude Code, Gemini CLI, Qwen Code, opencode, Windsurf, Kilo Code, Auggie CLI, and Roo Code.
+* **Build Process (`npm run build`):** New script (`scripts/build.js`) processes source templates (`templates/`) into distributable bundles (`dist/`) for each assistant, handling formatting (Markdown/TOML) and placeholders.
+* **Metadata File (`.apm/metadata.json`):** Tracks the installed APM version (template tag) and selected AI assistant within the project.
+* **`Troubleshooting_Guide.md`:** Added a dedicated guide based on the v0.4 User Guide's troubleshooting section.
+
+### Changed
+
+* **Installation Method:** APM is now installed via NPM (`npm install agentic-pm`) instead of Git clone or GitHub Template.
+* **Customization Workflow:** Customization is now done by editing files locally within the `.apm/guides/` directory or the assistant-specific command directory *after* running `apm init`. Acknowledged as a work-in-progress for improving flexibility.
+* **Source File Structure:** Core prompt and guide templates moved to the `templates/` directory in the repository. The `/prompts` directory is no longer the source or user-facing structure.
+* **Prompt/Guide Compliance:** Updated all agent initiation prompts, handover prompts, and core guides (`Memory_System`, `Memory_Log`, `Task_Assignment`, `Implementation_Plan`, `Project_Breakdown`, `Context_Synthesis`) to be v0.5 compliant:
+    * Removed all instructions related to actions now handled by the CLI (e.g., Asset Verification).
+    * Added CLI awareness to the Setup Agent.
+    * Removed all references to JSON assets.
+    * Removed all references to the Simple Memory system.
+* **File Re-branding & Relocation:**
+    * `Context_Synthesis_Prompt.md` re-branded to `Context_Synthesis_Guide.md` and moved conceptually to the guides directory.
+    * `Manager_Agent_Handover_Guide.md` re-branded to `Manager_Agent_Handover_Prompt.md` with command name `handover-manager`.
+    * `Implementation_Agent_Handover_Guide.md` re-branded to `Implementation_Agent_Handover_Prompt.md` with command name `handover-implementation`.
+* **Documentation Update:** Updated `README.md` (main), `docs/README.md`, `CONTRIBUTING.md`, `Getting_Started.md`, `Introduction.md`, `Workflow_Overview.md`, `Modifying_APM.md`, `Agent_Types.md`, and `Token_Consumption_Tips.md` to reflect all v0.5 changes, including CLI usage, new file structures, deprecations, and customization workflow. Removed references to now-obsolete PDF guides.
+
+### Deprecated
+
+* **JSON Asset Format:** No longer supported for Implementation Plans or Memory Logs.
+* **Simple Memory Bank:** The single-file `Memory_Bank.md` strategy is no longer supported. APM v0.5 exclusively uses the Dynamic-MD system.
+
+### Removed
+
+* **GitHub Template:** The "Use this template" approach for installation and customization is removed in favor of the CLI.
+* **User-facing `/prompts` Directory:** The structured `/prompts` directory is no longer part of the user installation; assets are placed directly by the CLI.
+* **PDF Guides:** `APM_Quick_Start_Guide.pdf` and `APM_User_Guide.pdf` are removed from the documentation set; relevant content integrated into Markdown files.
+
+---
 
 ## [0.4.0] - 2025-08-19
 
