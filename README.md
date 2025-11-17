@@ -3,7 +3,7 @@
 This repository hosts two complementary Agentic Project Management systems:
 
 - **`rigorous-apm/`** – An academic-manuscript review workflow built around 26 specialized agents and a scripted workspace helper.
-- **`the original/`** – The v0.4 reference implementation for general-purpose multi-agent project coordination.
+- **`upstream-apm/`** – The v0.5 reference implementation for general-purpose multi-agent project coordination.
 
 Use this README to pick the right starting point and keep both tracks aligned as you contribute updates.
 
@@ -17,9 +17,9 @@ Use this README to pick the right starting point and keep both tracks aligned as
 | CLI automation for the Rigorous workflow | [`rigorous-apm/02-setup_review.py`](rigorous-apm/02-setup_review.py) | Generates `Implementation_Plan.md`, `system_state.*`, and storage folders with the shared 👤/🤖/🔁 legend baked in. |
 | Drag-and-drop prompts for the Rigorous agents | [`rigorous-apm/03-review-kickoff/`](rigorous-apm/03-review-kickoff/) | Contains the kickoff prompt bundle that seeds both the Setup and Manager agents. |
 | A high-level tour of every Rigorous guide | [`rigorous-apm/06-guides/README.md`](rigorous-apm/06-guides/README.md) | Maps operator questions to the correct playbook, cheat sheet, or IDE ritual. |
-| A framework overview for the legacy APM stack | [`the original/README.md`](the%20original/README.md) | Introduces the v0.4 terminology, onboarding paths, and documentation legend shared across the legacy assets. |
-| A detailed walkthrough of the original workflow | [`the original/docs/Workflow_Overview.md`](the%20original/docs/Workflow_Overview.md) | Aligns operators and agents on the canonical protocols, rituals, and shared-state expectations. |
-| Schema definitions and validation helpers | [`the original/prompts/schemas/`](the%20original/prompts/schemas/) | Hosts JSON schema assets plus `validate_schema.py` for verifying structured prompts. |
+| A framework overview for the upstream APM stack | [`upstream-apm/README.md`](upstream-apm/README.md) | Introduces the v0.5 terminology, onboarding paths, and documentation legend shared across the upstream assets. |
+| A detailed walkthrough of the upstream workflow | [`upstream-apm/docs/Workflow_Overview.md`](upstream-apm/docs/Workflow_Overview.md) | Aligns operators and agents on the canonical protocols, rituals, and shared-state expectations. |
+| Schema definitions and validation helpers | [`upstream-apm/prompts/schemas/`](upstream-apm/prompts/schemas/) | Hosts JSON schema assets plus `validate_schema.py` for verifying structured prompts. |
 
 ---
 
@@ -41,8 +41,8 @@ README.md                         # This orientation guide
 rigorous-apm/                     # Manuscript review workflow
 └── 01-START_HERE.md              # Human operator onboarding
 └── …                             # Specialist prompts, guides, and CLI helper
-"the original"/                  # Legacy APM v0.4 assets
-└── README.md                     # Legacy overview and documentation index
+upstream-apm/                     # Upstream APM v0.5 assets
+└── README.md                     # Upstream overview and documentation index
 └── docs/                         # Guides referenced by the workflow overview
 └── prompts/                      # Prompt bundles, schemas, and ad-hoc assets
 ```
