@@ -4,30 +4,30 @@ This repository hosts two complementary Agentic Project Management (APM) systems
 
 ## Upstream Integration Approach
 
-**Rigorous APM is a domain-specific extension of upstream-apm v0.5.** This means:
+**PhD APM is a domain-specific extension of upstream-apm v0.5.** This means:
 
-- **Foundation + Specialization Architecture**: Rigorous APM adopts upstream's core patterns (5-phase Setup, Bootstrap Prompts, Memory System, Task Assignment protocol) and extends them with manuscript review specialization (26 agents, 3-phase parallel execution, academic criteria).
+- **Foundation + Specialization Architecture**: PhD APM adopts upstream's core patterns (5-phase Setup, Bootstrap Prompts, Memory System, Task Assignment protocol) and extends them with manuscript review specialization (26 agents, 3-phase parallel execution, academic criteria).
 - **Pattern Adoption Requirements**: All agent prompts must follow upstream v0.5 patterns:
   - YAML frontmatter with metadata (priority, command_name, description, agent_id, domain)
   - Guide references using `{GUIDE_PATH:filename.md}` syntax
   - Memory Log format following `{GUIDE_PATH:upstream/Memory_Log_Guide.md}`
   - Execution type documentation (single-step vs multi-step)
   - Debug delegation protocol and handover awareness
-- **Shared Guide System**: Upstream's 7 core guides live in `rigorous-apm/06-guides/upstream/` alongside manuscript-specific guides in `rigorous-apm/06-guides/`. Both sets are referenced by agents.
+- **Shared Guide System**: Upstream's 7 core guides live in `phd-apm/06-guides/upstream/` alongside manuscript-specific guides in `phd-apm/06-guides/`. Both sets are referenced by agents.
 - **Artifact Compatibility**: Generated artifacts (metadata.json, Implementation Plans, Bootstrap Prompts) follow upstream formats to enable future CLI integration.
 
 See [INTEGRATION_STRATEGY.md](INTEGRATION_STRATEGY.md) and `.kiro/specs/upstream-integration-plan/` for full technical details.
 
 ## Shared Expectations
-- Follow the existing file organization; document any renames of the top-level `rigorous-apm/` or `upstream-apm/` directories so collaborators can update scripts accordingly.
+- Follow the existing file organization; document any renames of the top-level `phd-apm/` or `upstream-apm/` directories so collaborators can update scripts accordingly.
 - Keep instructions actionable for agent operators and contributors. When you add or edit guidance, mention the relevant file path so readers can navigate quickly.
 - Prefer incremental updates that maintain compatibility with existing prompts, automation snippets, and scaffolding scripts.
 - Run targeted checks (unit tests, schema validation, linting, or dry-run scripts) whenever you touch executable assets. Documentation-only updates do not require tests.
 
-## Rigorous APM (`rigorous-apm/`)
+## PhD APM (`phd-apm/`)
 
 ### Workflow Preservation
-- Preserve the onboarding flow described in `rigorous-apm/01-START_HERE.md`. Updates should clarify how to launch or coordinate the 26 specialist agents without introducing breaking workflow changes.
+- Preserve the onboarding flow described in `phd-apm/01-START_HERE.md`. Updates should clarify how to launch or coordinate the 26 specialist agents without introducing breaking workflow changes.
 - Maintain the 3-phase parallel execution model: Section (S1-S10) → Rigor (R1-R7) + Writing (W1-W7) → QC → ES.
 - Preserve manuscript-specific analysis criteria and domain specialization in all Implementation Agent prompts.
 
@@ -64,7 +64,7 @@ See [INTEGRATION_STRATEGY.md](INTEGRATION_STRATEGY.md) and `.kiro/specs/upstream
 
 ## Pattern Adoption Checklist
 
-When updating or creating agent prompts in Rigorous APM, verify:
+When updating or creating agent prompts in PhD APM, verify:
 
 - [ ] YAML frontmatter includes all required fields (priority, command_name, description, agent_id, domain)
 - [ ] Guide references use `{GUIDE_PATH:filename.md}` syntax
@@ -78,6 +78,6 @@ When updating or creating agent prompts in Rigorous APM, verify:
 
 ## Commit & PR Guidance
 - Reference affected files or directories in commit messages and PR descriptions.
-- Summaries should call out whether the change benefits Rigorous APM, Upstream APM, or both.
-- For Rigorous APM changes, note whether upstream patterns were adopted or preserved.
+- Summaries should call out whether the change benefits PhD APM, Upstream APM, or both.
+- For PhD APM changes, note whether upstream patterns were adopted or preserved.
 - Include validation results (e.g., "Verified YAML frontmatter in all updated agents").

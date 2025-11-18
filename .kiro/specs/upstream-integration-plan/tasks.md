@@ -6,7 +6,7 @@
 
 
 
-  - Copy 7 core guides from upstream-apm to rigorous-apm/06-guides/upstream/
+  - Copy 7 core guides from upstream-apm to phd-apm/06-guides/upstream/
   - Update 06-guides/README.md with navigation for both upstream and manuscript-specific guides
   - Verify all guide files are properly formatted and readable
   - _Requirements: 1.2, 4.1, 4.2, 4.3, 4.4, 4.5_
@@ -246,7 +246,7 @@
 
 - [ ] 9.4 Add version compatibility checking
   - Track upstream-apm version
-  - Track rigorous-apm version
+  - Track phd-apm version
   - Validate compatibility on script execution
   - _Requirements: 3.1, 3.5_
 

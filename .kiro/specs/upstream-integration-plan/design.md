@@ -2,9 +2,9 @@
 
 ## Overview
 
-This design document outlines the technical approach for integrating rigorous-apm with upstream-apm v0.5. The integration transforms rigorous-apm from a parallel APM system into a domain-specific extension that leverages upstream's proven patterns while preserving rigorous-apm's manuscript review specialization.
+This design document outlines the technical approach for integrating phd-apm with upstream-apm v0.5. The integration transforms phd-apm from a parallel APM system into a domain-specific extension that leverages upstream's proven patterns while preserving phd-apm's manuscript review specialization.
 
-The design follows a "foundation + specialization" architecture where upstream-apm provides core APM patterns and rigorous-apm extends them with manuscript-specific capabilities.
+The design follows a "foundation + specialization" architecture where upstream-apm provides core APM patterns and phd-apm extends them with manuscript-specific capabilities.
 
 ## Architecture
 
@@ -12,7 +12,7 @@ The design follows a "foundation + specialization" architecture where upstream-a
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Rigorous-APM System                       │
+│                      PhD-APM System                          │
 │                  (Domain Specialization)                     │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
@@ -60,7 +60,7 @@ The design follows a "foundation + specialization" architecture where upstream-a
 ### Directory Structure
 
 ```
-rigorous-apm/
+phd-apm/
 ├── 01-START_HERE.md                          # Entry point, explains upstream relationship
 ├── 02-setup_review.py                        # Python automation (enhanced)
 │
@@ -248,7 +248,7 @@ python 02-setup_review.py --manuscript <name> --type <empirical|theoretical|revi
 **Metadata JSON Structure**:
 ```json
 {
-  "apm_version": "upstream-v0.5.0+rigorous-v1.0.0",
+  "apm_version": "upstream-v0.5.0+phd-v1.0.0",
   "domain": "manuscript-review",
   "manuscript": {
     "name": "example_manuscript",
@@ -631,7 +631,7 @@ Path: `.apm/Memory_Logs/R1_Methodology_Analysis.md`
 
 **Upstream Tracking**:
 - Monitor upstream-apm releases
-- Update rigorous-apm when upstream patterns change
+- Update phd-apm when upstream patterns change
 - Document version compatibility
 
 **Community Contribution**:
@@ -651,7 +651,7 @@ Path: `.apm/Memory_Logs/R1_Methodology_Analysis.md`
 ### Medium-Term (Phase 2)
 
 1. **CLI Integration**: Contribute manuscript-review domain to upstream
-2. **Template Bundle**: Package rigorous-apm as installable extension
+2. **Template Bundle**: Package phd-apm as installable extension
 3. **Update Command**: Enable `apm update --domain manuscript-review`
 4. **Version Management**: Track upstream and domain versions separately
 
@@ -660,11 +660,11 @@ Path: `.apm/Memory_Logs/R1_Methodology_Analysis.md`
 1. **Multi-Domain Support**: Enable combining manuscript-review with other domains
 2. **Domain Registry**: Publish as installable package
 3. **Custom Build Process**: Extend upstream's build.js for domain bundles
-4. **Community Ecosystem**: Foster academic review community around rigorous-apm
+4. **Community Ecosystem**: Foster academic review community around phd-apm
 
 ## References
 
 - [Upstream APM v0.5 Documentation](../../upstream-apm/README.md)
 - [Upstream Workflow Overview](../../upstream-apm/docs/Workflow_Overview.md)
 - [Integration Strategy](../../INTEGRATION_STRATEGY.md)
-- [Rigorous APM Current State](../../rigorous-apm/01-START_HERE.md)
+- [PhD APM Current State](../../phd-apm/01-START_HERE.md)
