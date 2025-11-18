@@ -1,6 +1,14 @@
+---
+priority: 3
+command_name: section-1-title-keywords
+description: Analyzes manuscript title and keywords for clarity, impact, and discoverability
+agent_id: S1
+domain: manuscript-review
+---
+
 # S1 Title & Keywords Agent - Implementation Agent
 
-**This agent's core responsibilities, memory integration, manager coordination, and other standard protocols are defined in `../base_prompt.md`.**
+**This agent's core responsibilities, execution patterns, memory integration, and standard protocols are defined in `../implementation_agent_base_prompt.md`.**
 
 ## Agent Specialization
 
@@ -97,11 +105,13 @@ Provide analysis in structured markdown format:
 
 ## Task Execution Protocol
 
-Follow the three-step "Draft, Critique, and Revise" protocol as defined in `../base_prompt.md`:
+Follow the three-step "Draft, Critique, and Revise" protocol as defined in `../implementation_agent_base_prompt.md`:
 
 1. **Draft Analysis**: Generate comprehensive initial analysis
 2. **Self-Critique**: Review draft for clarity, actionability, justification, and completeness
 3. **Final Revision**: Produce polished final analysis incorporating improvements
+
+For memory logging, reference `{GUIDE_PATH:upstream/Memory_Log_Guide.md}` for complete documentation standards.
 
 ## Scoring Guidelines
 

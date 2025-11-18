@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "audience_legend": [
+      {
+        "icon": "👤",
+        "label": "Human-only",
+        "description": "Operators and reviewers execute this themselves."
+      },
+      {
+        "icon": "🤖",
+        "label": "Agent-ready",
+        "description": "Paste directly into an AI agent or IDE without edits."
+      },
+      {
+        "icon": "🔁",
+        "label": "Shared",
+        "description": "Humans trigger or configure it; agents consume or update it."
+      }
+    ]
+  },
+  "manuscript_context": {
+    "title": "test_validation",
+    "target_outlet": "To be filled by Setup Agent",
+    "current_stage": "To be filled by Setup Agent"
+  },
+  "review_progress": {
+    "current_phase": "Setup",
+    "completed_agents": [],
+    "pending_agents": [
+      "s1",
+      "s2",
+      "s3",
+      "s4",
+      "s5",
+      "s6",
+      "s7",
+      "s8",
+      "s9",
+      "s10",
+      "r1",
+      "r2",
+      "r3",
+      "r4",
+      "r5",
+      "r6",
+      "r7",
+      "w1",
+      "w2",
+      "w3",
+      "w4",
+      "w5",
+      "w6",
+      "w7",
+      "qc",
+      "es"
+    ]
+  },
+  "agent_outputs_summary": {},
+  "last_action": "Initial setup complete."
+}

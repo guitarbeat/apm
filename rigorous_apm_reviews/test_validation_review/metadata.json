@@ -1,0 +1,18 @@
+{
+  "apm_version": "upstream-v0.5.0+rigorous-v1.0.0",
+  "domain": "manuscript-review",
+  "manuscript": {
+    "name": "test_validation",
+    "type": "empirical",
+    "target_outlet": "Nature Neuroscience",
+    "field": "neuroscience"
+  },
+  "review_started": "2025-11-17",
+  "phases": {
+    "section_analysis": "pending",
+    "rigor_analysis": "pending",
+    "writing_analysis": "pending",
+    "quality_control": "pending",
+    "executive_summary": "pending"
+  }
+}

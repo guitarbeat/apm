@@ -1,6 +1,6 @@
 # Rigorous APM - Start Here
 
-A specialized Agentic Project Management (APM) instance for academic manuscript review with 26 focused agents.
+A specialized Agentic Project Management (APM) domain extension for academic manuscript review with 26 focused agents, built on upstream-apm v0.5 patterns.
 
 ## 🔍 Audience Legend
 
@@ -10,7 +10,22 @@ A specialized Agentic Project Management (APM) instance for academic manuscript 
 
 ---
 
-## 🚀 Quick Start (Streamlined)
+## 🔗 Upstream Relationship
+
+Rigorous APM is a **domain-specific extension** of [upstream-apm v0.5](../upstream-apm/README.md), the foundational APM framework. This means:
+
+- **Core patterns from upstream**: Setup Agent 5-phase workflow, Manager Agent coordination, Bootstrap Prompts with YAML frontmatter, Memory System, and guide reference syntax (`{GUIDE_PATH:filename.md}`)
+- **Manuscript specialization**: 26 specialized Implementation Agents (S1-S10 for sections, R1-R7 for rigor, W1-W7 for writing, plus QC and ES), 3-phase parallel execution model, and academic review criteria
+- **Shared guides**: Upstream's 7 core guides live in `06-guides/upstream/` alongside manuscript-specific guides in `06-guides/`
+- **Enhanced automation**: `02-setup_review.py` generates upstream-compatible artifacts (metadata.json, Bootstrap Prompts, Implementation Plans)
+
+This integration gives you proven APM infrastructure plus specialized manuscript review capabilities. See [INTEGRATION_STRATEGY.md](../INTEGRATION_STRATEGY.md) for the full technical approach.
+
+---
+
+## 🚀 Quick Start (Upstream-Integrated Workflow)
+
+### Phase 1: Workspace Setup
 
 1. **👤 Bootstrap a dedicated workspace**
    ```bash
@@ -29,21 +44,45 @@ A specialized Agentic Project Management (APM) instance for academic manuscript 
    - Add `--plan-detail-level descriptive` to embed each agent's specialization alongside checklist items.
    - Remove `--non-interactive` if you prefer guided prompts.
 
-   **The helper generates**
-   - `Implementation_Plan.md` (🔁) – Includes an embedded audience legend and icon-tagged checklists for every phase.
-   - `system_state.json` / `system_state.md` (🔁) – Shared workspace state, now stamped with the same legend for humans and agents.
-   - `agent_outputs/` (🤖) – Storage for agent deliverables; inspect results here.
-   - Optional `manuscript_assets/` (🔁) – Humans curate supporting files that agents reference.
-   - Re-running without `--force` keeps existing files but automatically refreshes any generated plan or system-state file that is missing the shared legend.
+   **The helper generates (upstream-compatible format)**
+   - `metadata.json` (🔁) – APM version tracking, manuscript metadata, and phase status
+   - `Implementation_Plan.md` (🔁) – Upstream format with guide references and 5-phase structure
+   - `Bootstrap_Prompt.md` (🔁) – YAML frontmatter initialization for Manager Agent
+   - `system_state.json` / `system_state.md` (🔁) – Shared workspace state
+   - `agent_outputs/` (🤖) – Storage for agent deliverables
+   - Optional `manuscript_assets/` (🔁) – Supporting files for agent reference
+   - Re-running without `--force` keeps existing files but automatically refreshes generated artifacts.
 
-2. **🤖 Kick off Setup and Manager from a single prompt**
-   - Drag `03-review-kickoff/review_kickoff_prompt.md` (🤖) into your agentic IDE.
-   - Share `Implementation_Plan.md` with the Setup Agent using `03-review-kickoff/share_plan_with_setup.apm` (🔁).
-   - After the Setup Agent refines the plan, run `03-review-kickoff/manager_load_plan.apm` (🔁) so the Manager Agent imports the latest version without copy/paste.
+### Phase 2: Setup Agent (5-Phase Workflow)
 
-3. **🔁 Track progress and collect outputs**
-   - Monitor `agent_outputs/` (🤖) as the Manager coordinates all 26 agents.
-   - Re-run `manager_load_plan.apm` (🔁) whenever the plan changes to keep the Manager in sync.
+2. **🤖 Launch the Setup Agent**
+   - Drag `03-setup-agent/setup_agent_initiation_prompt.md` (🤖) into your agentic IDE.
+   - The Setup Agent follows upstream's 5-phase pattern:
+     1. **Context Synthesis** – Gather manuscript details (type, outlet, field, priorities)
+     2. **Project Breakdown** – Create 5-phase review plan (Section→Rigor→Writing→QC→ES)
+     3. **Review** – Validate plan completeness with checkpoints
+     4. **Enhancement** – Refine based on manuscript specifics
+     5. **Bootstrap** – Generate Bootstrap Prompt for Manager Agent
+   - Share the draft plan using `03-review-kickoff/share_plan_with_setup.apm` (🔁).
+   - Setup Agent references upstream guides: `{GUIDE_PATH:upstream/Context_Synthesis_Guide.md}`, `{GUIDE_PATH:upstream/Implementation_Plan_Guide.md}`
+
+### Phase 3: Manager Agent Coordination
+
+3. **🤖 Initialize the Manager Agent**
+   - Drag `04-manager-agent/manager_agent_initiation_prompt.md` (🤖) into the conversation after Setup Agent completes.
+   - Load the Bootstrap Prompt: `Bootstrap_Prompt.md` contains YAML frontmatter with workspace context.
+   - Manager Agent coordinates 26 Implementation Agents through 3-phase parallel execution:
+     - **Phase 1**: Section Analysis (S1-S10) in parallel
+     - **Phase 2**: Rigor (R1-R7) + Writing (W1-W7) in parallel
+     - **Phase 3**: Quality Control → Executive Summary
+   - Manager references upstream guides: `{GUIDE_PATH:upstream/Task_Assignment_Guide.md}`, `{GUIDE_PATH:upstream/Memory_System_Guide.md}`
+
+### Phase 4: Execution & Monitoring
+
+4. **🔁 Track progress and collect outputs**
+   - Monitor `agent_outputs/` (🤖) as agents complete tasks.
+   - Check `metadata.json` for phase status updates.
+   - Each Implementation Agent creates Memory Logs following `{GUIDE_PATH:upstream/Memory_Log_Guide.md}`.
    - Consult `quality_control` and `executive_summary` deliverables (👤) for the decision package.
 
 ---
@@ -53,12 +92,20 @@ A specialized Agentic Project Management (APM) instance for academic manuscript 
 ```
 rigorous-apm/
 ├── 01-START_HERE.md                    # 👤 Orientation for operators (this file)
-├── 02-setup_review.py                  # 🔁 CLI helper humans run, agents consume outputs
+├── 02-setup_review.py                  # 🔁 CLI helper (generates upstream-compatible artifacts)
 ├── 03-review-kickoff/                  # 🤖 Drag-and-drop prompts + 🔁 plan loaders
-├── 03-setup-agent/                     # 🤖 Setup Agent initiation prompt
-├── 04-manager-agent/                   # 🤖 / 🔁 Manager prompts and state loaders
-├── 05-implementation-agents/           # 🤖 Execution prompts for specialist agents
-└── 06-guides/                          # 👤 Extended reading for operators
+├── 03-setup-agent/                     # 🤖 Setup Agent (upstream 5-phase pattern)
+├── 04-manager-agent/                   # 🤖 Manager Agent (upstream coordination + 26-agent orchestration)
+├── 05-implementation-agents/           # 🤖 26 specialist agents (S1-S10, R1-R7, W1-W7, QC, ES)
+│   ├── implementation_agent_base_prompt.md  # Base template with upstream patterns
+│   ├── section/                        # S1-S10 section analysis agents
+│   ├── rigor/                          # R1-R7 scientific rigor agents
+│   ├── writing/                        # W1-W7 writing quality agents
+│   ├── quality_control_agent_prompt.md # QC synthesis agent
+│   └── executive_summary_agent_prompt.md # ES reporting agent
+└── 06-guides/                          # 👤 / 🔁 Guides for operators and agents
+    ├── upstream/                       # 7 core upstream-apm guides
+    └── [manuscript-specific guides]    # Domain specialization guides
 ```
 
 Refer to `06-guides/Agent_Cheat_Sheet.md` for a succinct list of every implementation agent and deliverable.
@@ -94,9 +141,21 @@ Drag these snippets directly into your IDE instead of recreating `/load` command
 
 All supporting documentation lives in `06-guides/`:
 
-- `README.md` – Navigation map for the guide set.
-- `Agent_Cheat_Sheet.md` (👤) – Quick reference for every agent and deliverable.
-- `Context_and_Prompt_Engineering_Guide.md` (👤) – Architecture principles and prompt design.
-- `Customization_Guide.md` (👤) – How to tailor Rigorous APM for specific journals or teams.
-- `Memory_System_Guide.md` (🔁) – Persistent state strategy the manager and specialists rely on.
-- `Handover_Guide.md` (🔁) – Best practices for passing context between sessions.
+### Upstream Guides (Foundation Patterns)
+- `upstream/Context_Synthesis_Guide.md` (🔁) – How Setup Agent gathers project context
+- `upstream/Implementation_Plan_Guide.md` (🔁) – Structure for project breakdown
+- `upstream/Memory_Log_Guide.md` (🔁) – Documentation format for agent findings
+- `upstream/Memory_System_Guide.md` (🔁) – Persistent state strategy across agents
+- `upstream/Project_Breakdown_Guide.md` (🔁) – Task decomposition methodology
+- `upstream/Project_Breakdown_Review_Guide.md` (🔁) – Plan validation procedures
+- `upstream/Task_Assignment_Guide.md` (🔁) – Manager-to-Implementation handoff protocol
+
+### Manuscript-Specific Guides (Domain Specialization)
+- `README.md` – Navigation map for both upstream and domain guides
+- `Agent_Cheat_Sheet.md` (👤) – Quick reference for all 26 agents and deliverables
+- `Context_and_Prompt_Engineering_Guide.md` (👤) – Architecture principles and prompt design
+- `Customization_Guide.md` (👤) – How to tailor Rigorous APM for specific journals or teams
+- `Manuscript_Review_Implementation_Plan_Guide.md` (🔁) – 5-phase review workflow details
+- `Handover_Guide.md` (🔁) – Best practices for passing context between sessions
+
+**Guide Reference Pattern**: Agents use `{GUIDE_PATH:filename.md}` syntax to reference guides. The system resolves paths to either `06-guides/upstream/` or `06-guides/` based on the filename.

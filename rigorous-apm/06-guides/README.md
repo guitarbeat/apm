@@ -16,6 +16,24 @@ This README replaces the standalone guidebook so that all navigation lives in a 
 
 ---
 
+## 0. Upstream APM Foundation Guides
+
+Rigorous-APM extends [upstream-apm v0.5](../../upstream-apm/) with manuscript review specialization. The core APM patterns and workflows are defined in upstream guides that both Setup and Manager agents reference.
+
+| Guide | Audience | Purpose |
+| --- | --- | --- |
+| [`upstream/Context_Synthesis_Guide.md`](upstream/Context_Synthesis_Guide.md) | 🤖 | Defines how Setup Agent gathers project context through iterative discovery phases |
+| [`upstream/Project_Breakdown_Guide.md`](upstream/Project_Breakdown_Guide.md) | 🤖 | Explains systematic task breakdown methodology from context to structured plan |
+| [`upstream/Project_Breakdown_Review_Guide.md`](upstream/Project_Breakdown_Review_Guide.md) | 🤖 | Details targeted review process for Implementation Plan quality assurance |
+| [`upstream/Implementation_Plan_Guide.md`](upstream/Implementation_Plan_Guide.md) | 🤖 | Specifies Implementation Plan format and enhancement procedures |
+| [`upstream/Task_Assignment_Guide.md`](upstream/Task_Assignment_Guide.md) | 🤖 | Defines how Manager Agent creates Task Assignment Prompts for Implementation Agents |
+| [`upstream/Memory_System_Guide.md`](upstream/Memory_System_Guide.md) | 🤖 | Explains Dynamic-MD memory system structure and Manager Agent responsibilities |
+| [`upstream/Memory_Log_Guide.md`](upstream/Memory_Log_Guide.md) | 🤖 | Specifies Memory Log format and Implementation Agent logging workflow |
+
+**Integration Note**: Rigorous-APM agents use upstream patterns with manuscript-specific extensions. When upstream guides reference `{GUIDE_PATH:filename.md}`, agents resolve paths to either `upstream/` or manuscript-specific guides based on context.
+
+---
+
 ## 1. Onboarding & Review Kickoff
 
 | Purpose | Audience | Read This | Why It Matters |
@@ -143,6 +161,13 @@ If you build additional domain playbooks, append a short synopsis and link in th
 ```
 README.md (this file)
     ↓ (summarizes and links to)
+upstream/ (Foundation APM Patterns)
+    ├── Context_Synthesis_Guide.md
+    ├── Project_Breakdown_Guide.md
+    ├── Implementation_Plan_Guide.md
+    ├── Task_Assignment_Guide.md
+    └── Memory_System_Guide.md + Memory_Log_Guide.md
+    ↓ (extended by manuscript-specific guides)
 Context_and_Prompt_Engineering_Guide.md
     ↓ (informs)
 Customization_Guide.md

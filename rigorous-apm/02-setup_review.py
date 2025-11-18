@@ -24,6 +24,11 @@ AUTOMATION_SNIPPETS = {
     / "manager_load_plan.apm",
 }
 
+# Version tracking
+UPSTREAM_APM_VERSION = "0.5.0"
+RIGOROUS_APM_VERSION = "1.0.0"
+COMBINED_VERSION = f"upstream-v{UPSTREAM_APM_VERSION}+rigorous-v{RIGOROUS_APM_VERSION}"
+
 
 AUDIENCE_DEFINITIONS: OrderedDict[str, dict[str, str]] = OrderedDict(
     [
@@ -283,6 +288,19 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
             "Use 'descriptive' to append each agent's specialization from the cheat sheet."
         ),
     )
+    parser.add_argument(
+        "--manuscript-type",
+        choices=["empirical", "theoretical", "review"],
+        help="Type of manuscript being reviewed (empirical, theoretical, or review).",
+    )
+    parser.add_argument(
+        "--target-outlet",
+        help="Target journal or publication outlet for the manuscript.",
+    )
+    parser.add_argument(
+        "--research-field",
+        help="Research field or domain of the manuscript (e.g., neuroscience, psychology).",
+    )
     return parser.parse_args(argv)
 
 
@@ -502,6 +520,198 @@ def write_file(
     return "written"
 
 
+def check_version_compatibility() -> bool:
+    """Check version compatibility and display version information."""
+    print(f"\033[94mRigorous APM Version: {RIGOROUS_APM_VERSION}\033[0m")
+    print(f"\033[94mUpstream APM Version: {UPSTREAM_APM_VERSION}\033[0m")
+    print(f"\033[94mCombined Version: {COMBINED_VERSION}\033[0m")
+    
+    # Check if upstream guides exist
+    script_dir = Path(__file__).resolve().parent
+    upstream_guides_dir = script_dir / "06-guides" / "upstream"
+    
+    if not upstream_guides_dir.exists():
+        print("\033[93mWarning: Upstream guides directory not found at 06-guides/upstream/\033[0m")
+        print("\033[93mSome guide references in generated artifacts may not resolve correctly.\033[0m")
+        return False
+    
+    # Check for key upstream guides
+    required_guides = [
+        "Context_Synthesis_Guide.md",
+        "Implementation_Plan_Guide.md",
+        "Memory_Log_Guide.md",
+        "Memory_System_Guide.md",
+        "Task_Assignment_Guide.md"
+    ]
+    
+    missing_guides = []
+    for guide in required_guides:
+        if not (upstream_guides_dir / guide).exists():
+            missing_guides.append(guide)
+    
+    if missing_guides:
+        print(f"\033[93mWarning: Missing upstream guides: {', '.join(missing_guides)}\033[0m")
+        return False
+    
+    print("\033[92mVersion compatibility check passed.\033[0m")
+    return True
+
+
+def build_bootstrap_prompt(
+    manuscript_name: str,
+    review_dir_path: Path,
+    manuscript_type: str = "",
+    target_outlet: str = "",
+    research_field: str = ""
+) -> str:
+    """Build Manager Agent Bootstrap Prompt in upstream YAML format."""
+    workspace_root = str(review_dir_path.resolve())
+    
+    lines: List[str] = [
+        "---",
+        f"workspace_root: {workspace_root}",
+        "---",
+        "",
+        "# Manager Agent Bootstrap Prompt",
+        "",
+        "You are the first Manager Agent of this APM session: Manager Agent 1.",
+        "",
+        "## User Intent and Requirements",
+        "",
+        f"This is a manuscript review project for **{manuscript_name}** using the Rigorous APM domain extension.",
+        "",
+        "**Manuscript Details:**",
+        f"- **Name:** {manuscript_name}",
+        f"- **Type:** {manuscript_type or 'To be determined during Context Synthesis'}",
+        f"- **Target Outlet:** {target_outlet or 'To be determined during Context Synthesis'}",
+        f"- **Research Field:** {research_field or 'To be determined during Context Synthesis'}",
+        "",
+        "**Review Objectives:**",
+        "- Conduct comprehensive academic manuscript review",
+        "- Evaluate section structure, scientific rigor, and writing quality",
+        "- Generate actionable feedback for manuscript improvement",
+        "- Produce decision-ready executive summary",
+        "",
+        "## Implementation Plan Overview",
+        "",
+        "The Implementation Plan follows a 5-phase manuscript review workflow with 26 specialized agents:",
+        "",
+        "### Phase 1: Section Analysis (S1-S10)",
+        "Analyze each manuscript section independently:",
+        "- S1: Title & Keywords",
+        "- S2: Abstract",
+        "- S3: Introduction",
+        "- S4: Literature Review",
+        "- S5: Methodology",
+        "- S6: Results",
+        "- S7: Discussion",
+        "- S8: Conclusion",
+        "- S9: References",
+        "- S10: Supplementary Materials",
+        "",
+        "### Phase 2: Rigor Analysis (R1-R7)",
+        "Evaluate scientific methodology and standards:",
+        "- R1: Originality & Contribution",
+        "- R2: Impact & Significance",
+        "- R3: Ethics & Compliance",
+        "- R4: Data & Code Availability",
+        "- R5: Statistical Rigor",
+        "- R6: Technical Accuracy",
+        "- R7: Consistency",
+        "",
+        "### Phase 3: Writing Analysis (W1-W7)",
+        "Assess language, style, and presentation:",
+        "- W1: Language & Style",
+        "- W2: Narrative Structure",
+        "- W3: Clarity & Conciseness",
+        "- W4: Terminology Consistency",
+        "- W5: Inclusive Language",
+        "- W6: Citation Formatting",
+        "- W7: Target Audience Alignment",
+        "",
+        "### Phase 4: Quality Control (QC)",
+        "Synthesize findings from all 24 agents to identify gaps, blockers, and follow-ups.",
+        "",
+        "### Phase 5: Executive Summary (ES)",
+        "Generate decision-ready executive summary package.",
+        "",
+        "## 26-Agent Coordination Strategy",
+        "",
+        "**Parallel Execution Model:**",
+        "1. Execute all Section agents (S1-S10) in parallel",
+        "2. Execute Rigor (R1-R7) and Writing (W1-W7) agents in parallel after Section phase completes",
+        "3. Execute QC agent after all analysis agents complete",
+        "4. Execute ES agent after QC completes",
+        "",
+        "**Task Assignment Protocol:**",
+        "- Create Task Assignment Prompts following {GUIDE_PATH:upstream/Task_Assignment_Guide.md}",
+        "- Each agent receives manuscript context and specific analysis criteria",
+        "- Agents create Memory Logs following {GUIDE_PATH:upstream/Memory_Log_Guide.md}",
+        "- Review Memory Logs to track progress and coordinate next tasks",
+        "",
+        "**Memory System Organization:**",
+        "- Phase-based directory structure: `Memory/Phase_01_Section_Analysis/`, etc.",
+        "- Individual agent logs: `S1_Title_Keywords.md`, `R1_Originality.md`, etc.",
+        "- Phase summaries after each phase completion",
+        "",
+        "## Next Steps for Manager Agent",
+        "",
+        "Follow this sequence exactly. Steps 1-10 in one response. Step 11 after explicit User confirmation:",
+        "",
+        "**Plan Responsibilities & Project Understanding**",
+        "1. Read {GUIDE_PATH:upstream/Implementation_Plan_Guide.md}",
+        "2. Read the entire `Implementation_Plan.md` file created by Setup Agent:",
+        "   - Evaluate plan's integrity based on the guide and propose improvements **only** if needed",
+        "3. Confirm your understanding of the project scope, phases, and task structure & your plan management responsibilities",
+        "",
+        "**Memory System Responsibilities**",
+        "4. Read {GUIDE_PATH:upstream/Memory_System_Guide.md}",
+        "5. Read {GUIDE_PATH:upstream/Memory_Log_Guide.md}",
+        "6. Read the `Memory_Root.md` file to understand current memory system state",
+        "7. Confirm your understanding of memory management responsibilities",
+        "",
+        "**Task Coordination Preparation**",
+        "8. Read {GUIDE_PATH:upstream/Task_Assignment_Guide.md}",
+        "9. Confirm your understanding of task assignment prompt creation and coordination duties",
+        "",
+        "**Execution Confirmation**",
+        "10. Summarize your complete understanding and **AWAIT USER CONFIRMATION** - Do not proceed to phase execution until confirmed",
+        "",
+        "**Execution**",
+        "11. When User confirms readiness, proceed as follows:",
+        "    a. Read the first phase from the Implementation Plan.",
+        "    b. Create `Memory/Phase_01_Section_Analysis/` directory.",
+        "    c. For all tasks in Phase 1, create completely empty `.md` Memory Log files in the phase's directory.",
+        "    d. Once all empty logs exist, issue the first Task Assignment Prompt.",
+    ]
+    
+    return "\n".join(lines)
+
+
+def build_metadata_json(manuscript_name: str, manuscript_type: str = "", target_outlet: str = "", research_field: str = "") -> dict:
+    """Build metadata.json structure with APM version tracking and manuscript metadata."""
+    from datetime import datetime
+    
+    return {
+        "apm_version": COMBINED_VERSION,
+        "domain": "manuscript-review",
+        "manuscript": {
+            "name": manuscript_name,
+            "type": manuscript_type or "To be filled by Setup Agent",
+            "target_outlet": target_outlet or "To be filled by Setup Agent",
+            "field": research_field or "To be filled by Setup Agent"
+        },
+        "review_started": datetime.now().strftime("%Y-%m-%d"),
+        "phases": {
+            "section_analysis": "pending",
+            "rigor_analysis": "pending",
+            "writing_analysis": "pending",
+            "quality_control": "pending",
+            "executive_summary": "pending"
+        }
+    }
+
+
 def build_system_state(manuscript_name: str) -> dict:
     return {
         "metadata": {
@@ -715,10 +925,22 @@ def build_implementation_plan(
     assets_copied: bool,
     detail_level: str,
 ) -> str:
+    """Build Implementation Plan in upstream-compatible format with proper guide references."""
     lines: List[str] = [
         f"# {manuscript_name} - Implementation Plan",
         "",
-        "**Generated automatically by `02-setup_review.py`. Customize before handing to the Rigorous Setup Agent.**",
+        "**Generated automatically by `02-setup_review.py`. This plan follows upstream APM v0.5 patterns.**",
+        "",
+        "## Project Overview",
+        "",
+        f"This is a manuscript review project for **{manuscript_name}** using the Rigorous APM domain extension.",
+        "The review follows a 5-phase workflow with 26 specialized Implementation Agents.",
+        "",
+        "**Key References:**",
+        "- Context Synthesis: {{GUIDE_PATH:upstream/Context_Synthesis_Guide.md}}",
+        "- Implementation Planning: {{GUIDE_PATH:upstream/Implementation_Plan_Guide.md}}",
+        "- Memory System: {{GUIDE_PATH:upstream/Memory_System_Guide.md}}",
+        "- Task Assignment: {{GUIDE_PATH:upstream/Task_Assignment_Guide.md}}",
         "",
         "## Audience Legend",
     ]
@@ -728,21 +950,8 @@ def build_implementation_plan(
     lines.extend(
         [
             "",
-            "## Review Kickoff Checklist",
-        ]
-    )
-
-    kickoff_items = [
-        ("Confirm manuscript scope and target outlet details with the Setup Agent", "human"),
-        ("Provide manuscript files and supporting assets to the Setup Agent", "shared"),
-        ("Capture the refined Implementation Plan for Manager handoff", "shared"),
-    ]
-    lines.extend(format_checklist_item(text, audience) for text, audience in kickoff_items)
-
-    lines.extend(
-        [
-            "",
             "## Phase 0: Workspace Preparation",
+            "",
             format_checklist_item(
                 f"Verify project workspace at `{review_dir_path}`",
                 "human",
@@ -765,7 +974,16 @@ def build_implementation_plan(
             )
         )
 
-    lines.append("")
+    lines.extend(
+        [
+            "",
+            format_checklist_item(
+                "Review metadata.json for manuscript details and phase tracking",
+                "shared",
+            ),
+            "",
+        ]
+    )
 
     for phase, templates in collect_agent_templates().items():
         lines.append(f"## {phase}")
@@ -780,10 +998,38 @@ def build_implementation_plan(
             )
         lines.append("")
 
-    lines.append("---")
-    lines.append("")
-    lines.append(
-        "Once the Setup Agent finalizes this plan, run the Manager Agent using the Review Kickoff prompt (03-review-kickoff/)."
+    lines.extend(
+        [
+            "---",
+            "",
+            "## Manuscript-Specific Workflow",
+            "",
+            "This Implementation Plan preserves the rigorous-apm 5-phase review workflow:",
+            "",
+            "1. **Phase 1: Section Analysis (S1-S10)** - Analyze each manuscript section independently",
+            "2. **Phase 2: Rigor Analysis (R1-R7)** - Evaluate scientific methodology and standards",
+            "3. **Phase 3: Writing Analysis (W1-W7)** - Assess language, style, and presentation",
+            "4. **Phase 4: Quality Control (QC)** - Synthesize findings from all 24 agents",
+            "5. **Phase 5: Executive Summary (ES)** - Generate final comprehensive report",
+            "",
+            "**Coordination Strategy:**",
+            "- Section agents (S1-S10) execute in parallel",
+            "- Rigor (R1-R7) and Writing (W1-W7) agents execute in parallel after Section phase",
+            "- QC agent synthesizes all findings",
+            "- ES agent creates decision-ready summary",
+            "",
+            "**Memory Logging:**",
+            "Each agent creates a Memory Log following {{GUIDE_PATH:upstream/Memory_Log_Guide.md}}",
+            "",
+            "---",
+            "",
+            "## Next Steps",
+            "",
+            "Once the Setup Agent finalizes this plan:",
+            "1. Review the generated Bootstrap Prompt",
+            "2. Initialize Manager Agent with the Bootstrap Prompt",
+            "3. Manager Agent will coordinate the 26 Implementation Agents through the 5-phase workflow",
+        ]
     )
 
     return "\n".join(lines)
@@ -804,6 +1050,12 @@ def print_post_run_summary(
             review_dir_path / "Implementation_Plan.md",
             "shared",
         ),
+        (
+            "Bootstrap prompt",
+            review_dir_path / "Manager_Bootstrap_Prompt.md",
+            "shared",
+        ),
+        ("Metadata", review_dir_path / "metadata.json", "shared"),
         ("System state", review_dir_path / system_state_filename, "shared"),
     ]
 
@@ -859,6 +1111,14 @@ def print_post_run_summary(
 
 def main(argv: List[str] | None = None) -> None:
     args = parse_args(argv)
+    
+    # Check version compatibility
+    print("\n" + "="*60)
+    print("Rigorous APM - Manuscript Review Workspace Setup")
+    print("="*60 + "\n")
+    check_version_compatibility()
+    print("")
+    
     manuscript_input = request_manuscript_path(args)
     manuscript_file, manuscript_dir = resolve_manuscript(manuscript_input, args)
     manuscript_name = manuscript_file.stem
@@ -866,6 +1126,14 @@ def main(argv: List[str] | None = None) -> None:
     review_dir_path = determine_review_directory(manuscript_dir, manuscript_name, args)
     ensure_workspace(review_dir_path, force=args.force)
 
+    # Generate metadata.json with APM version tracking
+    metadata = build_metadata_json(
+        manuscript_name,
+        manuscript_type=args.manuscript_type or "",
+        target_outlet=args.target_outlet or "",
+        research_field=args.research_field or ""
+    )
+    
     system_state = build_system_state(manuscript_name)
     system_state_filename, system_state_content = format_system_state(
         system_state, args.system_state_format
@@ -885,8 +1153,22 @@ def main(argv: List[str] | None = None) -> None:
         assets_copied=assets_copied,
         detail_level=args.plan_detail_level,
     )
+    
+    # Generate Bootstrap Prompt in upstream format
+    bootstrap_prompt_content = build_bootstrap_prompt(
+        manuscript_name,
+        review_dir_path,
+        manuscript_type=args.manuscript_type or "",
+        target_outlet=args.target_outlet or "",
+        research_field=args.research_field or ""
+    )
 
     legend_upgraded_targets: List[Path] = []
+
+    # Write metadata.json
+    metadata_path = review_dir_path / "metadata.json"
+    metadata_content = json.dumps(metadata, indent=2, ensure_ascii=False)
+    write_file(metadata_path, metadata_content, overwrite=args.force)
 
     system_state_path = review_dir_path / system_state_filename
     system_state_status = write_file(
@@ -907,6 +1189,10 @@ def main(argv: List[str] | None = None) -> None:
     )
     if implementation_plan_status == "upgraded":
         legend_upgraded_targets.append(implementation_plan_path)
+    
+    # Write Bootstrap Prompt
+    bootstrap_prompt_path = review_dir_path / "Manager_Bootstrap_Prompt.md"
+    write_file(bootstrap_prompt_path, bootstrap_prompt_content, overwrite=args.force)
 
     print_post_run_summary(
         review_dir_path,
