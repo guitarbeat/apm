@@ -68,8 +68,7 @@ Drag `04-manager-agent/manager_agent_initiation_prompt.md` into IDE, then load `
 phd-apm/
 ├── 01-START_HERE.md              # 👤 This file
 ├── 02-setup_review.py            # 🔁 Workspace generator
-├── 03-review-kickoff/            # 🤖 Kickoff prompts
-├── 03-setup-agent/               # � Setup Ageunt
+├── 03-setup-agent/               # 🤖 Setup Agent
 ├── 04-manager-agent/             # 🤖 Manager Agent
 ├── 05-implementation-agents/     # 🤖 26 specialist agents
 │   ├── section/                  # S1-S10
@@ -79,17 +78,27 @@ phd-apm/
 └── 06-guides/                    # 👤/🔁 Domain-specific guides
 ```
 
-See `06-guides/Agent_Cheat_Sheet.md` for agent details.
-
 ---
 
 ## Reference Guides
 
-**Upstream** (`../upstream-apm/docs/`): See upstream repository for foundation patterns (Context_Synthesis, Project_Breakdown, Implementation_Plan, Task_Assignment, Memory_System, Memory_Log)
+**Upstream guides** (`../upstream-apm/prompts/guides/`): Core APM patterns
+- Implementation_Plan_Guide.md
+- Memory_Log_Guide.md
+- Memory_System_Guide.md
+- Project_Breakdown_Guide.md
+- Task_Assignment_Guide.md
 
-**Domain** (`06-guides/`): README, Agent_Cheat_Sheet, Context_and_Prompt_Engineering, Customization, Manuscript_Review_Implementation_Plan, Handover, Memory_System, Troubleshooting_Playbook
+**Domain guides** (`06-guides/`): Manuscript review specialization
+- Context_and_Prompt_Engineering_Guide.md
+- Customization_Guide.md
+- Handover_Guide.md
+- IDE_and_AI_Assistant_Guide.md
+- Manuscript_Review_Implementation_Plan_Guide.md
+- Memory_System_Guide.md
+- Troubleshooting_Playbook.md
 
-Agents use `{GUIDE_PATH:filename.md}` - system resolves to upstream or domain guides.
+**Note**: Agents reference guides using `{GUIDE_PATH:filename.md}` syntax, resolved at runtime by your AI IDE.
 
 ---
 
@@ -101,7 +110,7 @@ Upstream-apm v0.5 integration complete (Nov 2025):
 - End-to-end validation passed
 - No breaking changes to manuscript review workflow
 
-See [validation results](../.kiro/specs/upstream-integration-plan/validation_results.md) for details.
+See [integration spec](../.kiro/specs/upstream-integration-plan/) for complete details.
 
 ---
 
@@ -109,7 +118,7 @@ See [validation results](../.kiro/specs/upstream-integration-plan/validation_res
 
 **Version issues**: Ensure `../upstream-apm/` repository present with v0.5.0+
 
-**Missing guides**: Check `../upstream-apm/docs/` (upstream) and `06-guides/` (domain)
+**Missing guides**: Check `../upstream-apm/prompts/guides/` (upstream) and `06-guides/` (domain)
 
 **Artifact problems**: Run with `--force`, verify `metadata.json` version string
 

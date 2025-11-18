@@ -18,17 +18,15 @@ Use this README to pick the right starting point and keep both tracks aligned as
 | **PhD APM (Manuscript Review)** | | |
 | Quick start for manuscript review | [`phd-apm/01-START_HERE.md`](phd-apm/01-START_HERE.md) | Explains upstream relationship, 5-phase Setup workflow, 26-agent coordination, and end-to-end review process. |
 | CLI automation for review workspace | [`phd-apm/02-setup_review.py`](phd-apm/02-setup_review.py) | Generates upstream-compatible artifacts: `metadata.json`, `Bootstrap_Prompt.md`, `Implementation_Plan.md` with guide references. |
-| Kickoff prompts for Setup & Manager | [`phd-apm/03-review-kickoff/`](phd-apm/03-review-kickoff/) | Drag-and-drop prompts following upstream patterns for both Setup and Manager agents. |
-| Guide navigation (upstream + domain) | [`phd-apm/06-guides/README.md`](phd-apm/06-guides/README.md) | Maps to both upstream core guides and manuscript-specific guides. |
-| Migration from legacy version | [`phd-apm/MIGRATION_GUIDE.md`](phd-apm/MIGRATION_GUIDE.md) | Step-by-step migration instructions, breaking changes, troubleshooting. |
+| Setup & Manager agent prompts | [`phd-apm/03-setup-agent/`](phd-apm/03-setup-agent/) & [`phd-apm/04-manager-agent/`](phd-apm/04-manager-agent/) | Agent initiation prompts following upstream patterns. |
+| Domain-specific guides | [`phd-apm/06-guides/`](phd-apm/06-guides/) | Manuscript review guides (upstream guides in `upstream-apm/prompts/guides/`). |
 | **Upstream APM (Foundation)** | | |
 | Framework overview | [`upstream-apm/README.md`](upstream-apm/README.md) | Introduces v0.5 terminology, onboarding paths, and documentation legend. |
 | Detailed workflow walkthrough | [`upstream-apm/docs/Workflow_Overview.md`](upstream-apm/docs/Workflow_Overview.md) | Canonical protocols, rituals, and shared-state expectations. |
 | Schema definitions & validation | [`upstream-apm/prompts/schemas/`](upstream-apm/prompts/schemas/) | JSON schema assets plus `validate_schema.py` for structured prompts. |
 | **Integration & Contribution** | | |
-| Integration strategy & architecture | [`INTEGRATION_STRATEGY.md`](INTEGRATION_STRATEGY.md) | Technical approach for upstream-rigorous integration. |
+| Integration architecture & design | [`.kiro/specs/upstream-integration-plan/`](.kiro/specs/upstream-integration-plan/) | Requirements, design, and task breakdown for upstream integration. |
 | Contribution guidelines | [`AGENTS.md`](AGENTS.md) | Pattern adoption requirements, validation checklist, commit guidance. |
-| Implementation plan & design | [`.kiro/specs/upstream-integration-plan/`](.kiro/specs/upstream-integration-plan/) | Requirements, design, and task breakdown for integration. |
 
 ---
 
@@ -52,7 +50,7 @@ Use this README to pick the right starting point and keep both tracks aligned as
    - Verify YAML frontmatter in updated agent prompts
    - Test guide reference resolution
 
-5. **Document cross-links.** If you add or rename assets, update the relevant navigation table—`phd-apm/06-guides/README.md` or this file—so maintainers can discover your work.
+5. **Document cross-links.** If you add or rename assets, update the relevant navigation table in this file so maintainers can discover your work.
 
 6. **Preserve domain specialization.** When adopting upstream patterns in PhD APM, maintain manuscript-specific analysis criteria and 26-agent coordination model.
 
@@ -63,12 +61,10 @@ Use this README to pick the right starting point and keep both tracks aligned as
 ```
 README.md                         # This orientation guide
 AGENTS.md                         # Contribution guidelines & pattern adoption requirements
-INTEGRATION_STRATEGY.md           # Technical integration approach
 
 phd-apm/                          # Manuscript review domain extension
 ├── 01-START_HERE.md              # Operator onboarding (upstream-integrated workflow)
 ├── 02-setup_review.py            # Python automation (generates upstream artifacts)
-├── 03-review-kickoff/            # Kickoff prompts (upstream patterns)
 ├── 03-setup-agent/               # Setup Agent (5-phase upstream workflow)
 ├── 04-manager-agent/             # Manager Agent (Bootstrap Prompt processing)
 ├── 05-implementation-agents/     # 26 specialist agents (YAML frontmatter)
@@ -77,15 +73,12 @@ phd-apm/                          # Manuscript review domain extension
 │   ├── rigor/                    # R1-R7 scientific rigor
 │   ├── writing/                  # W1-W7 writing quality
 │   └── [QC, ES agents]           # Quality Control & Executive Summary
-├── 06-guides/                    # Guide system
-│   ├── upstream/                 # 7 core upstream-apm guides
-│   └── [domain guides]           # Manuscript-specific guides
-└── MIGRATION_GUIDE.md            # Legacy to upstream-integrated migration
+└── 06-guides/                    # Domain-specific manuscript review guides
 
 upstream-apm/                     # Upstream APM v0.5 foundation
 ├── README.md                     # Upstream overview and documentation index
 ├── docs/                         # Workflow guides and protocols
-├── prompts/                      # Prompt bundles, schemas, and templates
+├── prompts/guides/               # Core APM guides (referenced by agents)
 └── [CLI, templates, tests]       # Infrastructure components
 
 .kiro/specs/upstream-integration-plan/  # Integration specification

@@ -280,5 +280,5 @@ Iterative improvement cycles:
 
 - **Customization Guide**: Domain adaptation patterns
 - **Memory System Guide**: State management details
-- **Agent Cheat Sheet**: Agent roster and capabilities
+- **Agent Prompts** (`../05-implementation-agents/`): 26-agent roster and capabilities
 - **Upstream Guides**: Foundation patterns

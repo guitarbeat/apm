@@ -271,7 +271,7 @@ Requires: All Phase 1-3 tasks complete
 
 ## Resources
 
-- **Agent Cheat Sheet**: Detailed agent capabilities
+- **Agent Prompts** (`../05-implementation-agents/`): 26 specialist agent capabilities
 - **Memory System Guide**: State management details
 - **Task Assignment Guide** (upstream): Assignment protocol
 - **02-setup_review.py**: Automated plan generation

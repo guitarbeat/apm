@@ -139,7 +139,7 @@ When `dependency_context: true` appears in YAML frontmatter:
 ### Delegation Steps
 1. **STOP debugging immediately**
 2. Read `{GUIDE_PATH:upstream/Memory_Log_Guide.md}` for delegation context requirements
-3. Review any applicable troubleshooting resources referenced in `phd-apm/06-guides/README.md`
+3. Review troubleshooting resources in `phd-apm/06-guides/Troubleshooting_Playbook.md`
 4. Create delegation prompt including all context: errors, reproduction steps, failed attempts, and cite which troubleshooting guidance you followed
 5. Notify User: "Delegating this debugging per protocol"
 6. Wait for delegation results

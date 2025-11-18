@@ -13,10 +13,10 @@ This repository hosts two complementary Agentic Project Management (APM) systems
   - Memory Log format following `{GUIDE_PATH:upstream/Memory_Log_Guide.md}`
   - Execution type documentation (single-step vs multi-step)
   - Debug delegation protocol and handover awareness
-- **Shared Guide System**: Upstream's 7 core guides live in `phd-apm/06-guides/upstream/` alongside manuscript-specific guides in `phd-apm/06-guides/`. Both sets are referenced by agents.
+- **Shared Guide System**: Upstream's core guides live in `upstream-apm/prompts/guides/` and manuscript-specific guides in `phd-apm/06-guides/`. Both sets are referenced by agents using `{GUIDE_PATH:}` syntax.
 - **Artifact Compatibility**: Generated artifacts (metadata.json, Implementation Plans, Bootstrap Prompts) follow upstream formats to enable future CLI integration.
 
-See [INTEGRATION_STRATEGY.md](INTEGRATION_STRATEGY.md) and `.kiro/specs/upstream-integration-plan/` for full technical details.
+See `.kiro/specs/upstream-integration-plan/` for full technical details.
 
 ## Shared Expectations
 - Follow the existing file organization; document any renames of the top-level `phd-apm/` or `upstream-apm/` directories so collaborators can update scripts accordingly.
@@ -47,9 +47,8 @@ See [INTEGRATION_STRATEGY.md](INTEGRATION_STRATEGY.md) and `.kiro/specs/upstream
 
 ### Guide System
 - Guides under `06-guides/` must cross-link to any newly added artifacts so the training loop stays comprehensive.
-- Maintain separation between upstream guides (`06-guides/upstream/`) and manuscript-specific guides (`06-guides/`).
-- When adding new guides, update `06-guides/README.md` navigation.
-- Ensure guide references resolve correctly to either upstream or domain-specific paths.
+- Maintain separation between upstream guides (`upstream-apm/prompts/guides/`) and manuscript-specific guides (`phd-apm/06-guides/`).
+- Ensure guide references use `{GUIDE_PATH:filename.md}` syntax and resolve correctly at runtime.
 
 ### Base Template Usage
 - Use `05-implementation-agents/implementation_agent_base_prompt.md` as the reference template when creating or updating Implementation Agent prompts.

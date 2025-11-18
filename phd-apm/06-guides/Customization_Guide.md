@@ -222,6 +222,6 @@ git cherry-pick <commit-hash>  # For specific improvements
 ## Resources
 
 - **Context & Prompt Engineering Guide**: Architecture principles
-- **Agent Cheat Sheet**: Agent roster and capabilities
+- **Agent Prompts** (`../05-implementation-agents/`): 26-agent roster and capabilities
 - **Memory System Guide**: State management patterns
 - **Upstream APM**: Foundation patterns and updates

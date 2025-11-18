@@ -51,5 +51,5 @@ This playbook catalogs recurring runtime errors that surface when PhD APM implem
 
 1. Record new runtime or build failures in the matrix above.
 2. Provide a concise root-cause hypothesis and a deterministic checklist (3-5 steps).
-3. Cross-link any new entries from `06-guides/README.md` so operators can discover the updates quickly.
+3. Document any new troubleshooting patterns in this guide so operators can discover them.
 4. When a fix requires changes to implementation prompts, update the relevant files under `../05-implementation-agents/` and note the relationship in `handover.md`.
