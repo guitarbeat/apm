@@ -316,14 +316,39 @@ template version compatible with your current CLI version.
       }
       const memoryRootPath = join(memoryDir, 'Memory_Root.md');
       if (!existsSync(memoryRootPath)) {
-        writeFileSync(memoryRootPath, '');
+        const memoryRootContent = `# Memory Root
+
+This directory contains the memory system for your project.
+Agents use this system to store and retrieve information across sessions.
+
+## Structure
+- \`Memory_Root.md\`: This file (Index)
+- \`Phase_*/\`: Directories for each project phase
+- \`*.md\`: individual memory logs
+
+## Documentation
+See \`.apm/guides/Memory_System_Guide.md\` for full documentation.
+`;
+        writeFileSync(memoryRootPath, memoryRootContent);
         console.log(chalk.gray('  Created Memory/Memory_Root.md'));
       }
 
       // Create empty Implementation_Plan.md
       const implementationPlanPath = join(apmDir, 'Implementation_Plan.md');
       if (!existsSync(implementationPlanPath)) {
-        writeFileSync(implementationPlanPath, '');
+        const planContent = `# Implementation Plan
+
+This file tracks the progress of your project implementation.
+It is read and updated by the Manager Agent and other agents.
+
+## Usage
+1. Review the initial plan generated here.
+2. Agents will mark items as completed \`[x]\` as they progress.
+
+## Documentation
+See \`.apm/guides/Implementation_Plan_Guide.md\` for full documentation.
+`;
+        writeFileSync(implementationPlanPath, planContent);
         console.log(chalk.gray('  Created Implementation_Plan.md'));
       }
 
