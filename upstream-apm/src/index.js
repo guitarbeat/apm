@@ -123,6 +123,7 @@ template version compatible with your current CLI version.
       // Interactive prompt for AI assistant selection - all 10 assistants
       const assistant = await select({
         message: 'Which AI assistant are you using?',
+        pageSize: 15,
         choices: [
           {
             name: 'Cursor',
@@ -337,11 +338,11 @@ template version compatible with your current CLI version.
       console.log(chalk.green.bold('\nAPM initialized successfully!'));
       console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
       console.log(chalk.gray(`Template Version: ${targetTag}`));
-      console.log(chalk.gray('\nNext steps:'));
-      console.log(chalk.gray('1. Review the generated files in the .apm/ directory'));
-      console.log(chalk.gray('2. Customize the prompts and configuration for your specific project'));
-      console.log(chalk.gray('3. Start using APM with your AI assistant'));
-      console.log(chalk.gray('4. Run "apm update" anytime to get the latest improvements\n'));
+      console.log(chalk.cyan.bold('\nNext steps:'));
+      console.log(chalk.white('1. Review the generated files in the ') + chalk.white.bold('.apm/') + chalk.white(' directory'));
+      console.log(chalk.white('2. Customize the prompts and configuration for your specific project'));
+      console.log(chalk.white('3. Start using APM with your AI assistant'));
+      console.log(chalk.white('4. Run ') + chalk.yellow('apm update') + chalk.white(' anytime to get the latest improvements\n'));
 
     } catch (error) {
       console.error(chalk.red('\nInitialization failed...'));
