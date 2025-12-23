@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { PassThrough } from 'stream';
 import AdmZip from 'adm-zip';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -279,15 +280,32 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
       url: assetUrl,
       responseType: 'stream'
     });
+
+    const totalLength = response.headers['content-length'];
+    const monitor = new PassThrough();
+
+    if (totalLength) {
+      let downloaded = 0;
+      monitor.on('data', (chunk) => {
+        downloaded += chunk.length;
+        const percentage = Math.round((downloaded / totalLength) * 100);
+        process.stdout.write(`\r${chalk.blue('[DOWNLOAD]')} Downloading... ${percentage}%`);
+      });
+    }
     
     // Create a temporary file for the download
     const tempPath = join(destinationPath, 'temp-bundle.zip');
     const writer = createWriteStream(tempPath);
     
-    response.data.pipe(writer);
+    response.data.pipe(monitor).pipe(writer);
     
     await new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
+      writer.on('finish', () => {
+        if (totalLength) {
+          process.stdout.write('\n');
+        }
+        resolve();
+      });
       writer.on('error', reject);
     });
     
