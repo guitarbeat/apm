@@ -1,9 +1,7 @@
-import axios from 'axios';
 import chalk from 'chalk';
 import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import AdmZip from 'adm-zip';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,6 +33,7 @@ export const ASSET_MAP = {
  * @returns {Promise<Object>} Release data from GitHub API
  */
 export async function fetchLatestRelease(releaseTag = null) {
+  const axios = (await import('axios')).default;
   try {
     const endpoint = releaseTag
       ? `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/tags/${releaseTag}`
@@ -121,6 +120,7 @@ function parseTemplateTag(tagName) {
  * @returns {Promise<Object|null>} Object with tag_name, baseVersion, and release_notes, or null if none found
  */
 export async function findLatestTemplateTag() {
+  const axios = (await import('axios')).default;
   try {
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
@@ -195,6 +195,7 @@ function compareVersions(v1, v2) {
  * @returns {Promise<Object|null>} Object with tag_name and release_notes, or null if none found
  */
 export async function findLatestCompatibleTemplateTag(cliVersion) {
+  const axios = (await import('axios')).default;
   try {
     // Fetch all releases from GitHub API
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
@@ -267,6 +268,9 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
  * @returns {Promise<void>}
  */
 export async function downloadAndExtract(targetTag, assistantName, destinationPath) {
+  const axios = (await import('axios')).default;
+  const AdmZip = (await import('adm-zip')).default;
+
   try {
     console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
     
