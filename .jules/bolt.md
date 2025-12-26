@@ -1,0 +1,3 @@
+## 2024-05-23 - Lazy Loading Dependencies
+**Learning:** In Node.js CLI tools, heavy dependencies like `axios`, `adm-zip`, and `@inquirer/prompts` can significantly slow down startup time (cold boot). Lazy loading these dependencies using `await import('module')` only when needed (e.g., inside specific command actions) avoids this overhead for simple commands like `--help` or `--version`.
+**Action:** When adding heavy dependencies to a CLI tool, always check if they are needed for the immediate execution path. If not, import them dynamically inside the function or command action where they are used.
