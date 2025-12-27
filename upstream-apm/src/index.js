@@ -2,7 +2,6 @@
 
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
-import { select, confirm } from '@inquirer/prompts';
 import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } from './downloader.js';
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
@@ -102,6 +101,9 @@ ${chalk.gray('Note:')} If no --tag is specified, the CLI will automatically find
 template version compatible with your current CLI version.
 `)
   .action(async (options) => {
+    // Lazy load inquirer prompts
+    const { select, confirm } = await import('@inquirer/prompts');
+
     try {
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
@@ -358,6 +360,9 @@ ${chalk.gray('Note:')} This command updates templates to the latest version comp
 current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -g agentic-pm')}
 `)
   .action(async () => {
+    // Lazy load inquirer prompts
+    const { confirm } = await import('@inquirer/prompts');
+
     try {
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
@@ -520,7 +525,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 
       // Create backup by moving assistant directories and .apm/guides, then zipping
       console.log(chalk.gray('Creating backup...'));
-      const { backupDir, zipPath } = createAndZipBackup(process.cwd(), assistants, installedVersion);
+      const { backupDir, zipPath } = await createAndZipBackup(process.cwd(), assistants, installedVersion);
       console.log(chalk.green(`Backup created at: ${backupDir}`));
 
       try {
