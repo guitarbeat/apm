@@ -1,6 +1,5 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, cpSync, rmSync, copyFileSync, renameSync } from 'fs';
 import { join, dirname, basename } from 'path';
-import AdmZip from 'adm-zip';
 import chalk from 'chalk';
 
 /**
@@ -475,9 +474,10 @@ export function updateFromTempDirectory(tempDir, assistant, projectRoot, options
  * @param {string} projectPath
  * @param {string[]} assistants
  * @param {string} templateTag
- * @returns {string} backup directory path
+ * @returns {Promise<{backupDir: string, zipPath: string}>} backup directory path
  */
-export function createAndZipBackup(projectPath, assistants, templateTag) {
+export async function createAndZipBackup(projectPath, assistants, templateTag) {
+  const { default: AdmZip } = await import('adm-zip');
   const safeTag = String(templateTag || 'unknown').replace(/[^a-zA-Z0-9._-]/g, '-');
   const apmDir = join(projectPath, '.apm');
   const backupDir = join(apmDir, `apm-backup-${safeTag}`);
