@@ -4,6 +4,7 @@ import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import AdmZip from 'adm-zip';
+import { spinner } from './spinner.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -268,10 +269,16 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
  */
 export async function downloadAndExtract(targetTag, assistantName, destinationPath) {
   try {
-    console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
+    spinner.start(chalk.blue('Downloading assets...'));
     
     // Fetch the asset URL for the specified tag and assistant
-    const assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag);
+    let assetUrl;
+    try {
+        assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag);
+    } catch (e) {
+        spinner.fail(chalk.red('Failed to fetch asset URL'));
+        throw e;
+    }
     
     // Download the asset
     const response = await axios({
@@ -293,12 +300,13 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     
     const zipPath = tempPath;
     
-    console.log(chalk.yellow('[EXTRACT] Extracting files...'));
+    spinner.start(chalk.yellow('Extracting files...'));
     // Cross-platform extraction using adm-zip
     try {
       const zip = new AdmZip(zipPath);
       zip.extractAllTo(destinationPath, true);
     } catch (extractError) {
+      spinner.fail(chalk.red('Failed to extract zip file'));
       throw new Error(`Failed to extract zip file: ${extractError.message}`);
     }
     
@@ -315,12 +323,13 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
       // Ignore cleanup errors
     }
     
-    console.log(chalk.green('[OK] Scaffolding complete!'));
-    console.log(chalk.green(`[OK] APM project structure created in: ${destinationPath}`));
+    spinner.succeed(chalk.green(`Scaffolding complete in: ${destinationPath}`));
     
   } catch (error) {
-    console.error(chalk.red('[ERROR] Error during download/extraction...'));
-    console.error(chalk.red(error.message));
+    if (spinner.isSpinning) {
+        spinner.fail(chalk.red('Error during download/extraction'));
+    }
+    // console.error(chalk.red(error.message)); // Let the caller handle error logging if needed, or rethrow
     throw error;
   }
 }
