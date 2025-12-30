@@ -1,9 +1,7 @@
-import axios from 'axios';
 import chalk from 'chalk';
 import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import AdmZip from 'adm-zip';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,6 +34,8 @@ export const ASSET_MAP = {
  */
 export async function fetchLatestRelease(releaseTag = null) {
   try {
+    // Lazy load axios to improve CLI startup time
+    const { default: axios } = await import('axios');
     const endpoint = releaseTag
       ? `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/tags/${releaseTag}`
       : `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`;
@@ -122,6 +122,8 @@ function parseTemplateTag(tagName) {
  */
 export async function findLatestTemplateTag() {
   try {
+    // Lazy load axios to improve CLI startup time
+    const { default: axios } = await import('axios');
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
     const response = await axios.get(endpoint, {
@@ -196,6 +198,8 @@ function compareVersions(v1, v2) {
  */
 export async function findLatestCompatibleTemplateTag(cliVersion) {
   try {
+    // Lazy load axios to improve CLI startup time
+    const { default: axios } = await import('axios');
     // Fetch all releases from GitHub API
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
@@ -268,6 +272,10 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
  */
 export async function downloadAndExtract(targetTag, assistantName, destinationPath) {
   try {
+    // Lazy load heavy dependencies to improve CLI startup time
+    const { default: axios } = await import('axios');
+    const { default: AdmZip } = await import('adm-zip');
+
     console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
     
     // Fetch the asset URL for the specified tag and assistant
