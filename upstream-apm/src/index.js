@@ -8,6 +8,7 @@ import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup } from './utils.js';
+import { Spinner } from './spinner.js';
 
 const program = new Command();
 
@@ -246,7 +247,8 @@ template version compatible with your current CLI version.
         }
       } else {
         // Find latest compatible template tag for current CLI version
-        console.log(chalk.gray(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...\n`));
+        // console.log(chalk.gray(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...\n`));
+        // Note: findLatestCompatibleTemplateTag now uses Spinner internally
         const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
         
         if (!compatibleResult) {
@@ -271,7 +273,7 @@ template version compatible with your current CLI version.
         
         targetTag = compatibleResult.tag_name;
         releaseNotes = compatibleResult.release_notes;
-        console.log(chalk.green(`[OK] Found compatible template version: ${targetTag}`));
+        // console.log(chalk.green(`[OK] Found compatible template version: ${targetTag}`));
         
         // Check if there are newer templates available for other CLI versions
         const latestOverall = await findLatestTemplateTag();
@@ -519,13 +521,13 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
       console.log(chalk.blue('\n[PROCESS] Starting update process...'));
 
       // Create backup by moving assistant directories and .apm/guides, then zipping
-      console.log(chalk.gray('Creating backup...'));
+      const backupSpinner = new Spinner().start('Creating backup...');
       const { backupDir, zipPath } = createAndZipBackup(process.cwd(), assistants, installedVersion);
-      console.log(chalk.green(`Backup created at: ${backupDir}`));
+      backupSpinner.succeed(`Backup created at: ${backupDir}`);
 
       try {
         // Download and extract new version to a temporary directory
-        console.log(chalk.gray('\nDownloading update...'));
+        // console.log(chalk.gray('\nDownloading update...'));
         const tempDir = join(process.cwd(), '.apm', 'temp-update');
         
         // Ensure temp directory is clean
@@ -535,7 +537,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         mkdirSync(tempDir, { recursive: true });
 
         // Download and extract the latest compatible bundles per assistant
-        console.log(chalk.gray('\nDownloading update bundles...'));
+        // console.log(chalk.gray('\nDownloading update bundles...'));
         let guidesUpdated = false;
         for (const a of assistants) {
           const subDir = join(tempDir, a.replace(/[^a-zA-Z0-9._-]/g, '_'));
