@@ -2,7 +2,6 @@
 
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
-import { select, confirm } from '@inquirer/prompts';
 import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } from './downloader.js';
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
@@ -103,6 +102,8 @@ template version compatible with your current CLI version.
 `)
   .action(async (options) => {
     try {
+      // Lazy load prompts to improve CLI startup time
+      const { select, confirm } = await import('@inquirer/prompts');
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
       console.log(chalk.gray('Setting up Agentic Project Management in this directory...\n'));
@@ -359,6 +360,8 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 `)
   .action(async () => {
     try {
+      // Lazy load prompts to improve CLI startup time
+      const { confirm } = await import('@inquirer/prompts');
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
       console.log(chalk.blue('[UPDATE] APM Update Tool'));
@@ -520,7 +523,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 
       // Create backup by moving assistant directories and .apm/guides, then zipping
       console.log(chalk.gray('Creating backup...'));
-      const { backupDir, zipPath } = createAndZipBackup(process.cwd(), assistants, installedVersion);
+      const { backupDir, zipPath } = await createAndZipBackup(process.cwd(), assistants, installedVersion);
       console.log(chalk.green(`Backup created at: ${backupDir}`));
 
       try {
