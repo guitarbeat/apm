@@ -4,6 +4,7 @@ import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import AdmZip from 'adm-zip';
+import { Spinner } from './spinner.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,7 +41,7 @@ export async function fetchLatestRelease(releaseTag = null) {
       ? `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/tags/${releaseTag}`
       : `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`;
     
-    console.log(chalk.gray(`  Fetching release from: ${endpoint}`));
+    // Low-level fetcher: no side-effects (logging removed)
     
     const response = await axios.get(endpoint, {
       headers: {
@@ -80,7 +81,7 @@ export async function fetchReleaseAssetUrl(assistant, releaseTag = null) {
     // Fetch the release for the specified tag (or latest if no tag provided)
     const release = await fetchLatestRelease(releaseTag);
     
-    console.log(chalk.gray(`  Found release: ${release.name || release.tag_name}`));
+    // Low-level fetcher: no side-effects (logging removed)
     
     // Find the matching asset in the release
     const asset = release.assets.find(a => a.name === bundleFilename);
@@ -89,11 +90,11 @@ export async function fetchReleaseAssetUrl(assistant, releaseTag = null) {
       throw new Error(`Bundle not found for ${assistant}. Expected file: ${bundleFilename}. This may indicate an incomplete release.`);
     }
     
-    console.log(chalk.gray(`  Found asset: ${asset.name} (${(asset.size / 1024).toFixed(1)} KB)`));
+    // Low-level fetcher: no side-effects (logging removed)
     
     return asset.browser_download_url;
   } catch (error) {
-    console.error(chalk.red('Failed to fetch release asset:'));
+    // Caller handles error display
     throw error;
   }
 }
@@ -199,7 +200,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     // Fetch all releases from GitHub API
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
-    console.log(chalk.gray(`  Fetching all releases to find compatible templates for CLI v${cliVersion}...`));
+    // Low-level fetcher: no side-effects (logging removed)
     
     const response = await axios.get(endpoint, {
       headers: {
@@ -232,7 +233,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     }
     
     if (compatibleTags.length === 0) {
-      console.log(chalk.yellow(`No compatible template tags found for CLI version ${cliVersion}`));
+      // Logic unchanged, but removing console.log as caller might use spinner
       return null;
     }
     
@@ -240,7 +241,8 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     compatibleTags.sort((a, b) => b.buildNumber - a.buildNumber);
     
     const latest = compatibleTags[0];
-    console.log(chalk.gray(`  Found compatible template tag: ${latest.tag_name} (build ${latest.buildNumber})`));
+
+    // Low-level fetcher: no side-effects (logging removed)
     
     return {
       tag_name: latest.tag_name,
@@ -267,9 +269,8 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
  * @returns {Promise<void>}
  */
 export async function downloadAndExtract(targetTag, assistantName, destinationPath) {
+  const spinner = new Spinner('Downloading assets...').start();
   try {
-    console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
-    
     // Fetch the asset URL for the specified tag and assistant
     const assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag);
     
@@ -293,7 +294,8 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     
     const zipPath = tempPath;
     
-    console.log(chalk.yellow('[EXTRACT] Extracting files...'));
+    spinner.text = 'Extracting files...';
+
     // Cross-platform extraction using adm-zip
     try {
       const zip = new AdmZip(zipPath);
@@ -315,11 +317,11 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
       // Ignore cleanup errors
     }
     
-    console.log(chalk.green('[OK] Scaffolding complete!'));
-    console.log(chalk.green(`[OK] APM project structure created in: ${destinationPath}`));
+    spinner.succeed(`Scaffolding complete! APM project structure created in: ${destinationPath}`);
     
   } catch (error) {
-    console.error(chalk.red('[ERROR] Error during download/extraction...'));
+    spinner.fail('Error during download/extraction...');
+    // Log actual error details after spinner
     console.error(chalk.red(error.message));
     throw error;
   }
