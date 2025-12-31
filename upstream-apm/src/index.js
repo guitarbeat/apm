@@ -8,6 +8,7 @@ import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup } from './utils.js';
+import { Spinner } from './spinner.js';
 
 const program = new Command();
 
@@ -187,14 +188,15 @@ template version compatible with your current CLI version.
         // User specified a specific tag
         targetTag = options.tag;
         console.log(chalk.yellow(`\nInstalling specific tag: ${targetTag}`));
-        console.log(chalk.gray('  Validating tag...'));
         
         // Validate the tag exists
+        const spinner = new Spinner('Validating tag...').start();
         try {
           const release = await fetchLatestRelease(targetTag);
           releaseNotes = release.body || '';
-          console.log(chalk.gray(`  Found release: ${release.name || release.tag_name}`));
+          spinner.succeed(`Found release: ${release.name || release.tag_name}`);
         } catch (error) {
+          spinner.fail(`Tag ${targetTag} not found or invalid`);
           throw new Error(`Tag ${targetTag} not found or invalid: ${error.message}`);
         }
 
@@ -224,7 +226,9 @@ template version compatible with your current CLI version.
           }
         } else {
           // Same base - check if older build than latest compatible
+          const spinner = new Spinner(`Checking for compatibility with v${CURRENT_CLI_VERSION}...`).start();
           const compatible = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
+          spinner.stop();
           if (compatible) {
             const cmp = compareTemplateVersions(targetTag, compatible.tag_name);
             if (cmp === -1) {
@@ -246,10 +250,11 @@ template version compatible with your current CLI version.
         }
       } else {
         // Find latest compatible template tag for current CLI version
-        console.log(chalk.gray(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...\n`));
+        const spinner = new Spinner(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`).start();
         const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
         
         if (!compatibleResult) {
+          spinner.fail();
           // Check if there are newer templates available for other CLI versions
           const latestOverall = await findLatestTemplateTag();
           const newerInfo = checkForNewerTemplates(CURRENT_CLI_VERSION, latestOverall);
@@ -271,7 +276,7 @@ template version compatible with your current CLI version.
         
         targetTag = compatibleResult.tag_name;
         releaseNotes = compatibleResult.release_notes;
-        console.log(chalk.green(`[OK] Found compatible template version: ${targetTag}`));
+        spinner.succeed(`Found compatible template version: ${targetTag}`);
         
         // Check if there are newer templates available for other CLI versions
         const latestOverall = await findLatestTemplateTag();
@@ -303,6 +308,8 @@ template version compatible with your current CLI version.
       for (const a of assistantsToInstall) {
         const subDir = join(tempDir, a.replace(/[^a-zA-Z0-9._-]/g, '_'));
         mkdirSync(subDir, { recursive: true });
+        // NOTE: downloadAndExtract handles its own spinner UI
+        console.log(chalk.cyan(`Installing for ${a}...`));
         await downloadAndExtract(targetTag, a, subDir);
         installFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesInstalled });
         if (!guidesInstalled) guidesInstalled = true;
@@ -382,10 +389,11 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
       console.log(chalk.blue(`CLI Version: ${CURRENT_CLI_VERSION}`));
 
       // Find latest compatible template tag for current CLI version
-      console.log(chalk.gray(`\n  Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`));
+      const spinner = new Spinner(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`).start();
       const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
       
       if (!compatibleResult) {
+        spinner.fail();
         // Check if there are newer templates available for other CLI versions
         const latestOverall = await findLatestTemplateTag();
         const newerInfo = checkForNewerTemplates(CURRENT_CLI_VERSION, latestOverall);
@@ -407,6 +415,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
       }
       
       const latestCompatibleTag = compatibleResult.tag_name;
+      spinner.succeed(`Found compatible template version: ${latestCompatibleTag}`);
       
       // Decide update policy per rules:
       // - If installed base < CURRENT_CLI_VERSION: update available for sure
