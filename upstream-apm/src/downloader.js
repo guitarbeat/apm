@@ -4,6 +4,7 @@ import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import AdmZip from 'adm-zip';
+import { Spinner } from './spinner.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,12 +36,13 @@ export const ASSET_MAP = {
  * @returns {Promise<Object>} Release data from GitHub API
  */
 export async function fetchLatestRelease(releaseTag = null) {
+  const spinner = new Spinner(`Fetching release info...`).start();
   try {
     const endpoint = releaseTag
       ? `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/tags/${releaseTag}`
       : `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`;
     
-    console.log(chalk.gray(`  Fetching release from: ${endpoint}`));
+    // console.log(chalk.gray(`  Fetching release from: ${endpoint}`));
     
     const response = await axios.get(endpoint, {
       headers: {
@@ -49,8 +51,10 @@ export async function fetchLatestRelease(releaseTag = null) {
       }
     });
     
+    spinner.stop();
     return response.data;
   } catch (error) {
+    spinner.fail();
     if (error.response) {
       if (error.response.status === 404) {
         throw new Error('No releases found. Please ensure APM has been published.');
@@ -195,11 +199,12 @@ function compareVersions(v1, v2) {
  * @returns {Promise<Object|null>} Object with tag_name and release_notes, or null if none found
  */
 export async function findLatestCompatibleTemplateTag(cliVersion) {
+  const spinner = new Spinner(`Finding compatible templates for CLI v${cliVersion}...`).start();
   try {
     // Fetch all releases from GitHub API
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
-    console.log(chalk.gray(`  Fetching all releases to find compatible templates for CLI v${cliVersion}...`));
+    // console.log(chalk.gray(`  Fetching all releases to find compatible templates for CLI v${cliVersion}...`));
     
     const response = await axios.get(endpoint, {
       headers: {
@@ -232,6 +237,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     }
     
     if (compatibleTags.length === 0) {
+      spinner.stop();
       console.log(chalk.yellow(`No compatible template tags found for CLI version ${cliVersion}`));
       return null;
     }
@@ -240,6 +246,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     compatibleTags.sort((a, b) => b.buildNumber - a.buildNumber);
     
     const latest = compatibleTags[0];
+    spinner.stop(); // Stop spinner before logging success
     console.log(chalk.gray(`  Found compatible template tag: ${latest.tag_name} (build ${latest.buildNumber})`));
     
     return {
@@ -248,6 +255,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     };
     
   } catch (error) {
+    spinner.fail();
     if (error.response) {
       if (error.response.status === 404) {
         throw new Error('Repository or releases not found. Please verify the repository exists.');
@@ -267,8 +275,9 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
  * @returns {Promise<void>}
  */
 export async function downloadAndExtract(targetTag, assistantName, destinationPath) {
+  const spinner = new Spinner('Downloading assets...').start();
   try {
-    console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
+    // console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
     
     // Fetch the asset URL for the specified tag and assistant
     const assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag);
@@ -293,7 +302,8 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     
     const zipPath = tempPath;
     
-    console.log(chalk.yellow('[EXTRACT] Extracting files...'));
+    spinner.text = 'Extracting files...';
+    // console.log(chalk.yellow('[EXTRACT] Extracting files...'));
     // Cross-platform extraction using adm-zip
     try {
       const zip = new AdmZip(zipPath);
@@ -315,11 +325,11 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
       // Ignore cleanup errors
     }
     
-    console.log(chalk.green('[OK] Scaffolding complete!'));
+    spinner.succeed('Scaffolding complete!');
     console.log(chalk.green(`[OK] APM project structure created in: ${destinationPath}`));
     
   } catch (error) {
-    console.error(chalk.red('[ERROR] Error during download/extraction...'));
+    spinner.fail('Error during download/extraction');
     console.error(chalk.red(error.message));
     throw error;
   }
