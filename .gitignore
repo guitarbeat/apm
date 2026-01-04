@@ -1,2 +1,8 @@
+upstream-apm/node_modules
+upstream-apm/node_modules/
+node_modules
+node_modules/
+**/node_modules
+**/node_modules/
 __pycache__/
 *.pyc
