@@ -2,7 +2,6 @@
 
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
-import { select, confirm } from '@inquirer/prompts';
 import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } from './downloader.js';
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
@@ -121,6 +120,7 @@ template version compatible with your current CLI version.
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
+      const { select, confirm } = await import('@inquirer/prompts');
       const assistant = await select({
         message: 'Which AI assistant are you using?',
         choices: [
@@ -507,6 +507,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         console.log(chalk.cyan(`\n[INFO] Installed templates are for a different CLI base. Updating to latest compatible.`));
       }
       console.log('');
+      const { confirm } = await import('@inquirer/prompts');
       const shouldUpdate = await confirm({
         message: `Update ALL assistants from ${installedVersion} to ${latestCompatibleTag}?`,
         default: false
@@ -520,7 +521,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 
       // Create backup by moving assistant directories and .apm/guides, then zipping
       console.log(chalk.gray('Creating backup...'));
-      const { backupDir, zipPath } = createAndZipBackup(process.cwd(), assistants, installedVersion);
+      const { backupDir, zipPath } = await createAndZipBackup(process.cwd(), assistants, installedVersion);
       console.log(chalk.green(`Backup created at: ${backupDir}`));
 
       try {

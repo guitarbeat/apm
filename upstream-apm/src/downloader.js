@@ -1,9 +1,7 @@
-import axios from 'axios';
 import chalk from 'chalk';
 import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import AdmZip from 'adm-zip';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,6 +34,7 @@ export const ASSET_MAP = {
  */
 export async function fetchLatestRelease(releaseTag = null) {
   try {
+    const { default: axios } = await import('axios');
     const endpoint = releaseTag
       ? `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/tags/${releaseTag}`
       : `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`;
@@ -122,6 +121,7 @@ function parseTemplateTag(tagName) {
  */
 export async function findLatestTemplateTag() {
   try {
+    const { default: axios } = await import('axios');
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
     const response = await axios.get(endpoint, {
@@ -197,6 +197,7 @@ function compareVersions(v1, v2) {
 export async function findLatestCompatibleTemplateTag(cliVersion) {
   try {
     // Fetch all releases from GitHub API
+    const { default: axios } = await import('axios');
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
     console.log(chalk.gray(`  Fetching all releases to find compatible templates for CLI v${cliVersion}...`));
@@ -270,6 +271,7 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
   try {
     console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
     
+    const { default: axios } = await import('axios');
     // Fetch the asset URL for the specified tag and assistant
     const assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag);
     
@@ -296,6 +298,7 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     console.log(chalk.yellow('[EXTRACT] Extracting files...'));
     // Cross-platform extraction using adm-zip
     try {
+      const { default: AdmZip } = await import('adm-zip');
       const zip = new AdmZip(zipPath);
       zip.extractAllTo(destinationPath, true);
     } catch (extractError) {

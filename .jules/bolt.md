@@ -1,0 +1,3 @@
+## 2024-05-23 - Lazy Loading CLI Dependencies
+**Learning:** In Node.js CLI tools, top-level imports of heavy libraries (like `axios`, `adm-zip`, `@inquirer/prompts`) significantly impact startup time (e.g., `apm --help`). Using dynamic `await import(...)` inside command actions allows the CLI to start instantly for simple commands.
+**Action:** Always verify if a dependency is needed immediately at startup. If not, move it to a dynamic import within the function or command handler that uses it. For ESM projects, remember to destructure CommonJS default exports: `const { default: Lib } = await import('lib')`.
