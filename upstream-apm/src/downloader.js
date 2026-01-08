@@ -4,6 +4,7 @@ import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import AdmZip from 'adm-zip';
+import { Spinner } from './spinner.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -267,12 +268,15 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
  * @returns {Promise<void>}
  */
 export async function downloadAndExtract(targetTag, assistantName, destinationPath) {
+  const spinner = new Spinner();
   try {
     console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
     
     // Fetch the asset URL for the specified tag and assistant
     const assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag);
     
+    spinner.start('Downloading asset bundle...');
+
     // Download the asset
     const response = await axios({
       method: 'GET',
@@ -293,7 +297,7 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     
     const zipPath = tempPath;
     
-    console.log(chalk.yellow('[EXTRACT] Extracting files...'));
+    spinner.text = 'Extracting files...';
     // Cross-platform extraction using adm-zip
     try {
       const zip = new AdmZip(zipPath);
@@ -315,10 +319,11 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
       // Ignore cleanup errors
     }
     
-    console.log(chalk.green('[OK] Scaffolding complete!'));
+    spinner.succeed('Scaffolding complete!');
     console.log(chalk.green(`[OK] APM project structure created in: ${destinationPath}`));
     
   } catch (error) {
+    if (spinner.isSpinning) spinner.fail('Download/extraction failed');
     console.error(chalk.red('[ERROR] Error during download/extraction...'));
     console.error(chalk.red(error.message));
     throw error;
