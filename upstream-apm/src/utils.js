@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, cpSync, rmSync, copyFileSync, renameSync } from 'fs';
 import { join, dirname, basename } from 'path';
-import AdmZip from 'adm-zip';
 import chalk from 'chalk';
+import { createRequire } from 'module';
 
 /**
  * Assistant directory mapping for detection
@@ -475,7 +475,7 @@ export function updateFromTempDirectory(tempDir, assistant, projectRoot, options
  * @param {string} projectPath
  * @param {string[]} assistants
  * @param {string} templateTag
- * @returns {string} backup directory path
+ * @returns {{backupDir: string, zipPath: string}} backup directory path and zip path
  */
 export function createAndZipBackup(projectPath, assistants, templateTag) {
   const safeTag = String(templateTag || 'unknown').replace(/[^a-zA-Z0-9._-]/g, '-');
@@ -524,6 +524,11 @@ export function createAndZipBackup(projectPath, assistants, templateTag) {
     const backupBase = basename(backupDir);
     const zipName = `${backupBase}.zip`;
     zipPath = join(apmDir, zipName);
+
+    // Dynamic import for AdmZip using createRequire for sync loading
+    const require = createRequire(import.meta.url);
+    const AdmZip = require('adm-zip');
+
     const zip = new AdmZip();
     // Add the whole backup folder under its base name
     zip.addLocalFolder(backupDir, backupBase);
@@ -535,4 +540,3 @@ export function createAndZipBackup(projectPath, assistants, templateTag) {
 
   return { backupDir, zipPath };
 }
-
