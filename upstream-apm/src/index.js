@@ -121,6 +121,10 @@ template version compatible with your current CLI version.
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
+      const installedAssistants = new Set(
+        existingMetadata?.assistants || detectInstalledAssistants(process.cwd())
+      );
+
       const assistant = await select({
         message: 'Which AI assistant are you using?',
         choices: [
@@ -174,7 +178,15 @@ template version compatible with your current CLI version.
             value: 'Roo Code',
             description: 'Optimized for Roo Code IDE'
           }
-        ]
+        ].map(choice => {
+          if (installedAssistants.has(choice.value)) {
+            return {
+              ...choice,
+              description: `${choice.description} ${chalk.green('(installed)')}`
+            };
+          }
+          return choice;
+        })
       });
 
       console.log(chalk.blue(`\nSelected: ${assistant}`));
