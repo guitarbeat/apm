@@ -246,7 +246,6 @@ template version compatible with your current CLI version.
         }
       } else {
         // Find latest compatible template tag for current CLI version
-        console.log(chalk.gray(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...\n`));
         const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
         
         if (!compatibleResult) {
@@ -271,7 +270,6 @@ template version compatible with your current CLI version.
         
         targetTag = compatibleResult.tag_name;
         releaseNotes = compatibleResult.release_notes;
-        console.log(chalk.green(`[OK] Found compatible template version: ${targetTag}`));
         
         // Check if there are newer templates available for other CLI versions
         const latestOverall = await findLatestTemplateTag();

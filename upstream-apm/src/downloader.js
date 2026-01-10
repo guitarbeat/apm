@@ -196,11 +196,12 @@ function compareVersions(v1, v2) {
  * @returns {Promise<Object|null>} Object with tag_name and release_notes, or null if none found
  */
 export async function findLatestCompatibleTemplateTag(cliVersion) {
+  const spinner = new Spinner();
   try {
     // Fetch all releases from GitHub API
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
-    console.log(chalk.gray(`  Fetching all releases to find compatible templates for CLI v${cliVersion}...`));
+    spinner.start(`Fetching releases to find compatible templates for CLI v${cliVersion}...`);
     
     const response = await axios.get(endpoint, {
       headers: {
@@ -233,6 +234,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     }
     
     if (compatibleTags.length === 0) {
+      if (spinner.isSpinning) spinner.stop();
       console.log(chalk.yellow(`No compatible template tags found for CLI version ${cliVersion}`));
       return null;
     }
@@ -241,7 +243,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     compatibleTags.sort((a, b) => b.buildNumber - a.buildNumber);
     
     const latest = compatibleTags[0];
-    console.log(chalk.gray(`  Found compatible template tag: ${latest.tag_name} (build ${latest.buildNumber})`));
+    if (spinner.isSpinning) spinner.succeed(`Found compatible template tag: ${latest.tag_name} (build ${latest.buildNumber})`);
     
     return {
       tag_name: latest.tag_name,
@@ -249,6 +251,7 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     };
     
   } catch (error) {
+    if (spinner.isSpinning) spinner.fail('Failed to fetch releases');
     if (error.response) {
       if (error.response.status === 404) {
         throw new Error('Repository or releases not found. Please verify the repository exists.');
