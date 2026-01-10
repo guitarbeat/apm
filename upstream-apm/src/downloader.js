@@ -1,9 +1,7 @@
-import axios from 'axios';
 import chalk from 'chalk';
 import { createWriteStream, unlink } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import AdmZip from 'adm-zip';
 import { Spinner } from './spinner.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +35,7 @@ export const ASSET_MAP = {
  */
 export async function fetchLatestRelease(releaseTag = null) {
   try {
+    const { default: axios } = await import('axios');
     const endpoint = releaseTag
       ? `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/tags/${releaseTag}`
       : `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`;
@@ -123,6 +122,7 @@ function parseTemplateTag(tagName) {
  */
 export async function findLatestTemplateTag() {
   try {
+    const { default: axios } = await import('axios');
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
     const response = await axios.get(endpoint, {
@@ -197,6 +197,7 @@ function compareVersions(v1, v2) {
  */
 export async function findLatestCompatibleTemplateTag(cliVersion) {
   try {
+    const { default: axios } = await import('axios');
     // Fetch all releases from GitHub API
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
@@ -278,6 +279,7 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     spinner.start('Downloading asset bundle...');
 
     // Download the asset
+    const { default: axios } = await import('axios');
     const response = await axios({
       method: 'GET',
       url: assetUrl,
@@ -300,6 +302,7 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     spinner.text = 'Extracting files...';
     // Cross-platform extraction using adm-zip
     try {
+      const { default: AdmZip } = await import('adm-zip');
       const zip = new AdmZip(zipPath);
       zip.extractAllTo(destinationPath, true);
     } catch (extractError) {
