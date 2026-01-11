@@ -246,7 +246,6 @@ template version compatible with your current CLI version.
         }
       } else {
         // Find latest compatible template tag for current CLI version
-        console.log(chalk.gray(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...\n`));
         const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
         
         if (!compatibleResult) {
@@ -382,7 +381,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
       console.log(chalk.blue(`CLI Version: ${CURRENT_CLI_VERSION}`));
 
       // Find latest compatible template tag for current CLI version
-      console.log(chalk.gray(`\n  Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`));
+      console.log('');
       const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
       
       if (!compatibleResult) {
