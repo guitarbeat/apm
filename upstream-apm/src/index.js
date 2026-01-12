@@ -520,7 +520,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 
       // Create backup by moving assistant directories and .apm/guides, then zipping
       console.log(chalk.gray('Creating backup...'));
-      const { backupDir, zipPath } = createAndZipBackup(process.cwd(), assistants, installedVersion);
+      const { backupDir, zipPath } = await createAndZipBackup(process.cwd(), assistants, installedVersion);
       console.log(chalk.green(`Backup created at: ${backupDir}`));
 
       try {
