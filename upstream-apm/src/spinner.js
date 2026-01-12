@@ -13,6 +13,12 @@ export class Spinner {
     if (text) this.text = text;
     if (this.isSpinning) return this;
 
+    // If not TTY, just log the text once and return
+    if (!process.stdout.isTTY) {
+      console.log(this.text);
+      return this;
+    }
+
     this.isSpinning = true;
     process.stdout.write('\x1B[?25l'); // Hide cursor
 
