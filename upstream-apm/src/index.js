@@ -2,7 +2,6 @@
 
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
-import { select, confirm } from '@inquirer/prompts';
 import { Spinner } from './spinner.js';
 import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } from './downloader.js';
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
@@ -122,6 +121,7 @@ template version compatible with your current CLI version.
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
+      const { select } = await import('@inquirer/prompts');
       const assistant = await select({
         message: 'Which AI assistant are you using?',
         choices: [
@@ -217,6 +217,7 @@ template version compatible with your current CLI version.
           console.log(chalk.red(`  Target tag base: v${parsedTarget.baseVersion}`));
           console.log(chalk.red(`  Your CLI base:   v${CURRENT_CLI_VERSION}`));
           console.log(chalk.red(`  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`));
+          const { confirm } = await import('@inquirer/prompts');
           const proceed = await confirm({
             message: chalk.red(`May cause incompatibilities. Proceed with init using ${targetTag}?`),
             default: false
@@ -236,6 +237,7 @@ template version compatible with your current CLI version.
               console.log(chalk.yellow(`  Selected tag:      ${targetTag}`));
               console.log(chalk.yellow(`  Latest compatible: ${compatible.tag_name}`));
               console.log(chalk.yellow(`  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`));
+              const { confirm } = await import('@inquirer/prompts');
               const proceedOlder = await confirm({
                 message: chalk.yellow('Proceed with downgrade?'),
                 default: false
@@ -519,6 +521,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         console.log(chalk.cyan(`\n[INFO] Installed templates are for a different CLI base. Updating to latest compatible.`));
       }
       console.log('');
+      const { confirm } = await import('@inquirer/prompts');
       const shouldUpdate = await confirm({
         message: `Update ALL assistants from ${installedVersion} to ${latestCompatibleTag}?`,
         default: false
