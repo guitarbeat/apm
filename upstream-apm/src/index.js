@@ -349,11 +349,21 @@ template version compatible with your current CLI version.
       console.log(chalk.green.bold('\nAPM initialized successfully!'));
       console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
       console.log(chalk.gray(`Template Version: ${targetTag}`));
-      console.log(chalk.gray('\nNext steps:'));
-      console.log(chalk.gray('1. Review the generated files in the .apm/ directory'));
-      console.log(chalk.gray('2. Customize the prompts and configuration for your specific project'));
-      console.log(chalk.gray('3. Start using APM with your AI assistant'));
-      console.log(chalk.gray('4. Run "apm update" anytime to get the latest improvements\n'));
+
+      console.log(chalk.bold('\nNext steps:'));
+      console.log(`  1. Review generated files in:`);
+      console.log(`     - ${chalk.cyan('.apm/')}`);
+
+      assistantsToInstall.forEach(a => {
+        const dir = getAssistantDirectory(a);
+        if (dir) {
+          console.log(`     - ${chalk.cyan(dir + '/')}`);
+        }
+      });
+
+      console.log(`  2. ${chalk.white('Customize the prompts')} and configuration for your specific project`);
+      console.log(`  3. Start using APM with ${chalk.magenta(assistantsToInstall.join(', '))}`);
+      console.log(`  4. Run ${chalk.yellow('apm update')} anytime to get the latest improvements\n`);
 
     } catch (error) {
       console.error(chalk.red('\nInitialization failed...'));
@@ -576,9 +586,9 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         try {
           rmSync(backupDir, { recursive: true, force: true });
           if (zipPath) {
-            console.log(chalk.gray(`\nBackup archive saved at: ${zipPath}`));
+            console.log(`\nBackup archive saved at: ${chalk.cyan(zipPath)}`);
           } else {
-            console.log(chalk.gray(`\nBackup directory saved at: ${backupDir}`));
+            console.log(`\nBackup directory saved at: ${chalk.cyan(backupDir)}`);
           }
         } catch (_) {
           // If cleanup fails, still continue
