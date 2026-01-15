@@ -3,3 +3,4 @@ __pycache__/
 node_modules/
 **/node_modules/
 upstream-apm/node_modules/
+upstream-apm/dist/

@@ -122,8 +122,11 @@ template version compatible with your current CLI version.
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
+      const defaultAssistant = existingMetadata?.assistants?.[0];
+
       const assistant = await select({
         message: 'Which AI assistant are you using?',
+        default: defaultAssistant,
         choices: [
           {
             name: 'Cursor',
