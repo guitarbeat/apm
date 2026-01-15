@@ -2,7 +2,6 @@
 
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
-import { select, confirm } from '@inquirer/prompts';
 import { Spinner } from './spinner.js';
 import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } from './downloader.js';
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
@@ -103,6 +102,9 @@ ${chalk.gray('Note:')} If no --tag is specified, the CLI will automatically find
 template version compatible with your current CLI version.
 `)
   .action(async (options) => {
+    // Lazy-load interactive prompts
+    const { select, confirm } = await import('@inquirer/prompts');
+
     try {
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
@@ -370,6 +372,9 @@ ${chalk.gray('Note:')} This command updates templates to the latest version comp
 current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -g agentic-pm')}
 `)
   .action(async () => {
+    // Lazy-load interactive prompts
+    const { confirm } = await import('@inquirer/prompts');
+
     try {
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
