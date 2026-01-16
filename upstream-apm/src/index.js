@@ -346,14 +346,15 @@ template version compatible with your current CLI version.
       createOrUpdateMetadata(process.cwd(), assistantsToInstall, targetTag);
 
       // Success message with next steps
-      console.log(chalk.green.bold('\nAPM initialized successfully!'));
-      console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-      console.log(chalk.gray(`Template Version: ${targetTag}`));
-      console.log(chalk.gray('\nNext steps:'));
-      console.log(chalk.gray('1. Review the generated files in the .apm/ directory'));
-      console.log(chalk.gray('2. Customize the prompts and configuration for your specific project'));
-      console.log(chalk.gray('3. Start using APM with your AI assistant'));
-      console.log(chalk.gray('4. Run "apm update" anytime to get the latest improvements\n'));
+      console.log(chalk.green.bold('\n✔ APM initialized successfully!'));
+      console.log(chalk.gray(`  CLI Version:      ${chalk.white(CURRENT_CLI_VERSION)}`));
+      console.log(chalk.gray(`  Template Version: ${chalk.white(targetTag)}`));
+
+      console.log(chalk.bold('\nNext steps:'));
+      console.log(`  1. Review the generated files in the ${chalk.cyan('.apm/')} directory`);
+      console.log(`  2. Customize the prompts and configuration for your specific project`);
+      console.log(`  3. Start using APM with your AI assistant`);
+      console.log(`  4. Run ${chalk.yellow('apm update')} anytime to get the latest improvements\n`);
 
     } catch (error) {
       console.error(chalk.red('\nInitialization failed...'));
@@ -569,9 +570,9 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         rmSync(tempDir, { recursive: true, force: true });
 
         // Success!
-        console.log(chalk.green(`\nAPM templates successfully updated to ${latestCompatibleTag}!`));
-        console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-        console.log(chalk.gray(`Template Version: ${latestCompatibleTag}`));
+        console.log(chalk.green.bold(`\n✔ APM templates successfully updated to ${latestCompatibleTag}!`));
+        console.log(chalk.gray(`  CLI Version:      ${chalk.white(CURRENT_CLI_VERSION)}`));
+        console.log(chalk.gray(`  Template Version: ${chalk.white(latestCompatibleTag)}`));
         // Remove unzipped backup folder, keep archive
         try {
           rmSync(backupDir, { recursive: true, force: true });

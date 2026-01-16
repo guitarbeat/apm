@@ -1,3 +1,5 @@
-## 2024-05-23 - CLI Loading States
-**Learning:** The `upstream-apm` CLI relied on manual `console.log` for progress updates, which made long-running operations like downloads feel unresponsive or cluttered.
-**Action:** Implemented a lightweight `Spinner` class (using `process.stdout` and `chalk`) to provide visual feedback. This pattern should be used for all future async CLI operations to improve perceived performance and polish.
+# Palette's Journal
+
+## 2025-05-15 - Improved CLI Output Hierarchy
+**Learning:** CLI success messages often get buried in wall-of-text output. Using clear color hierarchy (Cyan for paths, Yellow for commands) and visual grouping (indentation/boxing) significantly improves scanability.
+**Action:** When designing CLI output, always identify the "key takeaways" (next steps) and separate them visually from the operational logs.
