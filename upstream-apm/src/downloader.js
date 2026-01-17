@@ -31,16 +31,20 @@ export const ASSET_MAP = {
 /**
  * Fetches the latest release information from GitHub API
  * @param {string} [releaseTag] - Optional specific release tag
+ * @param {Object} [options] - Options object
+ * @param {boolean} [options.silent] - If true, suppresses console output
  * @returns {Promise<Object>} Release data from GitHub API
  */
-export async function fetchLatestRelease(releaseTag = null) {
+export async function fetchLatestRelease(releaseTag = null, options = {}) {
   const { default: axios } = await import('axios');
   try {
     const endpoint = releaseTag
       ? `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/tags/${releaseTag}`
       : `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases/latest`;
     
-    console.log(chalk.gray(`  Fetching release from: ${endpoint}`));
+    if (!options.silent) {
+      console.log(chalk.gray(`  Fetching release from: ${endpoint}`));
+    }
     
     const response = await axios.get(endpoint, {
       headers: {
@@ -66,9 +70,11 @@ export async function fetchLatestRelease(releaseTag = null) {
  * Fetches the asset URL for the specified AI assistant from GitHub releases
  * @param {string} assistant - The AI assistant name (e.g., "Cursor", "GitHub Copilot")
  * @param {string} [releaseTag] - Optional specific release tag (e.g., "v0.5.1+templates.2")
+ * @param {Object} [options] - Options object
+ * @param {boolean} [options.silent] - If true, suppresses console output
  * @returns {Promise<string>} The download URL for the asset bundle
  */
-export async function fetchReleaseAssetUrl(assistant, releaseTag = null) {
+export async function fetchReleaseAssetUrl(assistant, releaseTag = null, options = {}) {
   try {
     // Get the bundle filename for this assistant
     const bundleFilename = ASSET_MAP[assistant];
@@ -78,9 +84,11 @@ export async function fetchReleaseAssetUrl(assistant, releaseTag = null) {
     }
     
     // Fetch the release for the specified tag (or latest if no tag provided)
-    const release = await fetchLatestRelease(releaseTag);
+    const release = await fetchLatestRelease(releaseTag, options);
     
-    console.log(chalk.gray(`  Found release: ${release.name || release.tag_name}`));
+    if (!options.silent) {
+      console.log(chalk.gray(`  Found release: ${release.name || release.tag_name}`));
+    }
     
     // Find the matching asset in the release
     const asset = release.assets.find(a => a.name === bundleFilename);
@@ -89,11 +97,15 @@ export async function fetchReleaseAssetUrl(assistant, releaseTag = null) {
       throw new Error(`Bundle not found for ${assistant}. Expected file: ${bundleFilename}. This may indicate an incomplete release.`);
     }
     
-    console.log(chalk.gray(`  Found asset: ${asset.name} (${(asset.size / 1024).toFixed(1)} KB)`));
+    if (!options.silent) {
+      console.log(chalk.gray(`  Found asset: ${asset.name} (${(asset.size / 1024).toFixed(1)} KB)`));
+    }
     
     return asset.browser_download_url;
   } catch (error) {
-    console.error(chalk.red('Failed to fetch release asset:'));
+    if (!options.silent) {
+      console.error(chalk.red('Failed to fetch release asset:'));
+    }
     throw error;
   }
 }
@@ -193,15 +205,19 @@ function compareVersions(v1, v2) {
  * Searches all GitHub releases for tags matching v<cliVersion>+templates.*
  * and returns the one with the highest build number
  * @param {string} cliVersion - Current CLI version (e.g., "0.5.1")
+ * @param {Object} [options] - Options object
+ * @param {boolean} [options.silent] - If true, suppresses console output
  * @returns {Promise<Object|null>} Object with tag_name and release_notes, or null if none found
  */
-export async function findLatestCompatibleTemplateTag(cliVersion) {
+export async function findLatestCompatibleTemplateTag(cliVersion, options = {}) {
   const { default: axios } = await import('axios');
   try {
     // Fetch all releases from GitHub API
     const endpoint = `${GITHUB_API_BASE}/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases`;
     
-    console.log(chalk.gray(`  Fetching all releases to find compatible templates for CLI v${cliVersion}...`));
+    if (!options.silent) {
+      console.log(chalk.gray(`  Fetching all releases to find compatible templates for CLI v${cliVersion}...`));
+    }
     
     const response = await axios.get(endpoint, {
       headers: {
@@ -234,7 +250,9 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     }
     
     if (compatibleTags.length === 0) {
-      console.log(chalk.yellow(`No compatible template tags found for CLI version ${cliVersion}`));
+      if (!options.silent) {
+        console.log(chalk.yellow(`No compatible template tags found for CLI version ${cliVersion}`));
+      }
       return null;
     }
     
@@ -242,7 +260,9 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
     compatibleTags.sort((a, b) => b.buildNumber - a.buildNumber);
     
     const latest = compatibleTags[0];
-    console.log(chalk.gray(`  Found compatible template tag: ${latest.tag_name} (build ${latest.buildNumber})`));
+    if (!options.silent) {
+      console.log(chalk.gray(`  Found compatible template tag: ${latest.tag_name} (build ${latest.buildNumber})`));
+    }
     
     return {
       tag_name: latest.tag_name,
@@ -266,20 +286,26 @@ export async function findLatestCompatibleTemplateTag(cliVersion) {
  * @param {string} targetTag - GitHub release tag (e.g., "v0.5.1+templates.2")
  * @param {string} assistantName - The AI assistant name (e.g., "Cursor", "GitHub Copilot")
  * @param {string} destinationPath - Path where the contents should be extracted
+ * @param {Object} [options] - Options object
+ * @param {boolean} [options.silent] - If true, suppresses console output and internal spinner
  * @returns {Promise<void>}
  */
-export async function downloadAndExtract(targetTag, assistantName, destinationPath) {
+export async function downloadAndExtract(targetTag, assistantName, destinationPath, options = {}) {
   const { default: axios } = await import('axios');
   const { default: AdmZip } = await import('adm-zip');
 
   const spinner = new Spinner();
   try {
-    console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
+    if (!options.silent) {
+      console.log(chalk.blue('[DOWNLOAD] Downloading assets...'));
+    }
     
     // Fetch the asset URL for the specified tag and assistant
-    const assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag);
+    const assetUrl = await fetchReleaseAssetUrl(assistantName, targetTag, options);
     
-    spinner.start('Downloading asset bundle...');
+    if (!options.silent) {
+      spinner.start('Downloading asset bundle...');
+    }
 
     // Download the asset
     const response = await axios({
@@ -301,7 +327,9 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     
     const zipPath = tempPath;
     
-    spinner.text = 'Extracting files...';
+    if (!options.silent) {
+      spinner.text = 'Extracting files...';
+    }
     // Cross-platform extraction using adm-zip
     try {
       const zip = new AdmZip(zipPath);
@@ -323,13 +351,17 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
       // Ignore cleanup errors
     }
     
-    spinner.succeed('Scaffolding complete!');
-    console.log(chalk.green(`[OK] APM project structure created in: ${destinationPath}`));
+    if (!options.silent) {
+      spinner.succeed('Scaffolding complete!');
+      console.log(chalk.green(`[OK] APM project structure created in: ${destinationPath}`));
+    }
     
   } catch (error) {
-    if (spinner.isSpinning) spinner.fail('Download/extraction failed');
-    console.error(chalk.red('[ERROR] Error during download/extraction...'));
-    console.error(chalk.red(error.message));
+    if (!options.silent && spinner.isSpinning) spinner.fail('Download/extraction failed');
+    if (!options.silent) {
+      console.error(chalk.red('[ERROR] Error during download/extraction...'));
+      console.error(chalk.red(error.message));
+    }
     throw error;
   }
 }
