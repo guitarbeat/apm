@@ -193,7 +193,7 @@ template version compatible with your current CLI version.
         
         // Validate the tag exists
         try {
-          const release = await fetchLatestRelease(targetTag);
+          const release = await fetchLatestRelease(targetTag, { silent: true });
           spinner.succeed(`Found release: ${release.name || release.tag_name}`);
           releaseNotes = release.body || '';
         } catch (error) {
@@ -250,7 +250,7 @@ template version compatible with your current CLI version.
       } else {
         // Find latest compatible template tag for current CLI version
         const spinner = new Spinner(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`).start();
-        const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
+        const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION, { silent: true });
         
         if (!compatibleResult) {
           spinner.fail(`No compatible template tags found for CLI version ${CURRENT_CLI_VERSION}.`);
@@ -311,7 +311,7 @@ template version compatible with your current CLI version.
         mkdirSync(subDir, { recursive: true });
 
         spinner.text = `Downloading templates for ${a}...`;
-        await downloadAndExtract(targetTag, a, subDir);
+        await downloadAndExtract(targetTag, a, subDir, { silent: true });
 
         spinner.text = `Installing templates for ${a}...`;
         installFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesInstalled });
