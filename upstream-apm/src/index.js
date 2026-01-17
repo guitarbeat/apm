@@ -2,7 +2,6 @@
 
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
-import { select, confirm } from '@inquirer/prompts';
 import { Spinner } from './spinner.js';
 import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } from './downloader.js';
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
@@ -104,6 +103,8 @@ template version compatible with your current CLI version.
 `)
   .action(async (options) => {
     try {
+      const { select, confirm } = await import('@inquirer/prompts');
+
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
       console.log(chalk.gray('Setting up Agentic Project Management in this directory...\n'));
@@ -519,6 +520,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         console.log(chalk.cyan(`\n[INFO] Installed templates are for a different CLI base. Updating to latest compatible.`));
       }
       console.log('');
+      const { confirm } = await import('@inquirer/prompts');
       const shouldUpdate = await confirm({
         message: `Update ALL assistants from ${installedVersion} to ${latestCompatibleTag}?`,
         default: false
