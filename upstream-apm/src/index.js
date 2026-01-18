@@ -311,10 +311,10 @@ template version compatible with your current CLI version.
         mkdirSync(subDir, { recursive: true });
 
         spinner.text = `Downloading templates for ${a}...`;
-        await downloadAndExtract(targetTag, a, subDir);
+        await downloadAndExtract(targetTag, a, subDir, { silent: true });
 
         spinner.text = `Installing templates for ${a}...`;
-        installFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesInstalled });
+        installFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesInstalled, silent: true });
 
         if (!guidesInstalled) guidesInstalled = true;
       }
@@ -547,14 +547,24 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         mkdirSync(tempDir, { recursive: true });
 
         // Download and extract the latest compatible bundles per assistant
-        console.log(chalk.gray('\nDownloading update bundles...'));
-        let guidesUpdated = false;
-        for (const a of assistants) {
-          const subDir = join(tempDir, a.replace(/[^a-zA-Z0-9._-]/g, '_'));
-          mkdirSync(subDir, { recursive: true });
-          await downloadAndExtract(latestCompatibleTag, a, subDir);
-          updateFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesUpdated });
-          if (!guidesUpdated) guidesUpdated = true;
+        const spinner = new Spinner('Downloading and installing updates...').start();
+
+        try {
+          let guidesUpdated = false;
+          for (const a of assistants) {
+            const subDir = join(tempDir, a.replace(/[^a-zA-Z0-9._-]/g, '_'));
+            mkdirSync(subDir, { recursive: true });
+
+            spinner.text = `Updating ${a}...`;
+
+            await downloadAndExtract(latestCompatibleTag, a, subDir, { silent: true });
+            updateFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesUpdated, silent: true });
+            if (!guidesUpdated) guidesUpdated = true;
+          }
+          spinner.succeed('Updates installed successfully.');
+        } catch (err) {
+          spinner.fail('Update failed during download/installation.');
+          throw err;
         }
 
         // Update metadata
