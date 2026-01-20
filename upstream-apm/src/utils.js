@@ -527,7 +527,13 @@ export async function createAndZipBackup(projectPath, assistants, templateTag) {
     const zip = new AdmZip();
     // Add the whole backup folder under its base name
     zip.addLocalFolder(backupDir, backupBase);
-    zip.writeZip(zipPath);
+    // Use async compression to prevent blocking the event loop
+    await new Promise((resolve, reject) => {
+      zip.writeZip(zipPath, (error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+    });
     console.log(chalk.gray(`  Created zip archive: .apm/${zipName}`));
   } catch (err) {
     console.log(chalk.yellow(`  Could not create zip archive for backup: ${err.message}`));
