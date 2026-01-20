@@ -305,7 +305,13 @@ export async function downloadAndExtract(targetTag, assistantName, destinationPa
     // Cross-platform extraction using adm-zip
     try {
       const zip = new AdmZip(zipPath);
-      zip.extractAllTo(destinationPath, true);
+      // Use async extraction to prevent blocking the event loop and spinner
+      await new Promise((resolve, reject) => {
+        zip.extractAllToAsync(destinationPath, true, (error) => {
+          if (error) reject(error);
+          else resolve();
+        });
+      });
     } catch (extractError) {
       throw new Error(`Failed to extract zip file: ${extractError.message}`);
     }
