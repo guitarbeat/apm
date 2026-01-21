@@ -79,6 +79,34 @@ export function writeMetadata(projectPath, metadata) {
 }
 
 /**
+ * Creates or updates metadata file to store APM installation information (multi-assistant schema)
+ * @param {string} projectPath - Path to the project directory
+ * @param {string[]} assistants - Installed assistants
+ * @param {string} templateVersion - APM template tag (e.g., v0.5.1+templates.2)
+ * @param {string} cliVersion - Current CLI version
+ */
+export function createOrUpdateMetadata(projectPath, assistants, templateVersion, cliVersion) {
+  const metadataDir = join(projectPath, '.apm');
+  const metadataPath = join(metadataDir, 'metadata.json');
+
+  if (!existsSync(metadataDir)) {
+    mkdirSync(metadataDir, { recursive: true });
+  }
+
+  const now = new Date().toISOString();
+  const metadata = {
+    cliVersion,
+    templateVersion,
+    assistants: assistants || [],
+    installedAt: existsSync(metadataPath) ? JSON.parse(readFileSync(metadataPath, 'utf8')).installedAt || now : now,
+    lastUpdated: now
+  };
+
+  writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+  console.log(chalk.gray(`  Metadata saved to ${metadataPath}`));
+}
+
+/**
  * Detects which AI assistant is installed in the current project
  * @param {string} projectPath - Path to the project directory
  * @returns {string[]} Array of detected assistant names
@@ -535,4 +563,3 @@ export async function createAndZipBackup(projectPath, assistants, templateTag) {
 
   return { backupDir, zipPath };
 }
-
