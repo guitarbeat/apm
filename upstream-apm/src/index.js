@@ -103,6 +103,8 @@ template version compatible with your current CLI version.
 `)
   .action(async (options) => {
     try {
+      const { select, confirm } = await import('@inquirer/prompts');
+
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
       console.log(chalk.gray('Setting up Agentic Project Management in this directory...\n'));
