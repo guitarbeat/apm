@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, cpSync, rmSync, copyFileSync, renameSync } from 'fs';
-import { join, dirname, basename } from 'path';
+import { join, dirname, basename, resolve } from 'path';
 import chalk from 'chalk';
 
 /**
@@ -536,3 +536,30 @@ export async function createAndZipBackup(projectPath, assistants, templateTag) {
   return { backupDir, zipPath };
 }
 
+/**
+ * Creates or updates metadata file to store APM installation information (multi-assistant schema)
+ * @param {string} projectPath - Path to the project directory
+ * @param {string[]} assistants - Installed assistants
+ * @param {string} templateVersion - APM template tag (e.g., v0.5.1+templates.2)
+ * @param {string} currentCliVersion - Current CLI version
+ */
+export function createOrUpdateMetadata(projectPath, assistants, templateVersion, currentCliVersion) {
+  const metadataDir = resolve(projectPath, '.apm');
+  const metadataPath = join(metadataDir, 'metadata.json');
+
+  if (!existsSync(metadataDir)) {
+    mkdirSync(metadataDir, { recursive: true });
+  }
+
+  const now = new Date().toISOString();
+  const metadata = {
+    cliVersion: currentCliVersion,
+    templateVersion,
+    assistants: assistants || [],
+    installedAt: existsSync(metadataPath) ? JSON.parse(readFileSync(metadataPath, 'utf8')).installedAt || now : now,
+    lastUpdated: now
+  };
+
+  writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+  console.log(chalk.gray(`  Metadata saved to ${metadataPath}`));
+}
