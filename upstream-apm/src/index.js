@@ -2,20 +2,14 @@
 
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
-import { Spinner } from './spinner.js';
-import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } from './downloader.js';
-import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
-import { resolve, join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup } from './utils.js';
+import { createRequire } from 'module';
 
 const program = new Command();
 
-// Dynamically read CLI version from package.json
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const packageJsonPath = join(__dirname, '..', 'package.json');
-const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+// Performance Optimization: Use createRequire for faster package.json reading
+// and to avoid top-level fs imports which slow down startup.
+const require = createRequire(import.meta.url);
+const packageJson = require('../package.json');
 const CURRENT_CLI_VERSION = packageJson.version;
 
 // Custom help output function
@@ -57,37 +51,12 @@ program
   });
 
 // Display banner when no command is provided
-program.action(() => {
+program.action(async () => {
+  // Performance Optimization: Lazy load utils to improve CLI startup time
+  const { displayBanner } = await import('./utils.js');
   displayBanner(CURRENT_CLI_VERSION);
   console.log(chalk.gray('\nUse --help to see available commands.\n'));
 });
-
-/**
- * Creates or updates metadata file to store APM installation information (multi-assistant schema)
- * @param {string} projectPath - Path to the project directory
- * @param {string[]} assistants - Installed assistants
- * @param {string} templateVersion - APM template tag (e.g., v0.5.1+templates.2)
- */
-function createOrUpdateMetadata(projectPath, assistants, templateVersion) {
-  const metadataDir = resolve(projectPath, '.apm');
-  const metadataPath = join(metadataDir, 'metadata.json');
-  
-  if (!existsSync(metadataDir)) {
-    mkdirSync(metadataDir, { recursive: true });
-  }
-  
-  const now = new Date().toISOString();
-  const metadata = {
-    cliVersion: CURRENT_CLI_VERSION,
-    templateVersion,
-    assistants: assistants || [],
-    installedAt: existsSync(metadataPath) ? JSON.parse(readFileSync(metadataPath, 'utf8')).installedAt || now : now,
-    lastUpdated: now
-  };
-  
-  writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
-  console.log(chalk.gray(`  Metadata saved to ${metadataPath}`));
-}
 
 program
   .command('init')
@@ -103,6 +72,13 @@ template version compatible with your current CLI version.
 `)
   .action(async (options) => {
     try {
+      // Performance Optimization: Lazy load heavy dependencies only when command is executed
+      const { displayBanner, readMetadata, detectInstalledAssistants, mergeAssistants, parseTemplateTagParts, compareTemplateVersions, findLatestCompatibleTemplateTag, findLatestTemplateTag, checkForNewerTemplates, createOrUpdateMetadata, installFromTempDirectory } = await import('./utils.js');
+      const { Spinner } = await import('./spinner.js');
+      const { fetchLatestRelease, downloadAndExtract } = await import('./downloader.js');
+      const { join } = await import('path');
+      const { existsSync, mkdirSync, rmSync, writeFileSync } = await import('fs');
+
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
       console.log(chalk.gray('Setting up Agentic Project Management in this directory...\n'));
@@ -345,7 +321,8 @@ template version compatible with your current CLI version.
       rmSync(tempDir, { recursive: true, force: true });
 
       // Create/update metadata file with full template tag and assistants
-      createOrUpdateMetadata(process.cwd(), assistantsToInstall, targetTag);
+      // Optimization: use shared function from utils with CLI version passed in
+      createOrUpdateMetadata(process.cwd(), assistantsToInstall, targetTag, CURRENT_CLI_VERSION);
 
       // Success message with next steps
       console.log(chalk.green.bold('\nAPM initialized successfully!'));
@@ -373,6 +350,12 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 `)
   .action(async () => {
     try {
+      // Performance Optimization: Lazy load heavy dependencies
+      const { displayBanner, readMetadata, detectInstalledAssistants, findLatestCompatibleTemplateTag, findLatestTemplateTag, checkForNewerTemplates, compareTemplateVersions, isVersionNewer, parseTemplateTagParts, createAndZipBackup, updateFromTempDirectory, writeMetadata, restoreBackup } = await import('./utils.js');
+      const { downloadAndExtract } = await import('./downloader.js');
+      const { join } = await import('path');
+      const { existsSync, mkdirSync, rmSync } = await import('fs');
+
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
       console.log(chalk.blue('[UPDATE] APM Update Tool'));
