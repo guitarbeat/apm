@@ -7,7 +7,7 @@ import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup } from './utils.js';
+import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup, displaySuccess } from './utils.js';
 
 const program = new Command();
 
@@ -348,14 +348,15 @@ template version compatible with your current CLI version.
       createOrUpdateMetadata(process.cwd(), assistantsToInstall, targetTag);
 
       // Success message with next steps
-      console.log(chalk.green.bold('\nAPM initialized successfully!'));
-      console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-      console.log(chalk.gray(`Template Version: ${targetTag}`));
-      console.log(chalk.gray('\nNext steps:'));
-      console.log(chalk.gray('1. Review the generated files in the .apm/ directory'));
-      console.log(chalk.gray('2. Customize the prompts and configuration for your specific project'));
-      console.log(chalk.gray('3. Start using APM with your AI assistant'));
-      console.log(chalk.gray('4. Run "apm update" anytime to get the latest improvements\n'));
+      displaySuccess('APM initialized successfully!', {
+        'CLI Version': CURRENT_CLI_VERSION,
+        'Template Version': targetTag
+      }, [
+        'Review the generated files in the .apm/ directory',
+        'Customize the prompts and configuration for your specific project',
+        'Start using APM with your AI assistant',
+        'Run "apm update" anytime to get the latest improvements'
+      ]);
 
     } catch (error) {
       console.error(chalk.red('\nInitialization failed...'));
@@ -572,9 +573,10 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         rmSync(tempDir, { recursive: true, force: true });
 
         // Success!
-        console.log(chalk.green(`\nAPM templates successfully updated to ${latestCompatibleTag}!`));
-        console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-        console.log(chalk.gray(`Template Version: ${latestCompatibleTag}`));
+        displaySuccess(`APM templates successfully updated to ${latestCompatibleTag}!`, {
+          'CLI Version': CURRENT_CLI_VERSION,
+          'Template Version': latestCompatibleTag
+        });
         // Remove unzipped backup folder, keep archive
         try {
           rmSync(backupDir, { recursive: true, force: true });
