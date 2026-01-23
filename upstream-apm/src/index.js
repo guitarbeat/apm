@@ -109,6 +109,9 @@ template version compatible with your current CLI version.
       const { select, confirm } = await import('@inquirer/prompts');
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
+
+      // Lazy load prompts to improve CLI startup time
+      const { select, confirm } = await import('@inquirer/prompts');
       console.log(chalk.gray('Setting up Agentic Project Management in this directory...\n'));
 
       // Check existing metadata and migrate if needed
@@ -384,6 +387,9 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
+
+      // Lazy load prompts to improve CLI startup time
+      const { confirm } = await import('@inquirer/prompts');
       console.log(chalk.blue('[UPDATE] APM Update Tool'));
       console.log(chalk.gray('  Checking for updates...\n'));
 
