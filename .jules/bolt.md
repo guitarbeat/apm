@@ -5,3 +5,7 @@
 ## 2024-05-23 - Lazy Loading @inquirer/prompts
 **Learning:** Statically importing `@inquirer/prompts` added ~60-87ms to the CLI startup time. Since it's only needed for interactive commands (`init`, `update`), lazy-loading it reduced the `--help` command execution time by ~150ms (~50% improvement).
 **Action:** Audit interactive CLI libraries and ensure they are only imported when interactivity is actually required.
+
+## 2024-05-24 - Lazy Loading Internal Modules
+**Learning:** Lazy loading internal modules (`utils.js`, `downloader.js`) in `index.js` reduced startup time from ~110ms to ~85ms (~25% improvement). Even local ESM imports add up.
+**Action:** For CLI tools, lazy load not just external heavy libs but also internal heavy modules that are not needed for the immediate command.
