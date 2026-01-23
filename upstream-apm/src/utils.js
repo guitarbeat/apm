@@ -379,7 +379,7 @@ export function checkForNewerTemplates(currentCliVersion, latestOverall) {
  * @param {string} projectRoot - Project root directory
  */
 export function installFromTempDirectory(tempDir, assistant, projectRoot, options = {}) {
-  const { installGuides = true } = options;
+  const { installGuides = true, silent = false } = options;
   // Install guides directory into .apm/
   const tempGuidesDir = join(tempDir, 'guides');
   const apmDir = join(projectRoot, '.apm');
@@ -393,7 +393,7 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
       rmSync(apmGuidesDir, { recursive: true, force: true });
     }
     cpSync(tempGuidesDir, apmGuidesDir, { recursive: true });
-    console.log(chalk.gray('  Installed guides/'));
+    if (!silent) console.log(chalk.gray('  Installed guides/'));
   }
 
   // Install commands directory into assistant-specific directory at PROJECT ROOT
@@ -407,7 +407,7 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
     }
     mkdirSync(rootAssistantDir, { recursive: true });
     cpSync(tempCommandsDir, rootAssistantDir, { recursive: true });
-    console.log(chalk.gray(`  Installed ${assistantDir}/`));
+    if (!silent) console.log(chalk.gray(`  Installed ${assistantDir}/`));
   }
 }
 
@@ -418,7 +418,7 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
  * @param {string} projectRoot - Project root directory
  */
 export function updateFromTempDirectory(tempDir, assistant, projectRoot, options = {}) {
-  const { installGuides = true } = options;
+  const { installGuides = true, silent = false } = options;
   
   // Update assistant-specific directory
   const assistantDir = getAssistantDirectory(assistant);
@@ -440,7 +440,7 @@ export function updateFromTempDirectory(tempDir, assistant, projectRoot, options
         copyFileSync(src, dest);
       }
     }
-    console.log(chalk.green(`  Updated ${assistantDir}`));
+    if (!silent) console.log(chalk.green(`  Updated ${assistantDir}`));
   }
 
   // Update guides directory (in .apm/guides) only when requested
@@ -463,7 +463,7 @@ export function updateFromTempDirectory(tempDir, assistant, projectRoot, options
           copyFileSync(src, dest);
         }
       }
-      console.log(chalk.green(`  Updated guides`));
+      if (!silent) console.log(chalk.green(`  Updated guides`));
     }
   }
 }
