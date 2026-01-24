@@ -7,7 +7,7 @@ import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup } from './utils.js';
+import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup, displaySuccess } from './utils.js';
 
 const program = new Command();
 
@@ -102,16 +102,13 @@ ${chalk.gray('Note:')} If no --tag is specified, the CLI will automatically find
 template version compatible with your current CLI version.
 `)
   .action(async (options) => {
-    // Lazy-load interactive prompts
-    const { select, confirm } = await import('@inquirer/prompts');
-
     try {
+      // Lazy-load interactive prompts
       const { select, confirm } = await import('@inquirer/prompts');
+
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
 
-      // Lazy load prompts to improve CLI startup time
-      const { select, confirm } = await import('@inquirer/prompts');
       console.log(chalk.gray('Setting up Agentic Project Management in this directory...\n'));
 
       // Check existing metadata and migrate if needed
@@ -128,7 +125,6 @@ template version compatible with your current CLI version.
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
-      const { select } = await import('@inquirer/prompts');
       const assistant = await select({
         message: 'Which AI assistant are you using?',
         choices: [
@@ -224,7 +220,6 @@ template version compatible with your current CLI version.
           console.log(chalk.red(`  Target tag base: v${parsedTarget.baseVersion}`));
           console.log(chalk.red(`  Your CLI base:   v${CURRENT_CLI_VERSION}`));
           console.log(chalk.red(`  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`));
-          const { confirm } = await import('@inquirer/prompts');
           const proceed = await confirm({
             message: chalk.red(`May cause incompatibilities. Proceed with init using ${targetTag}?`),
             default: false
@@ -244,7 +239,6 @@ template version compatible with your current CLI version.
               console.log(chalk.yellow(`  Selected tag:      ${targetTag}`));
               console.log(chalk.yellow(`  Latest compatible: ${compatible.tag_name}`));
               console.log(chalk.yellow(`  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`));
-              const { confirm } = await import('@inquirer/prompts');
               const proceedOlder = await confirm({
                 message: chalk.yellow('Proceed with downgrade?'),
                 default: false
@@ -355,14 +349,15 @@ template version compatible with your current CLI version.
       createOrUpdateMetadata(process.cwd(), assistantsToInstall, targetTag);
 
       // Success message with next steps
-      console.log(chalk.green.bold('\nAPM initialized successfully!'));
-      console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-      console.log(chalk.gray(`Template Version: ${targetTag}`));
-      console.log(chalk.gray('\nNext steps:'));
-      console.log(chalk.gray('1. Review the generated files in the .apm/ directory'));
-      console.log(chalk.gray('2. Customize the prompts and configuration for your specific project'));
-      console.log(chalk.gray('3. Start using APM with your AI assistant'));
-      console.log(chalk.gray('4. Run "apm update" anytime to get the latest improvements\n'));
+      displaySuccess('APM initialized successfully!', {
+        'CLI Version': CURRENT_CLI_VERSION,
+        'Template Version': targetTag
+      }, [
+        'Review the generated files in the .apm/ directory',
+        'Customize the prompts and configuration for your specific project',
+        'Start using APM with your AI assistant',
+        'Run "apm update" anytime to get the latest improvements'
+      ]);
 
     } catch (error) {
       console.error(chalk.red('\nInitialization failed...'));
@@ -379,17 +374,13 @@ ${chalk.gray('Note:')} This command updates templates to the latest version comp
 current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -g agentic-pm')}
 `)
   .action(async () => {
-    // Lazy-load interactive prompts
-    const { confirm } = await import('@inquirer/prompts');
-
     try {
+      // Lazy-load interactive prompts
       const { confirm } = await import('@inquirer/prompts');
 
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
 
-      // Lazy load prompts to improve CLI startup time
-      const { confirm } = await import('@inquirer/prompts');
       console.log(chalk.blue('[UPDATE] APM Update Tool'));
       console.log(chalk.gray('  Checking for updates...\n'));
 
@@ -536,7 +527,6 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         console.log(chalk.cyan(`\n[INFO] Installed templates are for a different CLI base. Updating to latest compatible.`));
       }
       console.log('');
-      const { confirm } = await import('@inquirer/prompts');
       const shouldUpdate = await confirm({
         message: `Update ALL assistants from ${installedVersion} to ${latestCompatibleTag}?`,
         default: false
@@ -597,22 +587,25 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         rmSync(tempDir, { recursive: true, force: true });
 
         // Success!
-        console.log(chalk.green(`\nAPM templates successfully updated to ${latestCompatibleTag}!`));
-        console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-        console.log(chalk.gray(`Template Version: ${latestCompatibleTag}`));
+        let backupInfo = {};
         // Remove unzipped backup folder, keep archive
         try {
           rmSync(backupDir, { recursive: true, force: true });
           if (zipPath) {
-            console.log(chalk.gray(`\nBackup archive saved at: ${zipPath}`));
+            backupInfo['Backup archive'] = zipPath;
           } else {
-            console.log(chalk.gray(`\nBackup directory saved at: ${backupDir}`));
+            backupInfo['Backup directory'] = backupDir;
           }
         } catch (_) {
           // If cleanup fails, still continue
           console.log(chalk.yellow(`\nCould not clean backup directory: ${backupDir}`));
         }
-        console.log('');
+
+        displaySuccess(`APM templates successfully updated to ${latestCompatibleTag}!`, {
+          'CLI Version': CURRENT_CLI_VERSION,
+          'Template Version': latestCompatibleTag,
+          ...backupInfo
+        });
 
       } catch (updateError) {
         console.error(chalk.red('\nUpdate failed...'), updateError.message);

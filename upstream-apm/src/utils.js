@@ -301,6 +301,33 @@ export function displayBanner(version = '0.5.0', useColors = true) {
 }
 
 /**
+ * Displays a formatted success message with details and next steps
+ * @param {string} title - Main success message
+ * @param {Object} info - Key-value pairs to display
+ * @param {string[]} nextSteps - Array of next steps instructions
+ */
+export function displaySuccess(title, info = {}, nextSteps = []) {
+  console.log('');
+  console.log(chalk.green.bold(`✔ ${title}`));
+
+  if (info && Object.keys(info).length > 0) {
+    console.log('');
+    for (const [key, value] of Object.entries(info)) {
+      console.log(`  ${chalk.gray(key + ':')} ${chalk.white(value)}`);
+    }
+  }
+
+  if (nextSteps && nextSteps.length > 0) {
+    console.log('');
+    console.log(`  ${chalk.bold('Next steps:')}`);
+    nextSteps.forEach((step, index) => {
+      console.log(`  ${chalk.gray((index + 1) + '.')} ${chalk.white(step)}`);
+    });
+  }
+  console.log('');
+}
+
+/**
  * Compares two base version strings to determine if v1 is newer than v2
  * @param {string} v1 - First version (e.g., "0.5.1")
  * @param {string} v2 - Second version (e.g., "0.5.0")
