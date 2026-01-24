@@ -358,11 +358,11 @@ template version compatible with your current CLI version.
       console.log(chalk.green.bold('\nAPM initialized successfully!'));
       console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
       console.log(chalk.gray(`Template Version: ${targetTag}`));
-      console.log(chalk.gray('\nNext steps:'));
-      console.log(chalk.gray('1. Review the generated files in the .apm/ directory'));
-      console.log(chalk.gray('2. Customize the prompts and configuration for your specific project'));
-      console.log(chalk.gray('3. Start using APM with your AI assistant'));
-      console.log(chalk.gray('4. Run "apm update" anytime to get the latest improvements\n'));
+      console.log(chalk.bold.cyan('\nNext steps:'));
+      console.log(chalk.white('1. Review the generated files in the .apm/ directory'));
+      console.log(chalk.white('2. Customize the prompts and configuration for your specific project'));
+      console.log(chalk.white('3. Start using APM with your AI assistant'));
+      console.log(chalk.white('4. Run "apm update" anytime to get the latest improvements\n'));
 
     } catch (error) {
       console.error(chalk.red('\nInitialization failed...'));
