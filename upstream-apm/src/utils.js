@@ -536,3 +536,27 @@ export async function createAndZipBackup(projectPath, assistants, templateTag) {
   return { backupDir, zipPath };
 }
 
+
+/**
+ * Displays a formatted success message with optional info and next steps
+ * @param {string} message - Main success message
+ * @param {string[]} [infoLines] - Optional array of info lines
+ * @param {string[]} [nextSteps] - Optional array of next steps
+ */
+export function displaySuccess(message, infoLines = [], nextSteps = []) {
+  console.log(chalk.bold.green(`\n✔ ${message}`));
+
+  if (infoLines && infoLines.length > 0) {
+    infoLines.forEach(line => {
+      console.log(chalk.gray(line));
+    });
+  }
+
+  if (nextSteps && nextSteps.length > 0) {
+    console.log(chalk.bold.cyan('\nNext steps:'));
+    nextSteps.forEach(step => {
+      console.log(chalk.white(step));
+    });
+    console.log(''); // Trailing newline
+  }
+}
