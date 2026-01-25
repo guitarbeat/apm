@@ -536,3 +536,42 @@ export async function createAndZipBackup(projectPath, assistants, templateTag) {
   return { backupDir, zipPath };
 }
 
+/**
+ * Returns the default content for the Memory_Root.md file.
+ * @returns {string} The markdown content.
+ */
+export function getMemoryRootContent() {
+  return `# 🧠 Project Memory Root
+
+This directory serves as the long-term memory for your project.
+AI assistants use these files to maintain context across sessions.
+
+## 📂 Structure
+- **Memory_Root.md**: High-level context and index.
+- **decisions/**: Records of architectural decisions.
+- **learnings/**: Lessons learned during development.
+
+## 🚀 Usage
+Keep this file updated with the most critical high-level information about your project.
+`;
+}
+
+/**
+ * Returns the default content for the Implementation_Plan.md file.
+ * @returns {string} The markdown content.
+ */
+export function getImplementationPlanContent() {
+  return `# 📋 Implementation Plan
+
+Use this file to track the progress of your active tasks.
+
+## 🏗️ Active Task
+- [ ] Initialize project structure
+- [ ] Configure AI assistant
+
+## 📝 Backlog
+- [ ] Add core features
+- [ ] Write tests
+- [ ] Update documentation
+`;
+}

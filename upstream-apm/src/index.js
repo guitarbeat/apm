@@ -7,7 +7,7 @@ import { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup } from './utils.js';
+import { readMetadata, writeMetadata, detectInstalledAssistants, compareTemplateVersions, getAssistantDirectory, restoreBackup, displayBanner, isVersionNewer, checkForNewerTemplates, installFromTempDirectory, updateFromTempDirectory, parseTemplateTagParts, mergeAssistants, createAndZipBackup, getMemoryRootContent, getImplementationPlanContent } from './utils.js';
 
 const program = new Command();
 
@@ -337,14 +337,14 @@ template version compatible with your current CLI version.
       }
       const memoryRootPath = join(memoryDir, 'Memory_Root.md');
       if (!existsSync(memoryRootPath)) {
-        writeFileSync(memoryRootPath, '');
+        writeFileSync(memoryRootPath, getMemoryRootContent());
         console.log(chalk.gray('  Created Memory/Memory_Root.md'));
       }
 
       // Create empty Implementation_Plan.md
       const implementationPlanPath = join(apmDir, 'Implementation_Plan.md');
       if (!existsSync(implementationPlanPath)) {
-        writeFileSync(implementationPlanPath, '');
+        writeFileSync(implementationPlanPath, getImplementationPlanContent());
         console.log(chalk.gray('  Created Implementation_Plan.md'));
       }
 
