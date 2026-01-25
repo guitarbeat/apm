@@ -5,3 +5,7 @@
 ## 2024-05-23 - Lazy Loading @inquirer/prompts
 **Learning:** Statically importing `@inquirer/prompts` added ~60-87ms to the CLI startup time. Since it's only needed for interactive commands (`init`, `update`), lazy-loading it reduced the `--help` command execution time by ~150ms (~50% improvement).
 **Action:** Audit interactive CLI libraries and ensure they are only imported when interactivity is actually required.
+
+## 2026-01-24 - Duplicate Dynamic Imports & SyntaxErrors
+**Learning:** Redundant `await import()` calls for the same module within the same scope using `const` destructuring will cause `SyntaxError: Identifier '...' has already been declared`, crashing the application.
+**Action:** When implementing lazy loading, strictly ensure that module imports and variable declarations occur only once per scope.
