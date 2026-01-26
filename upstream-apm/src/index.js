@@ -106,12 +106,9 @@ template version compatible with your current CLI version.
     const { select, confirm } = await import('@inquirer/prompts');
 
     try {
-      const { select, confirm } = await import('@inquirer/prompts');
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
 
-      // Lazy load prompts to improve CLI startup time
-      const { select, confirm } = await import('@inquirer/prompts');
       console.log(chalk.gray('Setting up Agentic Project Management in this directory...\n'));
 
       // Check existing metadata and migrate if needed
@@ -128,9 +125,21 @@ template version compatible with your current CLI version.
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
-      const { select } = await import('@inquirer/prompts');
+
+      // Determine default assistant based on metadata or detection
+      let defaultAssistant;
+      if (existingMetadata && Array.isArray(existingMetadata.assistants) && existingMetadata.assistants.length > 0) {
+        defaultAssistant = existingMetadata.assistants[0];
+      } else {
+        const detected = detectInstalledAssistants(process.cwd());
+        if (detected.length > 0) {
+          defaultAssistant = detected[0];
+        }
+      }
+
       const assistant = await select({
         message: 'Which AI assistant are you using?',
+        default: defaultAssistant,
         choices: [
           {
             name: 'Cursor',
@@ -383,13 +392,9 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
     const { confirm } = await import('@inquirer/prompts');
 
     try {
-      const { confirm } = await import('@inquirer/prompts');
-
       // Display the APM banner
       displayBanner(CURRENT_CLI_VERSION);
 
-      // Lazy load prompts to improve CLI startup time
-      const { confirm } = await import('@inquirer/prompts');
       console.log(chalk.blue('[UPDATE] APM Update Tool'));
       console.log(chalk.gray('  Checking for updates...\n'));
 
