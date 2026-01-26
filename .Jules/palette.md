@@ -5,3 +5,7 @@
 ## 2025-05-27 - CLI Success Message Readability
 **Learning:** In dark mode terminals (which most devs use), `chalk.gray` is often too subtle for critical "Next Steps" instructions. Users tend to scan for success/fail colors and may miss important post-install actions if they blend into the background.
 **Action:** For actionable "Next Steps" or important post-operation instructions, use high-contrast colors like `chalk.bold.cyan` for headers and `chalk.white` for list items, instead of `chalk.gray` which should be reserved for low-priority logs.
+
+## 2025-05-30 - Smart Defaults in CLI Prompts
+**Learning:** For setup/init commands that might be run multiple times (e.g. for updates or repairs), forcing users to re-select their configuration from a list adds unnecessary friction. Users expect tools to be "aware" of the existing environment.
+**Action:** Detect existing configurations (like installed directories or metadata) and use them to pre-populate or default the selection in interactive prompts. This saves keystrokes and reinforces the feeling that the tool is intelligent and context-aware.
