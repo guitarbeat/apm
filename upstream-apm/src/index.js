@@ -96,11 +96,14 @@ template version compatible with your current CLI version.
         console.log(chalk.gray(`\n${existingAssistantsMsg}`));
         console.log(chalk.gray(`Note: Selecting an assistant will install/update ALL recorded assistants to the chosen tag.`));
         console.log('');
+      } else {
+        console.log(chalk.cyan.bold('Configuration'));
+        console.log(chalk.gray('We need to know which AI tool you use to install the correct templates.\n'));
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
       const assistant = await select({
-        message: 'Which AI assistant are you using?',
+        message: 'Select your primary AI assistant:',
         choices: [
           {
             name: 'Cursor',
