@@ -564,3 +564,29 @@ export async function createAndZipBackup(projectPath, assistants, templateTag) {
   return { backupDir, zipPath };
 }
 
+/**
+ * Displays a standardized success message with next steps
+ * @param {string} title - The main success message
+ * @param {Object} info - Key-value pairs of metadata to display
+ * @param {string[]} nextSteps - Array of next step strings
+ */
+export function displaySuccess(title, info = {}, nextSteps = []) {
+  console.log('');
+  console.log(chalk.bold.green('✔ ') + chalk.bold.green(title));
+
+  if (Object.keys(info).length > 0) {
+    console.log('');
+    for (const [key, value] of Object.entries(info)) {
+      console.log(chalk.gray(`${key}: `) + chalk.white(value));
+    }
+  }
+
+  if (nextSteps.length > 0) {
+    console.log('');
+    console.log(chalk.bold.cyan('Next steps:'));
+    nextSteps.forEach((step, index) => {
+      console.log(chalk.white(`  ${index + 1}. ${step}`));
+    });
+  }
+  console.log('');
+}

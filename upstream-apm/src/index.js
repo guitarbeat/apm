@@ -77,7 +77,7 @@ template version compatible with your current CLI version.
     const { select, confirm } = await import('@inquirer/prompts');
     const { Spinner } = await import('./spinner.js');
     const { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } = await import('./downloader.js');
-    const { readMetadata, detectInstalledAssistants, createOrUpdateMetadata, mergeAssistants, installFromTempDirectory, displayBanner, parseTemplateTagParts, compareTemplateVersions, checkForNewerTemplates } = await import('./utils.js');
+    const { readMetadata, detectInstalledAssistants, createOrUpdateMetadata, mergeAssistants, installFromTempDirectory, displayBanner, parseTemplateTagParts, compareTemplateVersions, checkForNewerTemplates, displaySuccess } = await import('./utils.js');
 
     try {
       // Display the APM banner
@@ -325,14 +325,19 @@ template version compatible with your current CLI version.
       createOrUpdateMetadata(process.cwd(), assistantsToInstall, targetTag, CURRENT_CLI_VERSION);
 
       // Success message with next steps
-      console.log(chalk.green.bold('\nAPM initialized successfully!'));
-      console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-      console.log(chalk.gray(`Template Version: ${targetTag}`));
-      console.log(chalk.bold.cyan('\nNext steps:'));
-      console.log(chalk.white('1. Review the generated files in the .apm/ directory'));
-      console.log(chalk.white('2. Customize the prompts and configuration for your specific project'));
-      console.log(chalk.white('3. Start using APM with your AI assistant'));
-      console.log(chalk.white('4. Run "apm update" anytime to get the latest improvements\n'));
+      displaySuccess(
+        'APM initialized successfully!',
+        {
+          'CLI Version': CURRENT_CLI_VERSION,
+          'Template Version': targetTag
+        },
+        [
+          'Review the generated files in the .apm/ directory',
+          'Customize the prompts and configuration for your specific project',
+          'Start using APM with your AI assistant',
+          'Run "apm update" anytime to get the latest improvements'
+        ]
+      );
 
     } catch (error) {
       console.error(chalk.red('\nInitialization failed...'));
@@ -353,7 +358,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
     const { confirm } = await import('@inquirer/prompts');
     const { Spinner } = await import('./spinner.js');
     const { downloadAndExtract, findLatestCompatibleTemplateTag, findLatestTemplateTag } = await import('./downloader.js');
-    const { readMetadata, writeMetadata, detectInstalledAssistants, displayBanner, compareTemplateVersions, isVersionNewer, checkForNewerTemplates, updateFromTempDirectory, parseTemplateTagParts, createAndZipBackup, restoreBackup } = await import('./utils.js');
+    const { readMetadata, writeMetadata, detectInstalledAssistants, displayBanner, compareTemplateVersions, isVersionNewer, checkForNewerTemplates, updateFromTempDirectory, parseTemplateTagParts, createAndZipBackup, restoreBackup, displaySuccess } = await import('./utils.js');
 
     try {
       // Display the APM banner
@@ -560,19 +565,23 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         rmSync(tempDir, { recursive: true, force: true });
 
         // Success!
-        console.log(chalk.green(`\nAPM templates successfully updated to ${latestCompatibleTag}!`));
-        console.log(chalk.gray(`CLI Version: ${CURRENT_CLI_VERSION}`));
-        console.log(chalk.gray(`Template Version: ${latestCompatibleTag}`));
+        displaySuccess(
+          `APM templates successfully updated to ${latestCompatibleTag}!`,
+          {
+            'CLI Version': CURRENT_CLI_VERSION,
+            'Template Version': latestCompatibleTag
+          }
+        );
 
         try {
           rmSync(backupDir, { recursive: true, force: true });
           if (zipPath) {
-            console.log(chalk.gray(`\nBackup archive saved at: ${zipPath}`));
+            console.log(chalk.gray(`Backup archive saved at: ${zipPath}`));
           } else {
-            console.log(chalk.gray(`\nBackup directory saved at: ${backupDir}`));
+            console.log(chalk.gray(`Backup directory saved at: ${backupDir}`));
           }
         } catch (_) {
-          console.log(chalk.yellow(`\nCould not clean backup directory: ${backupDir}`));
+          console.log(chalk.yellow(`Could not clean backup directory: ${backupDir}`));
         }
         console.log('');
 
