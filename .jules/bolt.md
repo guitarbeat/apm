@@ -13,3 +13,7 @@
 ## 2024-05-23 - Duplicate Variable Declarations in Dynamic Imports
 **Learning:** Copy-pasting dynamic import blocks (e.g., `const { select } = await import('@inquirer/prompts')`) inside try/catch blocks or if/else branches can lead to "Identifier has already been declared" SyntaxErrors if the variable is also declared in the outer scope.
 **Action:** Declare dynamic imports once at the top of the async action handler or verify scope carefully when using them in nested blocks.
+
+## 2024-05-23 - Lightweight Chalk Replacement for Startup
+**Learning:** `chalk` (v5) static import adds ~8-30ms to startup time. Since `commander` requires synchronous help configuration, we cannot lazy-load `chalk` for the help output. A lightweight, API-compatible replacement (`simple-chalk.js`) that supports only used colors allows postponing the heavy `chalk` load until needed by async commands.
+**Action:** Use a lightweight shim for CLI startup paths where synchronous coloring is needed, and lazy-load the full library for complex interactions. Ensure the shim correctly handles TTY detection and `NO_COLOR` to avoid polluting piped output.
