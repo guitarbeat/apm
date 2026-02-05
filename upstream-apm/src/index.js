@@ -77,7 +77,7 @@ template version compatible with your current CLI version.
     const { select, confirm } = await import('@inquirer/prompts');
     const { Spinner } = await import('./spinner.js');
     const { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } = await import('./downloader.js');
-    const { readMetadata, detectInstalledAssistants, createOrUpdateMetadata, mergeAssistants, installFromTempDirectory, displayBanner, parseTemplateTagParts, compareTemplateVersions, checkForNewerTemplates, displaySuccess } = await import('./utils.js');
+    const { readMetadata, detectInstalledAssistants, createOrUpdateMetadata, mergeAssistants, installFromTempDirectory, displayBanner, parseTemplateTagParts, compareTemplateVersions, checkForNewerTemplates, displaySuccess, displayError } = await import('./utils.js');
 
     try {
       // Display the APM banner
@@ -343,8 +343,7 @@ template version compatible with your current CLI version.
       );
 
     } catch (error) {
-      console.error(chalk.red('\nInitialization failed...'));
-      console.error(chalk.red(error.message));
+      displayError('Initialization failed', error.message);
       process.exit(1);
     }
   });
@@ -361,7 +360,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
     const { confirm } = await import('@inquirer/prompts');
     const { Spinner } = await import('./spinner.js');
     const { downloadAndExtract, findLatestCompatibleTemplateTag, findLatestTemplateTag } = await import('./downloader.js');
-    const { readMetadata, writeMetadata, detectInstalledAssistants, displayBanner, compareTemplateVersions, isVersionNewer, checkForNewerTemplates, updateFromTempDirectory, parseTemplateTagParts, createAndZipBackup, restoreBackup, displaySuccess } = await import('./utils.js');
+    const { readMetadata, writeMetadata, detectInstalledAssistants, displayBanner, compareTemplateVersions, isVersionNewer, checkForNewerTemplates, updateFromTempDirectory, parseTemplateTagParts, createAndZipBackup, restoreBackup, displaySuccess, displayError } = await import('./utils.js');
 
     try {
       // Display the APM banner
@@ -589,7 +588,7 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         console.log('');
 
       } catch (updateError) {
-        console.error(chalk.red('\nUpdate failed...'), updateError.message);
+        displayError('Update failed', updateError.message);
         console.log(chalk.yellow('\nAttempting to restore from backup...'));
         
         try {
@@ -597,16 +596,14 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
           restoreBackup(backupDir, process.cwd());
           console.log(chalk.green('Successfully restored from backup.'));
         } catch (restoreError) {
-          console.error(chalk.red('Failed to restore backup...'), restoreError.message);
-          console.log(chalk.red(`Manual restoration may be required. Backup location: ${backupDir}`));
+          displayError('Failed to restore backup', restoreError.message, `Manual restoration may be required. Backup location: ${backupDir}`);
         }
         
         process.exit(1);
       }
 
     } catch (error) {
-      console.error(chalk.red('\nUpdate failed...'));
-      console.error(chalk.red(error.message));
+      displayError('Update failed', error.message);
       process.exit(1);
     }
   });
