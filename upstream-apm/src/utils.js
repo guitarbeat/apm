@@ -590,3 +590,25 @@ export function displaySuccess(title, info = {}, nextSteps = []) {
   }
   console.log('');
 }
+
+/**
+ * Displays a standardized error message with optional details and suggestion
+ * @param {string} title - The main error message
+ * @param {string} [details] - Optional details about the error
+ * @param {string} [suggestion] - Optional suggestion for resolution
+ */
+export function displayError(title, details, suggestion) {
+  console.error('');
+  console.error(chalk.bold.red('✖ ') + chalk.bold.red(title));
+
+  if (details) {
+    console.error(chalk.red(`  ${details}`));
+  }
+
+  if (suggestion) {
+    console.error('');
+    console.error(chalk.yellow('Suggestion:'));
+    console.error(chalk.white(`  ${suggestion}`));
+  }
+  console.error('');
+}
