@@ -19,6 +19,20 @@ const ASSISTANT_DIRECTORIES = {
 };
 
 /**
+ * Indicators for environment detection (folders or files that suggest an assistant is being used)
+ */
+const ASSISTANT_INDICATORS = {
+  'Cursor': ['.cursor'],
+  'Windsurf': ['.windsurf'],
+  'Roo Code': ['.roo'],
+  'Claude Code': ['.claude'],
+  'Gemini CLI': ['.gemini'],
+  'Kilo Code': ['.kilocode'],
+  'Auggie CLI': ['.augment'],
+  'opencode': ['.opencode']
+};
+
+/**
  * Reads APM metadata from the project directory
  * @param {string} projectPath - Path to the project directory
  * @returns {Object|null} Metadata object or null if not found
@@ -122,6 +136,22 @@ export function detectInstalledAssistants(projectPath) {
   }
   
   return detected;
+}
+
+/**
+ * Detects the likely AI assistant based on environment indicators
+ * @param {string} projectPath - Path to the project directory
+ * @returns {string|null} Detected assistant name or null
+ */
+export function detectLikelyAssistant(projectPath) {
+  for (const [assistant, indicators] of Object.entries(ASSISTANT_INDICATORS)) {
+    for (const indicator of indicators) {
+      if (existsSync(join(projectPath, indicator))) {
+        return assistant;
+      }
+    }
+  }
+  return null;
 }
 
 /**
