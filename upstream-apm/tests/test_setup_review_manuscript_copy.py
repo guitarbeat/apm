@@ -10,8 +10,8 @@ if TYPE_CHECKING:
     from _pytest.capture import CaptureFixture
 
 
-ROOT = Path(__file__).resolve().parents[1]
-MODULE_PATH = ROOT / "rigorous-apm" / "02-setup_review.py"
+ROOT = Path(__file__).resolve().parents[2]
+MODULE_PATH = ROOT / "phd-apm" / "02-setup_review.py"
 
 spec = importlib.util.spec_from_file_location("setup_review", MODULE_PATH)
 setup_review = importlib.util.module_from_spec(spec)
