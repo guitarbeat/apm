@@ -77,7 +77,7 @@ template version compatible with your current CLI version.
     const { select, confirm } = await import('@inquirer/prompts');
     const { Spinner } = await import('./spinner.js');
     const { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } = await import('./downloader.js');
-    const { readMetadata, detectInstalledAssistants, createOrUpdateMetadata, mergeAssistants, installFromTempDirectory, displayBanner, parseTemplateTagParts, compareTemplateVersions, checkForNewerTemplates, displaySuccess } = await import('./utils.js');
+    const { readMetadata, detectInstalledAssistants, detectLikelyAssistant, createOrUpdateMetadata, mergeAssistants, installFromTempDirectory, displayBanner, parseTemplateTagParts, compareTemplateVersions, checkForNewerTemplates, displaySuccess } = await import('./utils.js');
 
     try {
       // Display the APM banner
@@ -87,6 +87,8 @@ template version compatible with your current CLI version.
 
       // Check existing metadata and migrate if needed
       const existingMetadata = readMetadata(process.cwd(), CURRENT_CLI_VERSION);
+      let defaultAssistant = null;
+
       if (existingMetadata) {
         console.log(chalk.yellow('APM appears to already be initialized in this directory.'));
         console.log(chalk.yellow('Continuing may update existing APM files.'));
@@ -99,11 +101,20 @@ template version compatible with your current CLI version.
       } else {
         console.log(chalk.cyan.bold('Configuration'));
         console.log(chalk.gray('We need to know which AI tool you use to install the correct templates.\n'));
+
+        // Auto-detect environment for default selection
+        const likelyAssistant = detectLikelyAssistant(process.cwd());
+        if (likelyAssistant) {
+          defaultAssistant = likelyAssistant;
+          console.log(chalk.green(`  ✔ Detected likely environment: ${chalk.bold(likelyAssistant)}`));
+          console.log('');
+        }
       }
 
       // Interactive prompt for AI assistant selection - all 10 assistants
       const assistant = await select({
         message: 'Select your primary AI assistant:',
+        default: defaultAssistant,
         choices: [
           {
             name: 'Cursor',
