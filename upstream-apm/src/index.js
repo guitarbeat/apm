@@ -341,10 +341,10 @@ template version compatible with your current CLI version.
       // Success message with next steps
       displaySuccess(
         'APM initialized successfully!',
-        {
-          'CLI Version': CURRENT_CLI_VERSION,
-          'Template Version': targetTag
-        },
+        [
+          `CLI Version: ${CURRENT_CLI_VERSION}`,
+          `Template Version: ${targetTag}`
+        ],
         [
           'Review the generated files in the .apm/ directory',
           'Customize the prompts and configuration for your specific project',
@@ -581,10 +581,10 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         // Success!
         displaySuccess(
           `APM templates successfully updated to ${latestCompatibleTag}!`,
-          {
-            'CLI Version': CURRENT_CLI_VERSION,
-            'Template Version': latestCompatibleTag
-          }
+          [
+            `CLI Version: ${CURRENT_CLI_VERSION}`,
+            `Template Version: ${latestCompatibleTag}`
+          ]
         );
 
         try {
