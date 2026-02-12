@@ -39,11 +39,11 @@ const ASSISTANT_INDICATORS = {
  */
 export function readMetadata(projectPath, currentCliVersion) {
   const metadataPath = join(projectPath, '.apm', 'metadata.json');
-  
+
   if (!existsSync(metadataPath)) {
     return null;
   }
-  
+
   try {
     const content = readFileSync(metadataPath, 'utf8');
     const parsed = JSON.parse(content);
@@ -84,11 +84,11 @@ export function readMetadata(projectPath, currentCliVersion) {
 export function writeMetadata(projectPath, metadata) {
   const metadataDir = join(projectPath, '.apm');
   const metadataPath = join(metadataDir, 'metadata.json');
-  
+
   if (!existsSync(metadataDir)) {
     mkdirSync(metadataDir, { recursive: true });
   }
-  
+
   writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
 }
 
@@ -127,14 +127,14 @@ export function createOrUpdateMetadata(projectPath, assistants, templateVersion,
  */
 export function detectInstalledAssistants(projectPath) {
   const detected = [];
-  
+
   for (const [assistant, directory] of Object.entries(ASSISTANT_DIRECTORIES)) {
     const dirPath = join(projectPath, directory);
     if (existsSync(dirPath)) {
       detected.push(assistant);
     }
   }
-  
+
   return detected;
 }
 
@@ -183,18 +183,18 @@ export function parseTemplateTagParts(tag) {
 export function compareTemplateVersions(tagA, tagB) {
   const parsedA = parseTemplateTagParts(tagA);
   const parsedB = parseTemplateTagParts(tagB);
-  
+
   // Handle invalid tags
   if (!parsedA || !parsedB) {
     throw new Error(`Invalid template tag format: "${tagA}" or "${tagB}". Expected format: v<version>+templates.<buildNumber>`);
   }
-  
+
   // First, compare base versions
   // If base versions differ, these tags are not directly comparable
   if (parsedA.baseVersion !== parsedB.baseVersion) {
     return NaN;
   }
-  
+
   // Base versions are the same, compare build numbers
   if (parsedA.buildNumber < parsedB.buildNumber) {
     return -1;
@@ -214,9 +214,9 @@ export function compareTemplateVersions(tagA, tagB) {
 export function createBackup(projectPath, directories) {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupDir = join(projectPath, '.apm', `backup-${timestamp}`);
-  
+
   mkdirSync(backupDir, { recursive: true });
-  
+
   for (const dir of directories) {
     const sourcePath = join(projectPath, dir);
     if (existsSync(sourcePath)) {
@@ -226,7 +226,7 @@ export function createBackup(projectPath, directories) {
       console.log(chalk.gray(`  Backed up: ${dir}`));
     }
   }
-  
+
   return backupDir;
 }
 
@@ -239,13 +239,13 @@ export function restoreBackup(backupDir, projectPath) {
   if (!existsSync(backupDir)) {
     throw new Error('Backup directory not found');
   }
-  
+
   const items = readdirSync(backupDir);
-  
+
   for (const item of items) {
     const sourcePath = join(backupDir, item);
     const destPath = join(projectPath, item);
-    
+
     if (statSync(sourcePath).isDirectory()) {
       if (existsSync(destPath)) {
         rmSync(destPath, { recursive: true, force: true });
@@ -285,21 +285,21 @@ export function generateBanner(version = '0.5.0') {
   // Define colors for each letter in the ASCII art
   // You can change these to any chalk color: red, green, yellow, blue, magenta, cyan, white, gray, etc.
   const colorA = chalk.white;      // Color for letter "A"
-  const colorP = chalk.cyan;   // Color for letter "P" 
+  const colorP = chalk.cyan;   // Color for letter "P"
   const colorM = chalk.cyan;    // Color for letter "M"
-  
+
   // Banner width is 78 characters (based on horizontal border line)
   const BANNER_WIDTH = 80;
   const border = chalk.blue('║');
   const innerWidth = BANNER_WIDTH - 2; // Subtract 2 for border characters
-  
+
   // Calculate spacing for version line to center it
   const versionText = `Agentic Project Management v${version}`;
   const versionTextLength = versionText.length;
   const spacesOnEachSide = Math.floor((innerWidth - versionTextLength) / 2);
   const leftSpaces = ' '.repeat(spacesOnEachSide);
   const rightSpaces = ' '.repeat(innerWidth - versionTextLength - spacesOnEachSide);
-  
+
   // Detect basic hyperlink support (OSC 8). Many Windows consoles don't support this.
   const supportsHyperlinks = process.platform !== 'win32' && process.stdout && process.stdout.isTTY;
   const ghLabel = 'View on GitHub';
@@ -332,7 +332,7 @@ export function generateBanner(version = '0.5.0') {
     border + chalk.blue('                                                                              ') + border,
     chalk.blue('╚══════════════════════════════════════════════════════════════════════════════╝')
   ];
-  
+
   return lines;
 }
 
@@ -343,7 +343,7 @@ export function generateBanner(version = '0.5.0') {
  */
 export function displayBanner(version = '0.5.0', useColors = true) {
   const lines = generateBanner(version);
-  
+
   if (useColors) {
     // Lines are already colored, just print them
     lines.forEach(line => console.log(line));
@@ -418,7 +418,7 @@ export function checkForNewerTemplates(currentCliVersion, latestOverall) {
   if (!latestOverall) {
     return null;
   }
-  
+
   const latestBaseVersion = latestOverall.baseVersion;
   if (latestBaseVersion !== currentCliVersion && isVersionNewer(latestBaseVersion, currentCliVersion)) {
     return {
@@ -426,7 +426,7 @@ export function checkForNewerTemplates(currentCliVersion, latestOverall) {
       baseVersion: latestBaseVersion
     };
   }
-  
+
   return null;
 }
 
@@ -442,7 +442,7 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
   const tempGuidesDir = join(tempDir, 'guides');
   const apmDir = join(projectRoot, '.apm');
   const apmGuidesDir = join(apmDir, 'guides');
-  
+
   if (installGuides && existsSync(tempGuidesDir)) {
     if (!existsSync(apmDir)) {
       mkdirSync(apmDir, { recursive: true });
@@ -458,7 +458,7 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
   const assistantDir = getAssistantDirectory(assistant);
   const tempCommandsDir = join(tempDir, 'commands');
   const rootAssistantDir = join(projectRoot, assistantDir);
-  
+
   if (existsSync(tempCommandsDir)) {
     if (existsSync(rootAssistantDir)) {
       rmSync(rootAssistantDir, { recursive: true, force: true });
@@ -477,12 +477,12 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
  */
 export function updateFromTempDirectory(tempDir, assistant, projectRoot, options = {}) {
   const { installGuides = true, silent = false } = options;
-  
+
   // Update assistant-specific directory
   const assistantDir = getAssistantDirectory(assistant);
   const oldAssistantDir = join(projectRoot, assistantDir);
   const newCommandsDir = join(tempDir, 'commands');
-  
+
   if (existsSync(oldAssistantDir)) {
     rmSync(oldAssistantDir, { recursive: true, force: true });
   }
@@ -504,7 +504,7 @@ export function updateFromTempDirectory(tempDir, assistant, projectRoot, options
   // Update guides directory (in .apm/guides) only when requested
   const apmGuidesDir = join(projectRoot, '.apm', 'guides');
   const newGuidesDir = join(tempDir, 'guides');
-  
+
   if (installGuides) {
     if (existsSync(apmGuidesDir)) {
       rmSync(apmGuidesDir, { recursive: true, force: true });
@@ -619,26 +619,4 @@ export function displaySuccess(title, info = {}, nextSteps = []) {
     });
   }
   console.log('');
-}
-
-/**
- * Displays a standardized error message with optional details and suggestion
- * @param {string} title - The main error message
- * @param {string} [details] - Optional details about the error
- * @param {string} [suggestion] - Optional suggestion for resolution
- */
-export function displayError(title, details, suggestion) {
-  console.error('');
-  console.error(chalk.bold.red('✖ ') + chalk.bold.red(title));
-
-  if (details) {
-    console.error(chalk.red(`  ${details}`));
-  }
-
-  if (suggestion) {
-    console.error('');
-    console.error(chalk.yellow('Suggestion:'));
-    console.error(chalk.white(`  ${suggestion}`));
-  }
-  console.error('');
 }
