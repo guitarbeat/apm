@@ -34,7 +34,8 @@ const COLORS = {
 // 1. We are in a TTY environment (process.stdout.isTTY is true)
 // 2. NO_COLOR environment variable is NOT set
 // 3. FORCE_COLOR environment variable IS set (overrides everything)
-const isColorSupported = (process.stdout && process.stdout.isTTY && !process.env.NO_COLOR) || process.env.FORCE_COLOR;
+const isColorSupported =
+  (process.stdout && process.stdout.isTTY && !process.env.NO_COLOR) || process.env.FORCE_COLOR;
 
 function style(str, codes) {
   if (!isColorSupported) return str;
@@ -49,19 +50,19 @@ function createChalk(codes = []) {
   };
 
   // Add color properties
-  Object.keys(COLORS).forEach(color => {
+  Object.keys(COLORS).forEach((color) => {
     Object.defineProperty(fn, color, {
-      get: () => createChalk([...codes, COLORS[color]])
+      get: () => createChalk([...codes, COLORS[color]]),
     });
   });
 
   // Add modifier properties
   Object.defineProperty(fn, 'bold', {
-    get: () => createChalk([...codes, BOLD])
+    get: () => createChalk([...codes, BOLD]),
   });
 
   Object.defineProperty(fn, 'underline', {
-    get: () => createChalk([...codes, UNDERLINE])
+    get: () => createChalk([...codes, UNDERLINE]),
   });
 
   return fn;

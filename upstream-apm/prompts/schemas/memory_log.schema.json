@@ -26,7 +26,7 @@
       "maxLength": 50
     },
     "task_ref": {
-      "type": "string", 
+      "type": "string",
       "description": "Task ID reference from Implementation Plan",
       "pattern": "^Task \\d+(\\.\\d+)?$",
       "minLength": 6,
@@ -42,7 +42,7 @@
       "description": "Whether any ad-hoc agent delegation occurred during this task"
     },
     "compatibility_issues": {
-      "type": "boolean", 
+      "type": "boolean",
       "description": "Whether any compatibility issues were identified"
     },
     "important_findings": {
@@ -85,7 +85,7 @@
       "maxLength": 1000
     },
     "ad_hoc_delegation_details": {
-      "type": "string", 
+      "type": "string",
       "description": "Details of any agent delegation that occurred during this task (only present if ad_hoc_delegation: true)",
       "minLength": 10,
       "maxLength": 1000

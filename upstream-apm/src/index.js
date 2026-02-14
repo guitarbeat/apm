@@ -3,7 +3,7 @@
 import { Command, Option } from 'commander';
 import chalk from './simple-chalk.js';
 import { existsSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'fs';
-import { resolve, join, dirname } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const program = new Command();
@@ -19,12 +19,16 @@ const CURRENT_CLI_VERSION = packageJson.version;
 function displayCustomHelp() {
   console.log(chalk.cyan.bold('Agentic Project Management CLI'));
   console.log('');
-  console.log(chalk.gray('Usage:') + ' ' + chalk.white('apm [command] [options]'));
+  console.log(`${chalk.gray('Usage:')} ${chalk.white('apm [command] [options]')}`);
   console.log('');
   console.log(chalk.cyan.bold('Commands:'));
   console.log(`  ${chalk.bold('init')}              Initialize a new APM project`);
-  console.log(`  ${chalk.bold('init --tag <tag>')}  Install specific template version (e.g., v0.5.1+templates.2)`);
-  console.log(`  ${chalk.bold('update')}            Update APM templates to latest compatible version`);
+  console.log(
+    `  ${chalk.bold('init --tag <tag>')}  Install specific template version (e.g., v0.5.1+templates.2)`
+  );
+  console.log(
+    `  ${chalk.bold('update')}            Update APM templates to latest compatible version`
+  );
   console.log('');
   console.log(chalk.cyan.bold('Options:'));
   console.log(`  ${chalk.bold('-V, --version')}     Show version number`);
@@ -37,9 +41,13 @@ function displayCustomHelp() {
   console.log('');
   console.log(`  ${chalk.bold('Templates')} (v${CURRENT_CLI_VERSION}+templates.N):`);
   console.log(`            - Uses CLI version + build metadata`);
-  console.log(`            - Updated via: ${chalk.yellow('apm update')} or manually via: ${chalk.yellow('apm init --tag <tag>')}`);
+  console.log(
+    `            - Updated via: ${chalk.yellow('apm update')} or manually via: ${chalk.yellow('apm init --tag <tag>')}`
+  );
   console.log('');
-  console.log(chalk.gray('Learn more:') + ' ' + chalk.blue.underline('https://github.com/sdi2200262/agentic-project-management'));
+  console.log(
+    `${chalk.gray('Learn more:')} ${chalk.blue.underline('https://github.com/sdi2200262/agentic-project-management')}`
+  );
 }
 
 program
@@ -47,10 +55,10 @@ program
   .description('Agentic Project Management CLI')
   .version(CURRENT_CLI_VERSION)
   .configureHelp({
-    formatHelp: (cmd, helper) => {
+    formatHelp: () => {
       displayCustomHelp();
       return ''; // Return empty string to prevent default output
-    }
+    },
   });
 
 // Display banner when no command is provided
@@ -63,21 +71,47 @@ program.action(async () => {
 program
   .command('init')
   .description('Initialize a new APM project')
-  .addOption(new Option('-t, --tag <tag>', 'Install templates from a specific Git tag (e.g., v0.5.1+templates.1)'))
-  .addHelpText('after', `
+  .addOption(
+    new Option(
+      '-t, --tag <tag>',
+      'Install templates from a specific Git tag (e.g., v0.5.1+templates.1)'
+    )
+  )
+  .addHelpText(
+    'after',
+    `
 ${chalk.gray('Examples:')}
   ${chalk.white('apm init')}              Install latest compatible templates for current CLI version
   ${chalk.white('apm init --tag v0.5.1+templates.2')}  Install specific template version
 
 ${chalk.gray('Note:')} If no --tag is specified, the CLI will automatically find the latest
 template version compatible with your current CLI version.
-`)
+`
+  )
   .action(async (options) => {
     // Lazy-load dependencies
     const { select, confirm } = await import('@inquirer/prompts');
     const { Spinner } = await import('./spinner.js');
-    const { downloadAndExtract, fetchLatestRelease, findLatestCompatibleTemplateTag, findLatestTemplateTag } = await import('./downloader.js');
-    const { readMetadata, detectInstalledAssistants, detectLikelyAssistant, createOrUpdateMetadata, mergeAssistants, installFromTempDirectory, displayBanner, parseTemplateTagParts, compareTemplateVersions, checkForNewerTemplates, displaySuccess, displayError } = await import('./utils.js');
+    const {
+      downloadAndExtract,
+      fetchLatestRelease,
+      findLatestCompatibleTemplateTag,
+      findLatestTemplateTag,
+    } = await import('./downloader.js');
+    const {
+      readMetadata,
+      detectInstalledAssistants,
+      detectLikelyAssistant,
+      createOrUpdateMetadata,
+      mergeAssistants,
+      installFromTempDirectory,
+      displayBanner,
+      parseTemplateTagParts,
+      compareTemplateVersions,
+      checkForNewerTemplates,
+      displaySuccess,
+      displayError,
+    } = await import('./utils.js');
 
     try {
       // Display the APM banner
@@ -92,21 +126,30 @@ template version compatible with your current CLI version.
       if (existingMetadata) {
         console.log(chalk.yellow('APM appears to already be initialized in this directory.'));
         console.log(chalk.yellow('Continuing may update existing APM files.'));
-        const existingAssistantsMsg = Array.isArray(existingMetadata.assistants) && existingMetadata.assistants.length
-          ? `Installed assistants detected: ${existingMetadata.assistants.join(', ')}`
-          : 'No assistants recorded in metadata yet.';
+        const existingAssistantsMsg =
+          Array.isArray(existingMetadata.assistants) && existingMetadata.assistants.length
+            ? `Installed assistants detected: ${existingMetadata.assistants.join(', ')}`
+            : 'No assistants recorded in metadata yet.';
         console.log(chalk.gray(`\n${existingAssistantsMsg}`));
-        console.log(chalk.gray(`Note: Selecting an assistant will install/update ALL recorded assistants to the chosen tag.`));
+        console.log(
+          chalk.gray(
+            `Note: Selecting an assistant will install/update ALL recorded assistants to the chosen tag.`
+          )
+        );
         console.log('');
       } else {
         console.log(chalk.cyan.bold('Configuration'));
-        console.log(chalk.gray('We need to know which AI tool you use to install the correct templates.\n'));
+        console.log(
+          chalk.gray('We need to know which AI tool you use to install the correct templates.\n')
+        );
 
         // Auto-detect environment for default selection
         const likelyAssistant = detectLikelyAssistant(process.cwd());
         if (likelyAssistant) {
           defaultAssistant = likelyAssistant;
-          console.log(chalk.green(`  ✔ Detected likely environment: ${chalk.bold(likelyAssistant)}`));
+          console.log(
+            chalk.green(`  ✔ Detected likely environment: ${chalk.bold(likelyAssistant)}`)
+          );
           console.log('');
         }
       }
@@ -119,69 +162,69 @@ template version compatible with your current CLI version.
           {
             name: 'Cursor',
             value: 'Cursor',
-            description: 'Optimized for Cursor IDE'
+            description: 'Optimized for Cursor IDE',
           },
           {
             name: 'GitHub Copilot',
             value: 'GitHub Copilot',
-            description: 'Optimized for GitHub Copilot in VS Code'
+            description: 'Optimized for GitHub Copilot in VS Code',
           },
           {
             name: 'Claude Code',
             value: 'Claude Code',
-            description: 'Optimized for Anthropic Claude Code CLI'
+            description: 'Optimized for Anthropic Claude Code CLI',
           },
           {
             name: 'Gemini CLI',
             value: 'Gemini CLI',
-            description: 'Optimized for Google Gemini CLI'
+            description: 'Optimized for Google Gemini CLI',
           },
           {
             name: 'Qwen Code',
             value: 'Qwen Code',
-            description: 'Optimized for Alibaba Qwen Code CLI'
+            description: 'Optimized for Alibaba Qwen Code CLI',
           },
           {
             name: 'opencode',
             value: 'opencode',
-            description: 'Optimized for opencode CLI'
+            description: 'Optimized for opencode CLI',
           },
           {
             name: 'Windsurf',
             value: 'Windsurf',
-            description: 'Optimized for Windsurf IDE'
+            description: 'Optimized for Windsurf IDE',
           },
           {
             name: 'Kilo Code',
             value: 'Kilo Code',
-            description: 'Optimized for Kilo Code IDE'
+            description: 'Optimized for Kilo Code IDE',
           },
           {
             name: 'Auggie CLI',
             value: 'Auggie CLI',
-            description: 'Optimized for Auggie CLI'
+            description: 'Optimized for Auggie CLI',
           },
           {
             name: 'Roo Code',
             value: 'Roo Code',
-            description: 'Optimized for Roo Code IDE'
-          }
-        ]
+            description: 'Optimized for Roo Code IDE',
+          },
+        ],
       });
 
       console.log(chalk.blue(`\nSelected: ${assistant}`));
-      
+
       // Determine target tag: either user-specified or latest compatible
       let targetTag;
       let releaseNotes = '';
-      
+
       if (options.tag) {
         // User specified a specific tag
         targetTag = options.tag;
         console.log(chalk.yellow(`\nInstalling specific tag: ${targetTag}`));
 
         const spinner = new Spinner('Validating tag...').start();
-        
+
         // Validate the tag exists
         try {
           const release = await fetchLatestRelease(targetTag);
@@ -195,11 +238,14 @@ template version compatible with your current CLI version.
         // Apply warning policy for --tag
         const parsedTarget = parseTemplateTagParts(targetTag);
         if (!parsedTarget) {
-          throw new Error(`Invalid tag format: ${targetTag}. Expected v<version>+templates.<build>`);
+          throw new Error(
+            `Invalid tag format: ${targetTag}. Expected v<version>+templates.<build>`
+          );
         }
 
         // Determine assistants which will be affected (ALL recorded + selected)
-        const preExistingAssistants = existingMetadata?.assistants || detectInstalledAssistants(process.cwd());
+        const preExistingAssistants =
+          existingMetadata?.assistants || detectInstalledAssistants(process.cwd());
         const assistantsAffected = mergeAssistants(preExistingAssistants, [assistant]);
 
         if (parsedTarget.baseVersion !== CURRENT_CLI_VERSION) {
@@ -207,11 +253,17 @@ template version compatible with your current CLI version.
           console.log(chalk.red('[WARN] Different CLI base detected'));
           console.log(chalk.red(`  Target tag base: v${parsedTarget.baseVersion}`));
           console.log(chalk.red(`  Your CLI base:   v${CURRENT_CLI_VERSION}`));
-          console.log(chalk.red(`  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`));
+          console.log(
+            chalk.red(
+              `  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`
+            )
+          );
 
           const proceed = await confirm({
-            message: chalk.red(`May cause incompatibilities. Proceed with init using ${targetTag}?`),
-            default: false
+            message: chalk.red(
+              `May cause incompatibilities. Proceed with init using ${targetTag}?`
+            ),
+            default: false,
           });
           if (!proceed) {
             console.log(chalk.yellow('\nInit cancelled.'));
@@ -227,11 +279,15 @@ template version compatible with your current CLI version.
               console.log(chalk.yellow('[WARN] Template downgrade on same CLI base'));
               console.log(chalk.yellow(`  Selected tag:      ${targetTag}`));
               console.log(chalk.yellow(`  Latest compatible: ${compatible.tag_name}`));
-              console.log(chalk.yellow(`  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`));
+              console.log(
+                chalk.yellow(
+                  `  This will overwrite ALL assistants (${assistantsAffected.join(', ') || 'none'}) to ${targetTag}.`
+                )
+              );
 
               const proceedOlder = await confirm({
                 message: chalk.yellow('Proceed with downgrade?'),
-                default: false
+                default: false,
               });
               if (!proceedOlder) {
                 console.log(chalk.yellow('\nInit cancelled.'));
@@ -242,16 +298,18 @@ template version compatible with your current CLI version.
         }
       } else {
         // Find latest compatible template tag for current CLI version
-        const spinner = new Spinner(`Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`).start();
+        const spinner = new Spinner(
+          `Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`
+        ).start();
         const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
-        
+
         if (!compatibleResult) {
           spinner.fail(`No compatible template tags found for CLI version ${CURRENT_CLI_VERSION}.`);
           // Check if there are newer templates available for other CLI versions
           const latestOverall = await findLatestTemplateTag();
           const newerInfo = checkForNewerTemplates(CURRENT_CLI_VERSION, latestOverall);
           let errorMessage = `No compatible template tags found for CLI version ${CURRENT_CLI_VERSION}.`;
-          
+
           if (newerInfo) {
             errorMessage += `\n\n[INFO] Newer template versions are available for CLI v${newerInfo.baseVersion}: ${newerInfo.tag}`;
             errorMessage += `\n\nTo access these newer templates, please update your CLI:`;
@@ -262,29 +320,39 @@ template version compatible with your current CLI version.
             errorMessage += `\nPlease try again later, or check for releases at:`;
             errorMessage += `\nhttps://github.com/sdi2200262/agentic-project-management/releases`;
           }
-          
+
           throw new Error(errorMessage);
         }
-        
+
         targetTag = compatibleResult.tag_name;
         releaseNotes = compatibleResult.release_notes;
         spinner.succeed(`Found compatible template version: ${targetTag}`);
-        
+
         // Check if there are newer templates available for other CLI versions
         const latestOverall = await findLatestTemplateTag();
         const newerInfo = checkForNewerTemplates(CURRENT_CLI_VERSION, latestOverall);
         if (newerInfo) {
-          console.log(chalk.cyan(`\n[INFO] Note: Even newer templates are available for CLI v${newerInfo.baseVersion}: ${newerInfo.tag}`));
-          console.log(chalk.yellow(`To access those, update your CLI: ${chalk.white('npm update -g agentic-pm')} then run 'apm init' again.`));
+          console.log(
+            chalk.cyan(
+              `\n[INFO] Note: Even newer templates are available for CLI v${newerInfo.baseVersion}: ${newerInfo.tag}`
+            )
+          );
+          console.log(
+            chalk.yellow(
+              `To access those, update your CLI: ${chalk.white('npm update -g agentic-pm')} then run 'apm init' again.`
+            )
+          );
         }
-        
+
         if (releaseNotes) {
           const notesPreview = releaseNotes.substring(0, 200);
-          console.log(chalk.gray(`\nRelease notes: ${notesPreview}${releaseNotes.length > 200 ? '...' : ''}`));
+          console.log(
+            chalk.gray(`\nRelease notes: ${notesPreview}${releaseNotes.length > 200 ? '...' : ''}`)
+          );
         }
         console.log('');
       }
-      
+
       // Determine assistants to install/update (union existing + selected)
       const existingAssistants = existingMetadata?.assistants || [];
       const assistantsToInstall = mergeAssistants(existingAssistants, [assistant]);
@@ -295,7 +363,7 @@ template version compatible with your current CLI version.
         rmSync(tempDir, { recursive: true, force: true });
       }
       mkdirSync(tempDir, { recursive: true });
-      
+
       const spinner = new Spinner('Downloading and extracting templates...').start();
 
       let guidesInstalled = false;
@@ -307,7 +375,10 @@ template version compatible with your current CLI version.
         await downloadAndExtract(targetTag, a, subDir, { silent: true });
 
         spinner.text = `Installing templates for ${a}...`;
-        installFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesInstalled, silent: true });
+        installFromTempDirectory(subDir, a, process.cwd(), {
+          installGuides: !guidesInstalled,
+          silent: true,
+        });
 
         if (!guidesInstalled) guidesInstalled = true;
       }
@@ -343,16 +414,15 @@ template version compatible with your current CLI version.
         'APM initialized successfully!',
         {
           'CLI Version': CURRENT_CLI_VERSION,
-          'Template Version': targetTag
+          'Template Version': targetTag,
         },
         [
           'Review the generated files in the .apm/ directory',
           'Customize the prompts and configuration for your specific project',
           'Start using APM with your AI assistant',
-          'Run "apm update" anytime to get the latest improvements'
+          'Run "apm update" anytime to get the latest improvements',
         ]
       );
-
     } catch (error) {
       displayError('Initialization failed', error.message);
       process.exit(1);
@@ -362,16 +432,34 @@ template version compatible with your current CLI version.
 program
   .command('update')
   .description('Update APM templates to the latest compatible version')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 ${chalk.gray('Note:')} This command updates templates to the latest version compatible with your
 current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -g agentic-pm')}
-`)
+`
+  )
   .action(async () => {
     // Lazy-load dependencies
     const { confirm } = await import('@inquirer/prompts');
     const { Spinner } = await import('./spinner.js');
-    const { downloadAndExtract, findLatestCompatibleTemplateTag, findLatestTemplateTag } = await import('./downloader.js');
-    const { readMetadata, writeMetadata, detectInstalledAssistants, displayBanner, compareTemplateVersions, isVersionNewer, checkForNewerTemplates, updateFromTempDirectory, parseTemplateTagParts, createAndZipBackup, restoreBackup, displaySuccess, displayError } = await import('./utils.js');
+    const { downloadAndExtract, findLatestCompatibleTemplateTag, findLatestTemplateTag } =
+      await import('./downloader.js');
+    const {
+      readMetadata,
+      writeMetadata,
+      detectInstalledAssistants,
+      displayBanner,
+      compareTemplateVersions,
+      isVersionNewer,
+      checkForNewerTemplates,
+      updateFromTempDirectory,
+      parseTemplateTagParts,
+      createAndZipBackup,
+      restoreBackup,
+      displaySuccess,
+      displayError,
+    } = await import('./utils.js');
 
     try {
       // Display the APM banner
@@ -382,96 +470,138 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 
       // Check if APM is initialized (and migrate if needed)
       const metadata = readMetadata(process.cwd(), CURRENT_CLI_VERSION);
-      
+
       if (!metadata) {
         console.log(chalk.yellow('No APM installation detected in this directory.'));
         console.log(chalk.yellow('   Run "apm init" to initialize a new project.\n'));
         process.exit(1);
       }
-      const assistants = Array.isArray(metadata.assistants) && metadata.assistants.length > 0
-        ? metadata.assistants
-        : detectInstalledAssistants(process.cwd());
+      const assistants =
+        Array.isArray(metadata.assistants) && metadata.assistants.length > 0
+          ? metadata.assistants
+          : detectInstalledAssistants(process.cwd());
 
       const installedVersion = metadata.templateVersion || metadata.version; // support migrated/old
-      console.log(chalk.blue(`Current installation (all assistants): ${assistants.join(', ') || 'none'}`));
+      console.log(
+        chalk.blue(`Current installation (all assistants): ${assistants.join(', ') || 'none'}`)
+      );
       console.log(chalk.blue(`Template Version: ${installedVersion}`));
       console.log(chalk.blue(`CLI Version: ${CURRENT_CLI_VERSION}`));
 
       // Find latest compatible template tag for current CLI version
-      console.log(chalk.gray(`\n  Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`));
+      console.log(
+        chalk.gray(`\n  Finding latest compatible templates for CLI v${CURRENT_CLI_VERSION}...`)
+      );
       const compatibleResult = await findLatestCompatibleTemplateTag(CURRENT_CLI_VERSION);
-      
+
       if (!compatibleResult) {
         // Check if there are newer templates available for other CLI versions
         const latestOverall = await findLatestTemplateTag();
         const newerInfo = checkForNewerTemplates(CURRENT_CLI_VERSION, latestOverall);
-        
-        console.log(chalk.yellow(`\n[WARN] No compatible template tags found for CLI version ${CURRENT_CLI_VERSION}.`));
-        
+
+        console.log(
+          chalk.yellow(
+            `\n[WARN] No compatible template tags found for CLI version ${CURRENT_CLI_VERSION}.`
+          )
+        );
+
         if (newerInfo) {
-          console.log(chalk.cyan(`\n[INFO] Newer template versions are available for CLI v${newerInfo.baseVersion}: ${newerInfo.tag}`));
-          console.log(chalk.yellow(`\nYour current CLI version (${CURRENT_CLI_VERSION}) is incompatible with the latest templates.`));
+          console.log(
+            chalk.cyan(
+              `\n[INFO] Newer template versions are available for CLI v${newerInfo.baseVersion}: ${newerInfo.tag}`
+            )
+          );
+          console.log(
+            chalk.yellow(
+              `\nYour current CLI version (${CURRENT_CLI_VERSION}) is incompatible with the latest templates.`
+            )
+          );
           console.log(chalk.yellow(`To access these newer templates, please update your CLI:`));
           console.log(chalk.white(`  ${chalk.bold('npm update -g agentic-pm')}`));
-          console.log(chalk.gray(`\nAfter updating your CLI, run 'apm update' again to get the latest templates.\n`));
+          console.log(
+            chalk.gray(
+              `\nAfter updating your CLI, run 'apm update' again to get the latest templates.\n`
+            )
+          );
         } else {
-          console.log(chalk.yellow(`\nThis may indicate that no template releases have been published yet.`));
+          console.log(
+            chalk.yellow(`\nThis may indicate that no template releases have been published yet.`)
+          );
           console.log(chalk.yellow(`Please try again later, or check for releases at:`));
-          console.log(chalk.blue.underline(`https://github.com/sdi2200262/agentic-project-management/releases\n`));
+          console.log(
+            chalk.blue.underline(
+              `https://github.com/sdi2200262/agentic-project-management/releases\n`
+            )
+          );
         }
         process.exit(1);
       }
-      
+
       const latestCompatibleTag = compatibleResult.tag_name;
-      
+
       // Decide update policy per rules
       let comparison;
       const installedParsed = parseTemplateTagParts(installedVersion);
       if (installedParsed && installedParsed.baseVersion !== CURRENT_CLI_VERSION) {
         if (isVersionNewer(installedParsed.baseVersion, CURRENT_CLI_VERSION)) {
           // Installed templates are for a NEWER CLI base than current CLI → do not downgrade
-          console.log(chalk.red(`\n[WARN] Installed templates are for a newer CLI base than your current CLI.`));
+          console.log(
+            chalk.red(
+              `\n[WARN] Installed templates are for a newer CLI base than your current CLI.`
+            )
+          );
           console.log(chalk.red(`  Installed: v${installedParsed.baseVersion}`));
           console.log(chalk.red(`  Current CLI: v${CURRENT_CLI_VERSION}`));
           console.log(chalk.yellow(`\nTo align with installed templates, update your CLI:`));
           console.log(chalk.white(`  ${chalk.bold('npm update -g agentic-pm')}`));
-          console.log(chalk.gray(`\nAlternatively, you can re-install templates compatible with your CLI using a specific tag via:`));
+          console.log(
+            chalk.gray(
+              `\nAlternatively, you can re-install templates compatible with your CLI using a specific tag via:`
+            )
+          );
           console.log(chalk.white(`  ${chalk.bold('apm init --tag <tag-for-your-CLI>')}`));
           return;
-        } else {
-          // Installed templates are for an OLDER CLI base → update available
-          comparison = -1;
         }
+        // Installed templates are for an OLDER CLI base → update available
+        comparison = -1;
       } else {
         try {
           comparison = compareTemplateVersions(installedVersion, latestCompatibleTag);
         } catch (error) {
           // Invalid tag format in metadata - might be old format
-          console.log(chalk.yellow(`\n[WARN] Installed version format may be outdated: ${installedVersion}`));
+          console.log(
+            chalk.yellow(`\n[WARN] Installed version format may be outdated: ${installedVersion}`)
+          );
           console.log(chalk.yellow('Attempting to update to latest compatible version...'));
           comparison = -1; // Force update
         }
       }
-      
+
       // Check if there are newer templates available for other CLI versions
       const latestOverall = await findLatestTemplateTag();
       const newerVersionInfo = checkForNewerTemplates(CURRENT_CLI_VERSION, latestOverall);
-      
+
       // Handle comparison results
       let baseMismatch = false;
-      if (isNaN(comparison)) {
+      if (Number.isNaN(comparison)) {
         baseMismatch = true;
         comparison = -1;
       }
       if (comparison === 0) {
         // Already up to date
-        console.log(chalk.green(`\n[OK] You have the latest template version compatible with your CLI!`));
+        console.log(
+          chalk.green(`\n[OK] You have the latest template version compatible with your CLI!`)
+        );
         console.log(chalk.gray(`  Current CLI version: ${CURRENT_CLI_VERSION}`));
         console.log(chalk.gray(`  Current template version: ${installedVersion}`));
         console.log(chalk.gray(`  Latest compatible: ${latestCompatibleTag}`));
-        
+
         if (newerVersionInfo) {
-          console.log(chalk.cyan(`\n[INFO] Newer templates are available for CLI v${newerVersionInfo.baseVersion}: ${newerVersionInfo.tag}`));
+          console.log(
+            chalk.cyan(
+              `\n[INFO] Newer templates are available for CLI v${newerVersionInfo.baseVersion}: ${newerVersionInfo.tag}`
+            )
+          );
           console.log(chalk.yellow(`\nTo access these newer templates, update your CLI:`));
           console.log(chalk.white(`  ${chalk.bold('npm update -g agentic-pm')}`));
           console.log(chalk.gray(`Then run 'apm update' again.\n`));
@@ -479,27 +609,45 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
           console.log(chalk.gray(`\nNo update needed.\n`));
         }
         return;
-      } else if (comparison === 1) {
+      }
+      if (comparison === 1) {
         // Installed version is newer
-        console.log(chalk.yellow(`\n[WARN] Installed version (${installedVersion}) appears newer than latest found (${latestCompatibleTag}).`));
+        console.log(
+          chalk.yellow(
+            `\n[WARN] Installed version (${installedVersion}) appears newer than latest found (${latestCompatibleTag}).`
+          )
+        );
         console.log(chalk.yellow('This is unusual but safe. No update needed.\n'));
         return;
-      } else if (comparison === -1) {
+      }
+      if (comparison === -1) {
         // Update available
         console.log(chalk.cyan(`\n[UPDATE] Update available for your CLI version!`));
         console.log(chalk.gray(`  Current template version: ${installedVersion}`));
         console.log(chalk.gray(`  Latest compatible version: ${latestCompatibleTag}`));
         console.log(chalk.cyan(`\n  Update: ${installedVersion} → ${latestCompatibleTag}`));
-        
+
         if (compatibleResult.release_notes) {
           const notesPreview = compatibleResult.release_notes.substring(0, 300);
           console.log(chalk.gray(`  Release notes:`));
-          console.log(chalk.gray(`  ${notesPreview + (compatibleResult.release_notes.length > 300 ? '...' : '')}`));
+          console.log(
+            chalk.gray(
+              `  ${notesPreview + (compatibleResult.release_notes.length > 300 ? '...' : '')}`
+            )
+          );
         }
 
         if (newerVersionInfo) {
-          console.log(chalk.cyan(`\n[INFO] Note: Even newer templates are available for CLI v${newerVersionInfo.baseVersion}: ${newerVersionInfo.tag}`));
-          console.log(chalk.yellow(`To access those, update your CLI: ${chalk.white('npm update -g agentic-pm')} then run 'apm update' again.`));
+          console.log(
+            chalk.cyan(
+              `\n[INFO] Note: Even newer templates are available for CLI v${newerVersionInfo.baseVersion}: ${newerVersionInfo.tag}`
+            )
+          );
+          console.log(
+            chalk.yellow(
+              `To access those, update your CLI: ${chalk.white('npm update -g agentic-pm')} then run 'apm update' again.`
+            )
+          );
         }
 
         console.log(chalk.cyan('\n  What will be updated:'));
@@ -507,21 +655,27 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         console.log(chalk.gray('    - Guide files (templates and documentation)'));
 
         console.log(chalk.cyan('\n  What will be preserved:'));
-        console.log(chalk.gray('    - User apm/ directories (apm/Memory/, apm/Implementation_Plan.md, etc.)'));
+        console.log(
+          chalk.gray('    - User apm/ directories (apm/Memory/, apm/Implementation_Plan.md, etc.)')
+        );
         console.log(chalk.gray('    - User content in directories outside APM control'));
         console.log(chalk.gray('    - Custom configurations (if any)'));
       } else {
         return;
       }
-      
+
       if (baseMismatch) {
-        console.log(chalk.cyan(`\n[INFO] Installed templates are for a different CLI base. Updating to latest compatible.`));
+        console.log(
+          chalk.cyan(
+            `\n[INFO] Installed templates are for a different CLI base. Updating to latest compatible.`
+          )
+        );
       }
       console.log('');
 
       const shouldUpdate = await confirm({
         message: `Update ALL assistants from ${installedVersion} to ${latestCompatibleTag}?`,
-        default: false
+        default: false,
       });
       if (!shouldUpdate) {
         console.log(chalk.yellow('\nUpdate cancelled.\n'));
@@ -532,14 +686,18 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
 
       // Create backup
       console.log(chalk.gray('Creating backup...'));
-      const { backupDir, zipPath } = await createAndZipBackup(process.cwd(), assistants, installedVersion);
+      const { backupDir, zipPath } = await createAndZipBackup(
+        process.cwd(),
+        assistants,
+        installedVersion
+      );
       console.log(chalk.green(`Backup created at: ${backupDir}`));
 
       try {
         // Download and extract new version to a temporary directory
         console.log(chalk.gray('\nDownloading update...'));
         const tempDir = join(process.cwd(), '.apm', 'temp-update');
-        
+
         if (existsSync(tempDir)) {
           rmSync(tempDir, { recursive: true, force: true });
         }
@@ -557,7 +715,10 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
             spinner.text = `Updating ${a}...`;
 
             await downloadAndExtract(latestCompatibleTag, a, subDir, { silent: true });
-            updateFromTempDirectory(subDir, a, process.cwd(), { installGuides: !guidesUpdated, silent: true });
+            updateFromTempDirectory(subDir, a, process.cwd(), {
+              installGuides: !guidesUpdated,
+              silent: true,
+            });
             if (!guidesUpdated) guidesUpdated = true;
           }
           spinner.succeed('Updates installed successfully.');
@@ -578,13 +739,10 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
         rmSync(tempDir, { recursive: true, force: true });
 
         // Success!
-        displaySuccess(
-          `APM templates successfully updated to ${latestCompatibleTag}!`,
-          {
-            'CLI Version': CURRENT_CLI_VERSION,
-            'Template Version': latestCompatibleTag
-          }
-        );
+        displaySuccess(`APM templates successfully updated to ${latestCompatibleTag}!`, {
+          'CLI Version': CURRENT_CLI_VERSION,
+          'Template Version': latestCompatibleTag,
+        });
 
         try {
           rmSync(backupDir, { recursive: true, force: true });
@@ -597,22 +755,24 @@ current CLI version. To update the CLI itself, use: ${chalk.yellow('npm update -
           console.log(chalk.yellow(`Could not clean backup directory: ${backupDir}`));
         }
         console.log('');
-
       } catch (updateError) {
         displayError('Update failed', updateError.message);
         console.log(chalk.yellow('\nAttempting to restore from backup...'));
-        
+
         try {
           // Restore from backup
           restoreBackup(backupDir, process.cwd());
           console.log(chalk.green('Successfully restored from backup.'));
         } catch (restoreError) {
-          displayError('Failed to restore backup', restoreError.message, `Manual restoration may be required. Backup location: ${backupDir}`);
+          displayError(
+            'Failed to restore backup',
+            restoreError.message,
+            `Manual restoration may be required. Backup location: ${backupDir}`
+          );
         }
-        
+
         process.exit(1);
       }
-
     } catch (error) {
       displayError('Update failed', error.message);
       process.exit(1);

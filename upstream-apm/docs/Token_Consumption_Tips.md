@@ -31,8 +31,9 @@ APM is designed to be token-efficient through focused agent interactions and str
 **Philosophy**: Use premium models only where they provide the highest impact, rely on cost-effective options for routine execution.
 
 **Model Assignment Strategy**:
+
 - **Setup Agent**: Premium model for critical planning phase
-- **Manager Agent**: Mid-tier agentic model for coordination  
+- **Manager Agent**: Mid-tier agentic model for coordination
 - **Implementation Agents**: Budget models for most tasks, upgrade selectively
 - **Ad-Hoc Agents**: Match model tier to delegation complexity
 
@@ -43,6 +44,7 @@ APM is designed to be token-efficient through focused agent interactions and str
 **Philosophy**: Use top-tier models throughout for maximum quality and consistency.
 
 **Model Assignment Strategy**:
+
 - **All Agents**: Claude Sonnet 4, Claude Sonnet 4.5, Gemini 2.5 Pro, or equivalent frontier models; avoid "thinking" models
 - **Consistent Experience**: No model switching, premium reasoning throughout
 
@@ -53,6 +55,7 @@ APM is designed to be token-efficient through focused agent interactions and str
 **Philosophy**: Strategic model deployment based on agent responsibilities and task complexity.
 
 **Model Assignment Strategy**:
+
 - **Setup Agent**: Premium model (most critical for project success)
 - **Manager Agent**: Mid-tier agentic model with premium upgrade for complex coordination
 - **Implementation Agents**: Budget for routine tasks, premium for complex/creative work
@@ -67,22 +70,27 @@ APM is designed to be token-efficient through focused agent interactions and str
 ### Setup Agent (Highest Impact Investment)
 
 **Best Performing Models**:
+
 - **Claude Sonnet 4** - Outstanding project breakdown and systematic reasoning
 - **Gemini 2.5 Pro** - Excellent for complex project planning
 
 **Cost-Effective Alternatives**:
+
 - **Cursor Auto** - Surprisingly good for structured breakdown tasks; lacks reasoning capabilities
 
 **Why Premium Models Matter Here**:
 The Setup Agent creates your project foundation. Poor planning cascades through the entire session, causing more expensive fixes later. **Invest in quality here to save tokens downstream.**
 
 **Model Switching Considerations**:
+
 > **Warning**: Avoid model switching during Setup Agent sessions. Context gaps from token caching disruptions can compromise project breakdown quality. Stick with one model throughout the entire Setup Phase.
 
 **Thinking Models Warning**:
+
 > **Warning**: Avoid "thinking" models during project breakdown. "Thinking Mode" often disrupts the 'forced CoT' chat-to-file planning technique used there. They're great for Context Synthesis, but switching models mid-breakdown risks context loss.
 
 **Best Model During Testing (August 2025):**
+
 > **Claude Sonnet 4** was the clear top performer for Setup Agent, consistently delivering the best project breakdowns and systematic planning during testing.
 
 ---
@@ -90,17 +98,21 @@ The Setup Agent creates your project foundation. Poor planning cascades through 
 ### Manager Agent (Coordination Efficiency)
 
 **Best Performing Models**:
+
 - **Claude Sonnet 4** - Best reasoning for complex coordination decisions
 - **Gemini 2.5 Pro** - Strong cross-agent dependency management
 
 **Effective Budget Options**:
+
 - **Cursor Auto** - Outstanding performance during testing despite low cost
 - **Claude Sonnet 3.7** - Acceptable for straightforward projects
 
 **Model Switching Considerations**:
+
 > **Warning**: While model switching during Manager Agent sessions is not encouraged, real-world testing showed that context gaps and disruptions were generally manageable and did not break sessions. If a model switch is necessary (e.g., for a complex coordination task), proceed with caution and monitor for any context loss. For best results, stick with a single model throughout the Manager Agent session when possible.
 
 **Best Models During Testing (August 2025):**
+
 > **Claude Sonnet 4** was the best overall performer for Manager Agent coordination, providing the most reliable reasoning, decision making, and context management for complex project scenarios.
 > **Cursor Auto** delivered outstanding Manager Agent performance during extensive real-world testing. Even after recent pricing updates, it remains the most cost-effective choice for project coordination, especially when leveraging the structured Task Assignment format.
 
@@ -110,18 +122,19 @@ The Setup Agent creates your project foundation. Poor planning cascades through 
 
 **Best Performing Models**:
 Premium models such as **Claude Sonnet 4**, **Chat GPT-5** and **Gemini 2.5 Pro** deliver the highest performance for demanding implementation tasks. Consider using these models when your task involves:
+
 - Complex algorithm design, where advanced reasoning and error detection are critical
 - Creative or design-oriented work, such as UI/UX prototyping or generating novel solutions
 - Architecture decisions that require deep analysis, tradeoff evaluation, or synthesizing multiple requirements
 
 **Budget Models Excel Here**:
+
 - **GPT-4.1 in Copilot** - Excellent for focused, granular tasks
 - **Cursor Auto** - Strong general-purpose choice
-- **Windsurf SWE-1** - Excellent coordination capabilities  
+- **Windsurf SWE-1** - Excellent coordination capabilities
 - **Grok Code Fast 1** - Excellent for focused, granular tasks
 - **Qwen / Kimi K2** - Exceptional value for routine implementation
 - **Grok Code Fast** - Great performance considering super low costs
-
 
 For these scenarios, the superior reasoning, creativity, and context management of premium models can significantly improve outcomes and reduce the risk of costly mistakes. While budget models excel for routine implementation, investing in premium models for these high-impact tasks is often worthwhile.
 
@@ -138,9 +151,11 @@ If a step in a multi-step task doesn't meet your expectations, ask the agent to 
 At any stage of task execution, request agents to clarify their reasoning and outputs. This practice helps you catch potential issues early, especially for tasks outside your expertise. While it may add some tokens upfront, preventing misunderstandings saves significantly more tokens than fixing problems later. Use the natural checkpoints in multi-step tasks for these clarification requests.
 
 **Model Switching Strategy**:
+
 > **Implementation Agents handle model switching well.** In general, model switching **is not advised** due to potential context loss in agent sessions. However, during testing, frequent model switching based on task domain (Cursor Auto for routine tasks, Sonnet 4 for complex work) proved to be both cost-efficient and effective, and the tightly scoped task context makes this strategy viable with minimal context gaps observed. Proceed thoughtfully and monitor for any subtle context loss or unexpected behavior to avoid costly mistakes.
 
 **Best Models During Testing (August 2025):**
+
 > **Claude Sonnet 4** and **Gemini 2.5 Pro** tied as the top performers for complex or creative implementation tasks, each excelling in advanced reasoning and error detection.
 > **Cursor Auto** and **Windsurf SWE-1** also provided very strong results for routine implementation work, and as of August 2025 their extremely low (essentially free at the time of testing) cost makes them highly attractive for most tasks.
 
@@ -149,14 +164,17 @@ At any stage of task execution, request agents to clarify their reasoning and ou
 ### Ad-Hoc Agents (Delegation-Specific)
 
 **Debug Delegation**:
+
 - **Budget Models**: Simple bugs, environment issues
 - **Premium Models**: Complex systemic issues, architecture problems
 
 **Research Delegation**:
+
 - **Budget Models**: Data gathering, documentation review
 - **Premium Models**: Web research, data analysis, strategic recommendations
 
 **Specialized Tasks**:
+
 - Match model capability to delegation complexity
 - Short ad-hoc sessions make premium model costs manageable
 
@@ -165,25 +183,30 @@ At any stage of task execution, request agents to clarify their reasoning and ou
 ## Token Consumption Optimization
 
 ### Setup Phase (Highest Token Consumption)
+
 The Setup Phase is where the majority of high token consumption occurs during an APM session, as the Setup Agent gathers context and plans the project. Each Setup Phase step has its own token usage patterns. Use the following targeted tips to optimize tokens at every stage without sacrificing quality.
 
 **Context Synthesis**:
+
 - Prepare materials beforehand (PRDs, requirements, existing code references)
-- Use structured responses to guide the agent efficiently  
+- Use structured responses to guide the agent efficiently
 - Avoid excessive back-and-forth by being comprehensive in your responses
 
 **Project Breakdown**:
+
 - This is inherently token-heavy due to the systematic chat-to-file systematic sequence
 - Consider this your largest token investment in the project
-- **Don't cut corners here**:  An inadequate breakdown will lead to more costly fixes later
+- **Don't cut corners here**: An inadequate breakdown will lead to more costly fixes later
 - **Review Saves Tokens**: Perform a thorough end-to-end Implementation Plan review. Request corrections/modifications to match your needs. Fixes at this stage are far cheaper than downstream changes after enhancement or during execution.
 
 **Review Phase**:
+
 - Use only for complex projects or first-time APM usage
 - **Skip if budget-constrained** and you've thoroughly reviewed the Implementation Plan manually
 - Carefully select specific sections rather than full systematic review
 
 **Enhancement Phase**:
+
 - No optimization opportunities; this is necessary formatting work
 
 ### Handover Procedures (Context Transfer Overhead)
@@ -194,11 +217,13 @@ Context 'repair' and validation during a handover requires the agent to process 
 **Strategic Handover Timing**:
 
 **Conservative Approach (Recommended for New Users)**:
+
 - Handover at 70-80% context capacity
 - Prioritize session continuity over token optimization
 - 'Better safe than sorry' with context preservation
 
 **Experienced User Optimization**:
+
 - Push to 85-95% context capacity if you are able to properly time
 - Monitor for performance degradation indicators:
   - Repetitive questions about known information
@@ -207,6 +232,7 @@ Context 'repair' and validation during a handover requires the agent to process 
 
 **Proactive Handover Planning**:
 Strategic timing of handovers can significantly reduce token overhead and ensure smoother transitions:
+
 - **Track Context Usage**: Proactively monitor context usage during the session, either by using your IDE's context window visualization feature if available, or relying on the recommended capacity thresholds above
 - **Natural Break Points**: Plan handovers to occur at natural project breakpoints; ensure current task cycles are finished before initiating a handover to preserve context continuity
 - **Time for Complexity**: If a complex or multi-step task is ahead, initiate the handover early so the new agent has enough context window to finish uninterrupted. Avoid disrupting critical operations, but don't wait until performance declines
@@ -229,6 +255,7 @@ Strategic timing of handovers can significantly reduce token overhead and ensure
 **Context Preservation**: Use Memory Logs and Handover procedures as designed rather than trying to manually maintain context through extended sessions. The structured approach is more token-efficient than fighting context window limits.
 
 **Memory Logging Optimization**: Memory Logs serve dual purposes: they provide the Manager Agent with context for task review and serve as critical resources during handovers. Enhance Memory Log effectiveness by instructing Implementation Agents to:
+
 - **Include Manager-Relevant Context**: Add details that will help the Manager Agent during task review, reducing the need for clarification exchanges
 - **Document Insights for Handovers**: Record important insights such as workflow preferences, special considerations, or learned patterns so future agents can easily reference them during handovers, reducing context reconstruction overhead
 

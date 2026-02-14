@@ -1,13 +1,11 @@
 import json
 import os
+import subprocess
 import sys
+import types
 from pathlib import Path
 
-import subprocess
-import types
-
 import pytest
-
 
 if "jsonschema" not in sys.modules:
     jsonschema_stub = types.ModuleType("jsonschema")
@@ -26,8 +24,7 @@ if "jsonschema" not in sys.modules:
 ROOT_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT_DIR))
 
-from prompts.schemas import validate_schema
-
+from prompts.schemas import validate_schema  # noqa: E402
 
 EXAMPLES_DIR = ROOT_DIR / "prompts" / "schemas" / "examples"
 

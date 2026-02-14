@@ -34,7 +34,18 @@ const BUILD_CONFIG_PATH = path.join(PROJECT_ROOT, 'build-config.json');
 const BUILD_CONFIG_DATA = fs.readJsonSync(BUILD_CONFIG_PATH);
 
 // Assistants listed here should already be validated manually.
-const MANUALLY_VERIFIED_ASSISTANT_IDS = new Set(['copilot', 'gemini', 'cursor', 'windsurf', 'roo', 'qwen', 'opencode', 'kilocode', 'auggie', 'claude']);
+const MANUALLY_VERIFIED_ASSISTANT_IDS = new Set([
+  'copilot',
+  'gemini',
+  'cursor',
+  'windsurf',
+  'roo',
+  'qwen',
+  'opencode',
+  'kilocode',
+  'auggie',
+  'claude',
+]);
 
 // Use overrides for assistants whose behavior diverges from the default expectations.
 const ASSISTANT_EXPECTATION_OVERRIDES = {
@@ -51,7 +62,11 @@ function resolveAssistantExpectations(target) {
   const defaults =
     target.format === 'toml'
       ? { commandExtension: '.toml', argsPlaceholder: '{{args}}', commandRefExtension: '.toml' }
-      : { commandExtension: '.md', argsPlaceholder: '$ARGUMENTS', commandRefExtension: target.id === 'copilot' ? '.prompt.md' : '.md' };
+      : {
+          commandExtension: '.md',
+          argsPlaceholder: '$ARGUMENTS',
+          commandRefExtension: target.id === 'copilot' ? '.prompt.md' : '.md',
+        };
 
   const overrides = ASSISTANT_EXPECTATION_OVERRIDES[target.id] ?? {};
 
@@ -240,7 +255,12 @@ describe('replacePlaceholders()', () => {
       'Args: {ARGS}',
     ].join('\n');
 
-    const out = replacePlaceholders(template, '1.2.3', { guides: '/g', commands: '/c' }, 'markdown');
+    const out = replacePlaceholders(
+      template,
+      '1.2.3',
+      { guides: '/g', commands: '/c' },
+      'markdown'
+    );
 
     expect(out).toMatch(/Version: 1\.2\.3/);
     expect(out.includes('{TIMESTAMP}')).toBe(false);
@@ -297,7 +317,7 @@ describe('createZipArchive()', () => {
 
       // archiver doesn't throw for non-existent dirs, it creates empty ZIP
       await createZipArchive(nonExistentDir, zipPath);
-      
+
       expect(await fs.pathExists(zipPath)).toBe(true);
       const zip = new AdmZip(zipPath);
       expect(zip.getEntries().length).toBe(0);
@@ -349,7 +369,7 @@ describe('build()', () => {
       const outDir = path.join(dir, 'out');
 
       const cfg = {
-        build: { sourceDir: sourceDir, outputDir: outDir, cleanOutput: true },
+        build: { sourceDir, outputDir: outDir, cleanOutput: true },
         targets: [
           {
             id: 'copilot',
@@ -377,14 +397,16 @@ describe('build()', () => {
       // Verify ZIP contents
       const copilotZipFile = new AdmZip(copilotZip);
       const copilotEntries = copilotZipFile.getEntries();
-      
-      const copilotCmdEntry = copilotEntries.find(e => e.entryName === 'commands/apm-low-run.prompt.md');
+
+      const copilotCmdEntry = copilotEntries.find(
+        (e) => e.entryName === 'commands/apm-low-run.prompt.md'
+      );
       expect(copilotCmdEntry).toBeTruthy();
       const copilotCmdContent = copilotCmdEntry.getData().toString('utf8');
       expect(copilotCmdContent.includes('$ARGUMENTS')).toBe(true);
       expect(copilotCmdContent.includes('.github/prompts')).toBe(true);
 
-      const copilotGuideEntry = copilotEntries.find(e => e.entryName === 'guides/Guide.md');
+      const copilotGuideEntry = copilotEntries.find((e) => e.entryName === 'guides/Guide.md');
       expect(copilotGuideEntry).toBeTruthy();
       const copilotGuideContent = copilotGuideEntry.getData().toString('utf8');
       expect(copilotGuideContent.includes('$ARGUMENTS')).toBe(true);
@@ -402,7 +424,7 @@ describe('build()', () => {
       const geminiZipFile = new AdmZip(geminiZip);
       const geminiEntries = geminiZipFile.getEntries();
 
-      const geminiCmdEntry = geminiEntries.find(e => e.entryName === 'commands/apm-low-run.toml');
+      const geminiCmdEntry = geminiEntries.find((e) => e.entryName === 'commands/apm-low-run.toml');
       expect(geminiCmdEntry).toBeTruthy();
       const geminiCmdContent = geminiCmdEntry.getData().toString('utf8');
       expect(geminiCmdContent.startsWith('description = "Example command"')).toBe(true);
@@ -411,7 +433,7 @@ describe('build()', () => {
       expect(geminiCmdContent.includes('{{args}}')).toBe(true);
       expect(geminiCmdContent.includes('.gemini/guides')).toBe(true);
 
-      const geminiGuideEntry = geminiEntries.find(e => e.entryName === 'guides/Guide.md');
+      const geminiGuideEntry = geminiEntries.find((e) => e.entryName === 'guides/Guide.md');
       expect(geminiGuideEntry).toBeTruthy();
 
       // Verify temporary build directory was cleaned up
@@ -440,7 +462,13 @@ describe('build()', () => {
       const cfg = {
         build: { sourceDir, outputDir: outDir, cleanOutput: true },
         targets: [
-          { id: 'copilot', name: 'GitHub Copilot', bundleName: 'apm-copilot.zip', format: 'markdown', directories: { guides: '.github/prompts', commands: '.github/prompts' } },
+          {
+            id: 'copilot',
+            name: 'GitHub Copilot',
+            bundleName: 'apm-copilot.zip',
+            format: 'markdown',
+            directories: { guides: '.github/prompts', commands: '.github/prompts' },
+          },
         ],
       };
 
@@ -483,7 +511,13 @@ describe('build()', () => {
       const cfg = {
         build: { sourceDir, outputDir: outDir, cleanOutput: false },
         targets: [
-          { id: 'copilot', name: 'GitHub Copilot', bundleName: 'apm-copilot.zip', format: 'markdown', directories: { guides: '.', commands: '.' } },
+          {
+            id: 'copilot',
+            name: 'GitHub Copilot',
+            bundleName: 'apm-copilot.zip',
+            format: 'markdown',
+            directories: { guides: '.', commands: '.' },
+          },
         ],
       };
 
@@ -529,7 +563,13 @@ describe('build()', () => {
       const cfg = {
         build: { sourceDir, outputDir: outDir, cleanOutput: true },
         targets: [
-          { id: 'copilot', name: 'GitHub Copilot', bundleName: 'apm-copilot.zip', format: 'markdown', directories: { guides: '.github/prompts', commands: '.github/prompts' } },
+          {
+            id: 'copilot',
+            name: 'GitHub Copilot',
+            bundleName: 'apm-copilot.zip',
+            format: 'markdown',
+            directories: { guides: '.github/prompts', commands: '.github/prompts' },
+          },
         ],
       };
 
@@ -610,4 +650,3 @@ describe('build() - Verified assistant targets', () => {
     });
   });
 });
-

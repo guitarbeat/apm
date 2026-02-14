@@ -5,3 +5,29 @@ node_modules/
 upstream-apm/node_modules/
 dist/
 upstream-apm/dist/
+
+# Python
+.venv/
+.env
+.coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+htmlcov/
+
+# Node.js
+npm-debug.log
+yarn-error.log
+pnpm-debug.log*
+
+# System
+.DS_Store
+.idea/
+.vscode/
+
+# Project specific
+*.sqlite
+*.db
+upstream-apm-main/

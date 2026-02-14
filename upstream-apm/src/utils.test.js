@@ -45,11 +45,10 @@ describe('Utils', () => {
   });
 
   describe('displayError', () => {
-    let consoleLogSpy;
     let consoleErrorSpy;
 
     beforeEach(() => {
-      consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      vi.spyOn(console, 'log').mockImplementation(() => {});
       consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     });
 
@@ -62,23 +61,25 @@ describe('Utils', () => {
     });
 
     it('should display error message using console.error', () => {
-       if (displayError) {
-          displayError('Operation failed');
-          expect(consoleErrorSpy).toHaveBeenCalled();
-          // displayError uses console.error, so console.log might not be called,
-          // or at least error should be called.
-       }
+      if (displayError) {
+        displayError('Operation failed');
+        expect(consoleErrorSpy).toHaveBeenCalled();
+        // displayError uses console.error, so console.log might not be called,
+        // or at least error should be called.
+      }
     });
 
     it('should include details in error output', () => {
-       if (displayError) {
-          displayError('Failed', 'Some detailed error');
-          // Since console.error is called multiple times with styled strings,
-          // we check if any of the calls contained the string.
-          const calls = consoleErrorSpy.mock.calls.flat();
-          const hasDetails = calls.some(arg => typeof arg === 'string' && arg.includes('Some detailed error'));
-          expect(hasDetails).toBe(true);
-       }
+      if (displayError) {
+        displayError('Failed', 'Some detailed error');
+        // Since console.error is called multiple times with styled strings,
+        // we check if any of the calls contained the string.
+        const calls = consoleErrorSpy.mock.calls.flat();
+        const hasDetails = calls.some(
+          (arg) => typeof arg === 'string' && arg.includes('Some detailed error')
+        );
+        expect(hasDetails).toBe(true);
+      }
     });
   });
 });

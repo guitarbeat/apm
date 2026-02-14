@@ -25,6 +25,7 @@ APM's sophisticated agent coordination relies on advanced context and prompt eng
 Context engineering in APM focuses on **constructing the operational reality** within which LLMs function effectively. Unlike traditional approaches that rely on personality-based role definitions, APM's context engineering establishes clear operational boundaries and responsibilities, and process frameworks that enable emergent specialization through a focused context scope.
 
 **Agent Operational Contexts**:
+
 - **Setup Agents**: Project discovery and planning with systematic progression gates
 - **Manager Agents**: Coordination, decision-making, and structured task assignment and review protocols
 - **Implementation Agents**: Domain-specific execution with defined input/output specifications
@@ -49,10 +50,11 @@ The Task Loop Phase follows structured cycles that maintain coordination efficie
 
 Rather than employing predefined agent roles, APM enables **dynamic domain identification and agent assignment** through the Setup Agent's systematic Project Breakdown process. This approach recognizes that optimal agent specialization emerges from project-specific requirements rather than universal role templates.
 
-During Project Breakdown, the Setup Agent reviews the project context to identify distinct work domains, each requiring different skill sets and expertise. This process considers three main factors: 
-1) separation of skill areas: assigning different agents when specialized knowledge is needed
-2) technical environment boundaries: creating domain-specific agents for different technology stacks
-3) workflow patterns: distinguishing between different task orientations to assign agents accordingly.
+During Project Breakdown, the Setup Agent reviews the project context to identify distinct work domains, each requiring different skill sets and expertise. This process considers three main factors:
+
+1. separation of skill areas: assigning different agents when specialized knowledge is needed
+2. technical environment boundaries: creating domain-specific agents for different technology stacks
+3. workflow patterns: distinguishing between different task orientations to assign agents accordingly.
 
 The Setup Agent creates an **initial Implementation Agent team** based on identified logical domains, assigning descriptive agent identifiers that reflect domain scope such as `Agent_Backend`, `Agent_Frontend`, or `Agent_DevOps`. This dynamic assignment ensures agents receive context naturally suited to their designated work areas without requiring explicit domain expertise embedding in their prompts.
 
@@ -71,6 +73,7 @@ APM employs **structured Markdown formatting** as the default communication prot
 Using hierarchical Markdown formatting—such as headers, lists, and font emphasis—enables APM prompts to convey information in a way that is both easy for LLMs to parse and less prone to misinterpretation than plain text.
 
 **Key Parsing Benefits**:
+
 - **Token Retention**: Markdown's structural elements help LLMs organize and retain key information over the course of long conversations.
 - **Cross-Model Compatibility**: Universal formatting conventions in Markdown ensure reliable parsing and consistent behavior across a wide range of LLM architectures.
 - **Reduced Ambiguity**: Structured formatting and the use of font variations for emphasis create a clear information hierarchy, minimizing misinterpretation of complex instructions and enabling the model to deliver exceptional attention to detail.
@@ -82,6 +85,7 @@ APM uses **lightweight YAML front matter** at the top of important documents to 
 This front matter strategy streamlines agent workflows by allowing quick filtering and triage of assets. Agents can extract essential details such as execution type, dependencies, status, or task references without reading detailed descriptions. For example, Task Assignment Prompts leverage YAML to flag dependencies and execution context, while Memory Logs use it to indicate completion status and link to relevant tasks, supporting fast and accurate coordination in complex, multi-agent environments.
 
 **Dual-Layer Parsing Architecture**:
+
 - **YAML Layer**: Structured metadata provides context scaffolding and quick filtering
 - **Markdown Layer**: Detailed information delivery with hierarchical organization
 
@@ -98,6 +102,7 @@ This combination creates enhanced parsing precision where structured metadata pr
 Each agent type receives a comprehensive initiation prompt that establishes operational context without requiring additional setup. These prompts also instruct agents to autonomously read relevant APM guides (as described in the next section) or to expect additional prompts as part of the workflow. For example, Manager Agents are prepared for a Bootstrap Prompt after initialization, and both Manager and Implementation Agents are instructed to anticipate Handover Prompts when context transfer is required.
 
 **Initiation Prompt Components**:
+
 - **Setup Agents**: Five-step workflow sequence, progression gate requirements, asset verification protocols
 - **Manager Agents**: Coordination responsibilities, task loop protocols, handover procedures
 - **Implementation Agents**: Execution patterns, error handling protocols, delegation protocols, logging requirements, handover procedures
@@ -107,6 +112,7 @@ Each agent type receives a comprehensive initiation prompt that establishes oper
 A key practical feature of APM's prompt engineering is the use of **prompts and guides that agents access autonomously** via their AI IDE's file operation and search capabilities. This approach enables agents to independently retrieve detailed protocols, procedures, and workflows as needed during initialization, supporting scalable and efficient multi-agent coordination without manual intervention.
 
 **Autonomous Guide Access Patterns**:
+
 - **Setup Agents**: Context Synthesis Prompt and Project Breakdown, Review & Enhancement Guides during systematic planning phases
 - **Manager Agents**: Memory System & Log Guides for memory management, Task Assignment Guides when creating coordination prompts
 - **Implementation Agents**: Memory Log Guides for proper documentation protocols
@@ -116,6 +122,7 @@ A key practical feature of APM's prompt engineering is the use of **prompts and 
 APM's most advanced prompt engineering features **meta-prompts that agents create dynamically** during workflow execution. These prompts are not pre-written or stored in asset directories but are generated by agents following structured formats defined in the guide system.
 
 **Meta-Prompt Generation by Agent Type**
+
 - **Manager Agents**: Generate Task Assignment Prompts by combining Implementation Plan task specifications with dependency context, success criteria, and execution instructions. Task Assignment Prompts are presented as **Markdown code blocks in chat for easy copy-paste workflows**.
 - **Implementation Agents**: Generate Memory Log entries with standardized log formats and task-specific execution details, including outcomes, issues encountered, and solutions implemented. Memory Log entries are presented as **file appendixes in Memory Log files**.
 

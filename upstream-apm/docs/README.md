@@ -7,11 +7,13 @@ Welcome to the documentation suite for the Agentic Project Management (APM) fram
 This documentation suite provides in-depth coverage of APM's architecture, workflows, and implementation strategies using the v0.5 CLI. Whether you're getting started or optimizing your experience, these resources will guide you through effective multi-agent project management.
 
 ### Getting Started
+
 - **[Introduction](Introduction.md)** - Overview of the APM framework, core concepts, and the v0.5 CLI.
 - **[Getting Started](Getting_Started.md)** - Step-by-step guide for installing APM via CLI and launching your first session.
- - **[CLI Guide](CLI.md)** - Detailed CLI usage, behaviors, policies, and update rules.
+- **[CLI Guide](CLI.md)** - Detailed CLI usage, behaviors, policies, and update rules.
 
 ### Core Documentation
+
 - **[Agent Types](Agent_Types.md)** - Detailed breakdown of all four agent types and their roles
 - **[Workflow Overview](Workflow_Overview.md)** - Complete workflow walkthrough with procedures
 - **[Token Consumption Tips](Token_Consumption_Tips.md)** - Strategies for cost-effective model usage
@@ -19,6 +21,7 @@ This documentation suite provides in-depth coverage of APM's architecture, workf
 - **[Troubleshooting Guide](Troubleshooting_Guide.md)** - Solutions for common issues encountered during Setup Phase, Task Loop Phase, and Handovers.
 
 ### Advanced Topics
+
 - **[Context and Memory Management](Context_and_Memory_Management.md)** - Deep dive into APM's architecture and Dynamic-MD Memory System.
 - **[Context and Prompt Engineering](Context_and_Prompt_Engineering.md)** - In-depth explanation of how APM's prompts and guides shape agent context and behavior.
 
