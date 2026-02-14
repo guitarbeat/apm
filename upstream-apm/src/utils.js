@@ -1,4 +1,15 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, cpSync, rmSync, copyFileSync, renameSync } from 'fs';
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+  cpSync,
+  rmSync,
+  copyFileSync,
+  renameSync,
+} from 'fs';
 import { join, dirname, basename, resolve } from 'path';
 import chalk from 'chalk';
 
@@ -6,30 +17,30 @@ import chalk from 'chalk';
  * Assistant directory mapping for detection
  */
 const ASSISTANT_DIRECTORIES = {
-  'Cursor': '.cursor/commands',
+  Cursor: '.cursor/commands',
   'GitHub Copilot': '.github/prompts',
   'Claude Code': '.claude/commands',
   'Gemini CLI': '.gemini/commands',
   'Qwen Code': '.qwen/commands',
-  'opencode': '.opencode/command',
-  'Windsurf': '.windsurf/workflows',
+  opencode: '.opencode/command',
+  Windsurf: '.windsurf/workflows',
   'Kilo Code': '.kilocode/workflows',
   'Auggie CLI': '.augment/commands',
-  'Roo Code': '.roo/commands'
+  'Roo Code': '.roo/commands',
 };
 
 /**
  * Indicators for environment detection (folders or files that suggest an assistant is being used)
  */
 const ASSISTANT_INDICATORS = {
-  'Cursor': ['.cursor'],
-  'Windsurf': ['.windsurf'],
+  Cursor: ['.cursor'],
+  Windsurf: ['.windsurf'],
   'Roo Code': ['.roo'],
   'Claude Code': ['.claude'],
   'Gemini CLI': ['.gemini'],
   'Kilo Code': ['.kilocode'],
   'Auggie CLI': ['.augment'],
-  'opencode': ['.opencode']
+  opencode: ['.opencode'],
 };
 
 /**
@@ -39,17 +50,18 @@ const ASSISTANT_INDICATORS = {
  */
 export function readMetadata(projectPath, currentCliVersion) {
   const metadataPath = join(projectPath, '.apm', 'metadata.json');
-  
+
   if (!existsSync(metadataPath)) {
     return null;
   }
-  
+
   try {
     const content = readFileSync(metadataPath, 'utf8');
     const parsed = JSON.parse(content);
 
     // Detect old schema and migrate automatically
-    const isOldSchema = parsed && typeof parsed === 'object' && 'version' in parsed && 'assistant' in parsed;
+    const isOldSchema =
+      parsed && typeof parsed === 'object' && 'version' in parsed && 'assistant' in parsed;
     if (!isOldSchema) {
       return parsed;
     }
@@ -59,11 +71,13 @@ export function readMetadata(projectPath, currentCliVersion) {
     const assistants = Array.from(new Set([...oldAssistant, ...detected]));
 
     const migrated = {
-      cliVersion: currentCliVersion || (parsed.version ? parsed.version.replace(/^v(\d+\.\d+\.\d+).*/, '$1') : ''),
+      cliVersion:
+        currentCliVersion ||
+        (parsed.version ? parsed.version.replace(/^v(\d+\.\d+\.\d+).*/, '$1') : ''),
       templateVersion: parsed.version,
       assistants,
       installedAt: parsed.installedAt || new Date().toISOString(),
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     // Persist migrated schema
@@ -84,11 +98,11 @@ export function readMetadata(projectPath, currentCliVersion) {
 export function writeMetadata(projectPath, metadata) {
   const metadataDir = join(projectPath, '.apm');
   const metadataPath = join(metadataDir, 'metadata.json');
-  
+
   if (!existsSync(metadataDir)) {
     mkdirSync(metadataDir, { recursive: true });
   }
-  
+
   writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
 }
 
@@ -109,11 +123,13 @@ export function createOrUpdateMetadata(projectPath, assistants, templateVersion,
 
   const now = new Date().toISOString();
   const metadata = {
-    cliVersion: cliVersion,
+    cliVersion,
     templateVersion,
     assistants: assistants || [],
-    installedAt: existsSync(metadataPath) ? JSON.parse(readFileSync(metadataPath, 'utf8')).installedAt || now : now,
-    lastUpdated: now
+    installedAt: existsSync(metadataPath)
+      ? JSON.parse(readFileSync(metadataPath, 'utf8')).installedAt || now
+      : now,
+    lastUpdated: now,
   };
 
   writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
@@ -127,14 +143,14 @@ export function createOrUpdateMetadata(projectPath, assistants, templateVersion,
  */
 export function detectInstalledAssistants(projectPath) {
   const detected = [];
-  
+
   for (const [assistant, directory] of Object.entries(ASSISTANT_DIRECTORIES)) {
     const dirPath = join(projectPath, directory);
     if (existsSync(dirPath)) {
       detected.push(assistant);
     }
   }
-  
+
   return detected;
 }
 
@@ -168,7 +184,7 @@ export function parseTemplateTagParts(tag) {
   }
   return {
     baseVersion: match[1],
-    buildNumber: parseInt(match[2], 10)
+    buildNumber: parseInt(match[2], 10),
   };
 }
 
@@ -183,26 +199,28 @@ export function parseTemplateTagParts(tag) {
 export function compareTemplateVersions(tagA, tagB) {
   const parsedA = parseTemplateTagParts(tagA);
   const parsedB = parseTemplateTagParts(tagB);
-  
+
   // Handle invalid tags
   if (!parsedA || !parsedB) {
-    throw new Error(`Invalid template tag format: "${tagA}" or "${tagB}". Expected format: v<version>+templates.<buildNumber>`);
+    throw new Error(
+      `Invalid template tag format: "${tagA}" or "${tagB}". Expected format: v<version>+templates.<buildNumber>`
+    );
   }
-  
+
   // First, compare base versions
   // If base versions differ, these tags are not directly comparable
   if (parsedA.baseVersion !== parsedB.baseVersion) {
     return NaN;
   }
-  
+
   // Base versions are the same, compare build numbers
   if (parsedA.buildNumber < parsedB.buildNumber) {
     return -1;
-  } else if (parsedA.buildNumber > parsedB.buildNumber) {
-    return 1;
-  } else {
-    return 0;
   }
+  if (parsedA.buildNumber > parsedB.buildNumber) {
+    return 1;
+  }
+  return 0;
 }
 
 /**
@@ -214,9 +232,9 @@ export function compareTemplateVersions(tagA, tagB) {
 export function createBackup(projectPath, directories) {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupDir = join(projectPath, '.apm', `backup-${timestamp}`);
-  
+
   mkdirSync(backupDir, { recursive: true });
-  
+
   for (const dir of directories) {
     const sourcePath = join(projectPath, dir);
     if (existsSync(sourcePath)) {
@@ -226,7 +244,7 @@ export function createBackup(projectPath, directories) {
       console.log(chalk.gray(`  Backed up: ${dir}`));
     }
   }
-  
+
   return backupDir;
 }
 
@@ -239,13 +257,13 @@ export function restoreBackup(backupDir, projectPath) {
   if (!existsSync(backupDir)) {
     throw new Error('Backup directory not found');
   }
-  
+
   const items = readdirSync(backupDir);
-  
+
   for (const item of items) {
     const sourcePath = join(backupDir, item);
     const destPath = join(projectPath, item);
-    
+
     if (statSync(sourcePath).isDirectory()) {
       if (existsSync(destPath)) {
         rmSync(destPath, { recursive: true, force: true });
@@ -284,55 +302,64 @@ export function mergeAssistants(a = [], b = []) {
 export function generateBanner(version = '0.5.0') {
   // Define colors for each letter in the ASCII art
   // You can change these to any chalk color: red, green, yellow, blue, magenta, cyan, white, gray, etc.
-  const colorA = chalk.white;      // Color for letter "A"
-  const colorP = chalk.cyan;   // Color for letter "P" 
-  const colorM = chalk.cyan;    // Color for letter "M"
-  
+  const colorA = chalk.white; // Color for letter "A"
+  const colorP = chalk.cyan; // Color for letter "P"
+  const colorM = chalk.cyan; // Color for letter "M"
+
   // Banner width is 78 characters (based on horizontal border line)
   const BANNER_WIDTH = 80;
   const border = chalk.blue('║');
   const innerWidth = BANNER_WIDTH - 2; // Subtract 2 for border characters
-  
+
   // Calculate spacing for version line to center it
   const versionText = `Agentic Project Management v${version}`;
   const versionTextLength = versionText.length;
   const spacesOnEachSide = Math.floor((innerWidth - versionTextLength) / 2);
   const leftSpaces = ' '.repeat(spacesOnEachSide);
   const rightSpaces = ' '.repeat(innerWidth - versionTextLength - spacesOnEachSide);
-  
+
   // Detect basic hyperlink support (OSC 8). Many Windows consoles don't support this.
   const supportsHyperlinks = process.platform !== 'win32' && process.stdout && process.stdout.isTTY;
   const ghLabel = 'View on GitHub';
   const npmLabel = 'View on NPM';
   const ghUrl = 'https://github.com/sdi2200262/agentic-project-management';
   const npmUrl = 'https://www.npmjs.com/package/agentic-pm';
-  const formatLink = (label, url) => supportsHyperlinks
-    ? `\x1b]8;;${url}\x1b\\${label}\x1b]8;;\x1b\\`
-    : label;
+  const formatLink = (label, url) =>
+    supportsHyperlinks ? `\x1b]8;;${url}\x1b\\${label}\x1b]8;;\x1b\\` : label;
 
   const lines = [
     chalk.blue('╔══════════════════════════════════════════════════════════════════════════════╗'),
     border + chalk.blue(' '.repeat(innerWidth)) + border,
     border + chalk.blue(' '.repeat(innerWidth)) + border,
     // A letter              P letter              M letter
-    border + '                           ' + colorA('█████╗') + ' ' + colorP('██████╗') + ' ' + colorM('███╗   ███╗') + '                         ' + border,
-    border + '                          ' + colorA('██╔══██╗') + colorP('██╔══██╗') + colorM('████╗ ████║') + '                         ' + border,
-    border + '                       ' + colorP('█████████████████╔╝') + colorM('██╔████╔██║') + '                         ' + border,
-    border + '                       ' + colorP('╚══')+ colorA('██')+ colorP('═══') + colorA('██') + colorP('═██╔═══╝ ') + colorM('██║╚██╔╝██║') + '                         ' + border,
-    border + '                          ' + colorA('██║  ██║') + colorP('██║     ') + colorM('██║ ╚═╝ ██║') + '                         ' + border,
-    border + '                          ' + colorA('╚═╝  ╚═╝') + colorP('╚═╝     ') + colorM('╚═╝     ╚═╝') + '                         ' + border,
+    `${border}                           ${colorA('█████╗')} ${colorP('██████╗')} ${colorM('███╗   ███╗')}                         ${border}`,
+    `${border}                          ${colorA('██╔══██╗')}${colorP('██╔══██╗')}${colorM('████╗ ████║')}                         ${border}`,
+    `${border}                       ${colorP('█████████████████╔╝')}${colorM('██╔████╔██║')}                         ${border}`,
+    `${border}                       ${colorP('╚══')}${colorA('██')}${colorP('═══')}${colorA('██')}${colorP('═██╔═══╝ ')}${colorM('██║╚██╔╝██║')}                         ${border}`,
+    `${border}                          ${colorA('██║  ██║')}${colorP('██║     ')}${colorM('██║ ╚═╝ ██║')}                         ${border}`,
+    `${border}                          ${colorA('╚═╝  ╚═╝')}${colorP('╚═╝     ')}${colorM('╚═╝     ╚═╝')}                         ${border}`,
     border + chalk.blue(' '.repeat(innerWidth)) + border,
-    border + chalk.blue(leftSpaces) + chalk.cyan.bold(versionText) + chalk.blue(rightSpaces) + border,
+    border +
+      chalk.blue(leftSpaces) +
+      chalk.cyan.bold(versionText) +
+      chalk.blue(rightSpaces) +
+      border,
     border + chalk.blue(' '.repeat(innerWidth)) + border,
-    border + chalk.gray('              Manage complex projects with a team of AI assistants            ') + border,
-    border + chalk.gray('                          smoothly and efficiently                            ') + border,
+    border +
+      chalk.gray('              Manage complex projects with a team of AI assistants            ') +
+      border,
+    border +
+      chalk.gray('                          smoothly and efficiently                            ') +
+      border,
     border + chalk.blue(' '.repeat(innerWidth)) + border,
-    border + '                               ' + chalk.cyan.underline(formatLink(ghLabel, ghUrl)) + '                                 ' + border,
-    border + '                                ' + chalk.yellow.underline(formatLink(npmLabel, npmUrl)) + '                                   ' + border,
-    border + chalk.blue('                                                                              ') + border,
-    chalk.blue('╚══════════════════════════════════════════════════════════════════════════════╝')
+    `${border}                               ${chalk.cyan.underline(formatLink(ghLabel, ghUrl))}                                 ${border}`,
+    `${border}                                ${chalk.yellow.underline(formatLink(npmLabel, npmUrl))}                                   ${border}`,
+    border +
+      chalk.blue('                                                                              ') +
+      border,
+    chalk.blue('╚══════════════════════════════════════════════════════════════════════════════╝'),
   ];
-  
+
   return lines;
 }
 
@@ -343,18 +370,19 @@ export function generateBanner(version = '0.5.0') {
  */
 export function displayBanner(version = '0.5.0', useColors = true) {
   const lines = generateBanner(version);
-  
+
   if (useColors) {
     // Lines are already colored, just print them
-    lines.forEach(line => console.log(line));
+    lines.forEach((line) => console.log(line));
     console.log(); // Add blank line for spacing
   } else {
     // Strip colors for plain text version
-    const plainLines = lines.map(line => {
-      // This is a simplified version - in real use you'd strip ANSI codes
-      return line;
-    });
-    plainLines.forEach(line => console.log(line));
+    const plainLines = lines.map(
+      (line) =>
+        // This is a simplified version - in real use you'd strip ANSI codes
+        line
+    );
+    plainLines.forEach((line) => console.log(line));
   }
 }
 
@@ -368,7 +396,7 @@ export function displayBanner(version = '0.5.0', useColors = true) {
 function compareSemverVersions(v1, v2) {
   const parse = (v) => {
     const [core, pre = ''] = String(v).split('-');
-    const [maj, min, pat] = core.split('.').map(n => parseInt(n, 10));
+    const [maj, min, pat] = core.split('.').map((n) => parseInt(n, 10));
     const preTokens = pre === '' ? [] : pre.split('.');
     return { maj, min, pat, preTokens };
   };
@@ -397,8 +425,8 @@ function compareSemverVersions(v1, v2) {
     } else if (na !== nb) {
       // Numeric identifiers have lower precedence than non-numeric
       return na ? -1 : 1;
-    } else {
-      if (ta !== tb) return ta > tb ? 1 : -1; // ASCII lexical
+    } else if (ta !== tb) {
+      return ta > tb ? 1 : -1; // ASCII lexical
     }
   }
   return 0;
@@ -418,15 +446,18 @@ export function checkForNewerTemplates(currentCliVersion, latestOverall) {
   if (!latestOverall) {
     return null;
   }
-  
+
   const latestBaseVersion = latestOverall.baseVersion;
-  if (latestBaseVersion !== currentCliVersion && isVersionNewer(latestBaseVersion, currentCliVersion)) {
+  if (
+    latestBaseVersion !== currentCliVersion &&
+    isVersionNewer(latestBaseVersion, currentCliVersion)
+  ) {
     return {
       tag: latestOverall.tag_name,
-      baseVersion: latestBaseVersion
+      baseVersion: latestBaseVersion,
     };
   }
-  
+
   return null;
 }
 
@@ -442,7 +473,7 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
   const tempGuidesDir = join(tempDir, 'guides');
   const apmDir = join(projectRoot, '.apm');
   const apmGuidesDir = join(apmDir, 'guides');
-  
+
   if (installGuides && existsSync(tempGuidesDir)) {
     if (!existsSync(apmDir)) {
       mkdirSync(apmDir, { recursive: true });
@@ -458,7 +489,7 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
   const assistantDir = getAssistantDirectory(assistant);
   const tempCommandsDir = join(tempDir, 'commands');
   const rootAssistantDir = join(projectRoot, assistantDir);
-  
+
   if (existsSync(tempCommandsDir)) {
     if (existsSync(rootAssistantDir)) {
       rmSync(rootAssistantDir, { recursive: true, force: true });
@@ -477,12 +508,12 @@ export function installFromTempDirectory(tempDir, assistant, projectRoot, option
  */
 export function updateFromTempDirectory(tempDir, assistant, projectRoot, options = {}) {
   const { installGuides = true, silent = false } = options;
-  
+
   // Update assistant-specific directory
   const assistantDir = getAssistantDirectory(assistant);
   const oldAssistantDir = join(projectRoot, assistantDir);
   const newCommandsDir = join(tempDir, 'commands');
-  
+
   if (existsSync(oldAssistantDir)) {
     rmSync(oldAssistantDir, { recursive: true, force: true });
   }
@@ -504,7 +535,7 @@ export function updateFromTempDirectory(tempDir, assistant, projectRoot, options
   // Update guides directory (in .apm/guides) only when requested
   const apmGuidesDir = join(projectRoot, '.apm', 'guides');
   const newGuidesDir = join(tempDir, 'guides');
-  
+
   if (installGuides) {
     if (existsSync(apmGuidesDir)) {
       rmSync(apmGuidesDir, { recursive: true, force: true });

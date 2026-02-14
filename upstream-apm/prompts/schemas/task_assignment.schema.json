@@ -6,7 +6,7 @@
   "type": "object",
   "required": [
     "task_ref",
-    "agent_assignment", 
+    "agent_assignment",
     "memory_log_path",
     "execution_type",
     "dependency_context",
@@ -157,7 +157,7 @@
       "additionalProperties": false
     },
     "memory_logging": {
-      "type": "string", 
+      "type": "string",
       "description": "Instructions for logging work to memory system with path and guide reference",
       "minLength": 30,
       "maxLength": 200

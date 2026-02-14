@@ -26,13 +26,14 @@ Command files must include a YAML frontmatter block with the following required 
 
 ```yaml
 ---
-priority: <number>        # Controls sort order in AI assistant's command menu
-command_name: <string>    # Clean, action-oriented name in kebab-case
-description: <string>     # Brief explanation of the command's purpose
+priority: <number> # Controls sort order in AI assistant's command menu
+command_name: <string> # Clean, action-oriented name in kebab-case
+description: <string> # Brief explanation of the command's purpose
 ---
 ```
 
 Example:
+
 ```yaml
 ---
 priority: 1
@@ -49,6 +50,7 @@ Templates use the following placeholders that are replaced during the build proc
 - `{GUIDE_PATH:<filename>}`: Replaced with the correct relative path to a specific guide
 
 Example usage:
+
 ```markdown
 # APM v{VERSION} Setup Agent
 

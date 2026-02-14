@@ -26,8 +26,14 @@ export class Spinner {
     if (!Spinner.isCursorHandlerAttached) {
       const restoreCursor = () => process.stdout.write('\x1B[?25h');
       // Use exit code 1 to indicate interruption/failure
-      process.on('SIGINT', () => { restoreCursor(); process.exit(1); });
-      process.on('SIGTERM', () => { restoreCursor(); process.exit(1); });
+      process.on('SIGINT', () => {
+        restoreCursor();
+        process.exit(1);
+      });
+      process.on('SIGTERM', () => {
+        restoreCursor();
+        process.exit(1);
+      });
       Spinner.isCursorHandlerAttached = true;
     }
 

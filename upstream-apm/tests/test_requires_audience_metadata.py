@@ -1,4 +1,5 @@
 """Unit tests for legend upgrade detection in the Rigorous setup helper."""
+
 from __future__ import annotations
 
 import importlib.util

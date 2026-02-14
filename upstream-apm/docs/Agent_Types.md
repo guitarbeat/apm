@@ -16,6 +16,7 @@ APM employs four distinct agent types, each with clear responsibilities and care
 **APM achieves agent specialization by providing each agent with carefully scoped, task-relevant context**, rather than relying on artificial personas. Agents develop expertise organically from the information and responsibilities assigned to them, without relying on character-based role-play.
 
 **APM's Approach:**
+
 - **Context-Driven Specialization**: Agents develop domain expertise through exposure to focused, relevant context; not personalitty traits
 - **Responsibility-Based Emergence**: Specialization emerges from the specific tasks and decisions each agent handles
 - **Natural Adaptation**: Models naturally adapt their responses based on the scoped context they receive
@@ -23,12 +24,12 @@ APM employs four distinct agent types, each with clear responsibilities and care
 
 ## Quick Agent Comparison
 
-| Agent Type               | Primary Function                                                                                     | When Active            | Key Strengths                                |
-| ------------------------ | ---------------------------------------------------------------------------------------------------- | ---------------------- | -------------------------------------------- |
-| **Setup Agent**          | Initializes project assets, understands project goals & requirements and creates Implementation Plan | Project start only     | Comprehensive project discovery & planning   |
-| **Manager Agent**        | Oversees coordination, makes project decisions, assigns tasks, reviews work                          | Entire project         | Maintains big-picture context                |
-| **Implementation Agent** | Executes domain-specific tasks                                                                       | As assigned by Manager | Focused execution, detailed logging          |
-| **Ad-Hoc Agent**         | Handles isolated, context-heavy tasks                                                                | Temporary              | Prevents core agent context overload         |
+| Agent Type               | Primary Function                                                                                     | When Active            | Key Strengths                              |
+| ------------------------ | ---------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------ |
+| **Setup Agent**          | Initializes project assets, understands project goals & requirements and creates Implementation Plan | Project start only     | Comprehensive project discovery & planning |
+| **Manager Agent**        | Oversees coordination, makes project decisions, assigns tasks, reviews work                          | Entire project         | Maintains big-picture context              |
+| **Implementation Agent** | Executes domain-specific tasks                                                                       | As assigned by Manager | Focused execution, detailed logging        |
+| **Ad-Hoc Agent**         | Handles isolated, context-heavy tasks                                                                | Temporary              | Prevents core agent context overload       |
 
 ---
 
@@ -53,6 +54,7 @@ APM employs four distinct agent types, each with clear responsibilities and care
 **Context Transfer**: Upon completion, Setup Agent generates Manager Bootstrap Prompt containing all project context, User intent, Implementation Plan and Memory System initialization. Setup Agent session ends when Manager Agent assumes control.
 
 ### Key Characteristics
+
 - **Temporary Instance**: Operates only during project initialization
 - **Comprehensive Scope**: Full project understanding and planning authority
 - **Systematic Methodology**: Reads structured guides during project discovery, planning, review and enhancement for consistent quality
@@ -77,11 +79,13 @@ APM employs four distinct agent types, each with clear responsibilities and care
 ### Operational Workflow
 
 **Task Loop Management**: Manager Agent operates in Task Loop cycles. This continues until project completion or context handover requirements.
+
 > Issues Task Assignment → Reviews Memory Log → Makes Next Action Decision
 
 **Context Integration**: For cross-agent dependencies, Manager Agent provides comprehensive context integration instructions to Implementation Agents, ensuring seamless coordination between different agent instances.
 
 ### Key Characteristics
+
 - **Central Coordinator**: Maintains project overview and decision-making authority
 - **Memory System Maintenence**: Responsible phase initialization, Memory Log review and phase summary creation
 - **Implementation Plan Maintenence**: Responsible for Implementation Plan updates/modifications based on execution findings, project progress or User requests
@@ -98,7 +102,7 @@ APM employs four distinct agent types, each with clear responsibilities and care
 ### Core Responsibilities
 
 1. **Task Execution**: Execute assigned work following single-step or multi-step patterns as specified
-2. **Dependency Integration**: Process cross-agent or same-agent dependency context before main task execution  
+2. **Dependency Integration**: Process cross-agent or same-agent dependency context before main task execution
 3. **User Collaboration**: Coordinate with user for external actions, clarifications and approval/feedback processes
 4. **Ad-Hoc Delegation**: Delegate complex debugging, research, or analysis work to specialized Ad-Hoc agents when required or specified
 5. **Memory Logging**: Document all work, decisions, and execution outcomes in designated Memory Log using standardized format
@@ -107,17 +111,20 @@ APM employs four distinct agent types, each with clear responsibilities and care
 ### Execution Patterns
 
 **Single-Step Tasks:**
+
 - Complete all subtasks in one response
 - Focused executions, bug fixes, simple integrations
 - Direct execution followed by immediate Memory Logging
 
-**Multi-Step Tasks:**  
+**Multi-Step Tasks:**
+
 - Execute work across multiple responses with user confirmation points
 - Complex executions, research phases, integration work
 - Step-by-step progression with user iteration opportunities
 - Steps can be combined via User request/specification
 
 **Dependency Context Integration**:
+
 - **Same-Agent Dependencies**: Simple contextual references to previous work
 - **Cross-Agent Dependencies**: Comprehensive integration steps with file reading requirements
 
@@ -138,7 +145,7 @@ APM employs four distinct agent types, each with clear responsibilities and care
 
 ---
 
-## 4. Ad-Hoc Agents  
+## 4. Ad-Hoc Agents
 
 **Primary Function**: Temporary agent instances for isolated, context-intensive work outside main workflow.
 
@@ -153,6 +160,7 @@ APM employs four distinct agent types, each with clear responsibilities and care
 ### Operational Workflow
 
 **3-Step Process**:
+
 1. **Assessment**: Scope assessment and confirmation with clarification questions if needed
 2. **Execution**: Complete delegation work + present findings + request confirmation (all in one response)
 3. **Delivery**: Provide final results in markdown code block format for copy-paste integration back to the Implementation Agent's chat session

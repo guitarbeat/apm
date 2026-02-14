@@ -5,6 +5,7 @@ This document explains how the APM CLI installs and updates templates and how it
 ## Commands
 
 ### apm init
+
 - **Default behavior:** Finds and installs the latest template tag compatible with your current CLI version.
 - **Assistant selection:** You select one assistant, but **APM installs/updates _all_ recorded assistants** to the chosen tag.
 - **Guides:** `.apm/guides` is scaffolded **once per run**; assistant command directories are installed under their specific folders (e.g., `.cursor/commands`, `.github/prompts`).
@@ -12,11 +13,13 @@ This document explains how the APM CLI installs and updates templates and how it
 - **Metadata:** `.apm/metadata.json` stores the unified `templateVersion`, `cliVersion`, and an `assistants` array (all installed assistants).
 
 #### --tag policy
+
 - **Newer template, same CLI base:** Proceed without warnings.
 - **Older template, same CLI base:** Show a yellow warning and ask for confirmation.
 - **Different CLI base (newer or older):** Show a red warning and ask for confirmation. **All assistants will be overwritten** to the specified tag.
 
 ### apm update
+
 - **Always looks up the latest template tag compatible with your current CLI version.**
 - **Update decision:**
   - If **installed template base < current CLI base**: proceed to update.
@@ -26,6 +29,7 @@ This document explains how the APM CLI installs and updates templates and how it
 - **Backup:** Moves all assistant directories and `.apm/guides` into `.apm/apm-backup-<templateTag>/` and creates a zip archive. `.apm/Implementation_Plan.md` and `.apm/Memory/` are left intact.
 
 ## Metadata Schema
+
 ```json
 {
   "cliVersion": "<CURRENT_CLI_VERSION>",
@@ -35,10 +39,12 @@ This document explains how the APM CLI installs and updates templates and how it
   "lastUpdated": "<ISO>"
 }
 ```
+
 - **Migration:** older metadata (v0.5.0-test-x) with a single `assistant` and `version` is upgraded automatically to the schema above.
 
 ---
 
 > **Notes:**
+>
 > - If `apm update` indicates newer templates exist for a newer CLI base, update your CLI: `npm update -g agentic-pm` and run `apm update` again.
 > - You can always install a specific template via `apm init --tag <CLI_VERSION>+templates.N`.

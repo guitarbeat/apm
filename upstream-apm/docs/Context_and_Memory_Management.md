@@ -25,12 +25,14 @@ APM's effectiveness stems from context scope management and a dynamic memory sys
 APM achieves agent specialization through **targeted context scoping** rather than embedded persona engineering. When an agent receives only the context relevant to their specific responsibilities, they naturally develop the appropriate expertise and decision-making patterns for that role.
 
 **Traditional Approach Problems**:
+
 - Token-expensive persona descriptions that consume context window space
 - Artificial personality traits that don't improve task execution quality
 - Hallucinated expertise that can lead to overconfident but incorrect responses
 - Context pollution from irrelevant role-playing instructions
 
 **APM's Scoped Context Approach**:
+
 - **Active Context Tokens**: Include only information directly relevant to current task execution
 - **Natural Specialization**: LLM expertise emerges from task-specific context and requirements
 - **Token Efficiency**: Every token in context contributes to task completion quality
@@ -117,12 +119,14 @@ This structure ensures that all necessary information for successful cross-agent
 APM v0.5's Dynamic Memory Bank represents a carefully designed adaptation of the traditional single-file memory system, addressing scalability, maintainability, and cost-efficiency challenges inherent in large project contexts.
 
 **Traditional Single-File Memory Bank Limitations**:
+
 - Context window bloat as projects grow
 - Difficulty parsing relevant information from accumulated project history
 - Manager Agent context overload from accessing all historical information
 - Inefficient token usage when most historical context is irrelevant to current decisions
 
 **Dynamic Memory Bank Advantages**:
+
 - **Granular Access**: Load only relevant memory components for current coordination needs
 - **Scalable Structure**: Organize memory hierarchically to support projects of any size
 - **Progressive Creation**: Build memory structure as project progresses rather than upfront initialization
@@ -135,6 +139,7 @@ APM v0.5's Dynamic Memory Bank represents a carefully designed adaptation of the
 APM v0.5 uses the Dynamic-MD (Markdown) memory system exclusively for all projects:
 
 **Dynamic-MD Variant** (Directory structure with Markdown logs):
+
 - **Structure**: `Memory_Root.md` + `Phase_XX_<slug>/` directories + individual task logs
 - **Benefits**: User readability, granular access, efficient context management, optimal token usage
 
@@ -144,12 +149,14 @@ APM v0.5 uses the Dynamic-MD (Markdown) memory system exclusively for all projec
 APM dynamically generates memory components as project execution progresses. This approach provides significant practical and economic benefits.
 
 **Phase-Level Creation**:
+
 - **Memory Root**: Created during Setup Agent memory initialization with project context
 - **Phase Directories**: Created by the Manager Agent on Implementation Plan phase entry
 - **Task Memory Logs**: Mapped to Implementation Plan tasks and created as empty files on phase entry; populated by Implementation Agents during task execution
 - **Phase Summaries**: Appended to the Memory Root at phase completion
 
 **Progressive Benefits**:
+
 - **Adaptation Flexibility**: Memory structure adapts if the project requirements/goals and therefore the Implementation Plan changes during execution
 - **Resource Efficiency**: Avoid creating unused Memory Logs for modified or canceled tasks
 - **Token Conservation**: Manager Agents only initialize memory for immediate coordination needs
@@ -160,11 +167,13 @@ APM dynamically generates memory components as project execution progresses. Thi
 Each Implementation Plan task maps directly to a dedicated Memory Log file, ensuring traceability and granular access to task execution context.
 
 **Mapping Schema**:
+
 - **Task Reference**: `Task X.Y - Title | Agent_Domain` → **Memory Log**: `Task_X_Y_<title_slug>.md`
 - **Phase Organization**: `Phase N: Phase_Name` → **Directory**: `Phase_NN_<phase_slug>/`
 - **Cross-References**: Memory Logs include task references for dependency tracking
 
 **Example Structure**:
+
 ```
 Memory/
 ├── Memory_Root.md                          # Phase summaries and project context
@@ -179,13 +188,15 @@ Memory/
 ```
 
 #### Memory Root and Phase Summaries
-Manager Agents create phase summaries upon phase completion, providing structured project memory without overwhelming detail. In addition to providing a high-level overview for the User, these summaries also serve as structured context snapshots for Manager Agent handovers. 
+
+Manager Agents create phase summaries upon phase completion, providing structured project memory without overwhelming detail. In addition to providing a high-level overview for the User, these summaries also serve as structured context snapshots for Manager Agent handovers.
 
 **Phase Summary Creation**:
 Each phase summary is a concise record of the completed phase, capturing key outcomes, deliverables, and insights that reflect overall project progress:
 
 ```markdown
-## Phase 01 — Foundation Summary 
+## Phase 01 — Foundation Summary
+
 - **Outcome**: Database schema and authentication system implemented successfully
 - **Involved Agents**: Agent_DevOps, Agent_Backend
 - **Key Deliverables**: PostgreSQL schema, JWT authentication, deployment configuration
@@ -202,6 +213,7 @@ Each phase summary is a concise record of the completed phase, capturing key out
 **The Reality of Context Window Limits**: Even with careful scoping, agent instances eventually approach context window limits through accumulated task execution, dependency integration, and coordination history. APM's Handover Procedures enable seamless context transfer to replacement agent instances while preserving essential working context and project continuity.
 
 **Handover Trigger Scenarios**:
+
 - **Context Capacity**: Agent approaching 80-90% context window utilization
 - **Performance Degradation**: Repetitive questions, forgotten project details, or generic responses
 - **Session Length**: Proactive handover after 10-15 task cycles to maintain performance quality
@@ -215,6 +227,7 @@ APM employs a **two-artifact approach** that separates formal project memory fro
 **Purpose**: Captures active memory context that formal Memory Logs don't contain but is essential for project continuation.
 
 **Content Categories**:
+
 - **User Preferences**: Communication style, feedback patterns, and development preferences discovered through collaboration
 - **Working Insights**: Codebase patterns, effective approaches, recurring issues, and workflow discoveries
 - **Environmental Context**: File locations, configuration preferences, tool usage patterns, and setup insights
@@ -225,6 +238,7 @@ APM employs a **two-artifact approach** that separates formal project memory fro
 **Purpose**: Provides structured context transfer instructions for replacement agent instance, ensuring proper context integration and user verification.
 
 **Integration Protocol Components**:
+
 - **Guide Reading Requirements**: Specific guides replacement agent must read for responsibility understanding
 - **Memory Log Reading Sequence**: Chronological order for processing previous task execution history
 - **Handover File Integration**: Instructions for incorporating active working context
@@ -238,19 +252,19 @@ APM employs a **two-artifact approach** that separates formal project memory fro
 
 **Handover Chain Example**:
 
-- **Handover 1**: Agent_Frontend_1 → Agent_Frontend_2  
-  - **Tasks Completed Before Handover**: 1–10  
-  - **Context Transferred**: Working insights from tasks 1–10  
+- **Handover 1**: Agent_Frontend_1 → Agent_Frontend_2
+  - **Tasks Completed Before Handover**: 1–10
+  - **Context Transferred**: Working insights from tasks 1–10
   - **Handover File**: `Agent_Frontend_Handover_File_1.md` contains user intent and undocumented context (workflow preferences, discoveries) from tasks 1–10
 
-- **Handover 2**: Agent_Frontend_2 → Agent_Frontend_3  
-  - **Tasks Completed Before Handover**: 11–20  
-  - **Context Transferred**: Task history from tasks 1–10 and working insights from tasks 11–20  
+- **Handover 2**: Agent_Frontend_2 → Agent_Frontend_3
+  - **Tasks Completed Before Handover**: 11–20
+  - **Context Transferred**: Task history from tasks 1–10 and working insights from tasks 11–20
   - **Handover File**: `Agent_Frontend_Handover_File_2.md` contains user intent and undocumented context from tasks 11–20, as well as all prior insights and context from `Agent_Frontend_Handover_File_1.md`
 
-- **Handover 3**: Agent_Frontend_3 → Agent_Frontend_4  
-  - **Tasks Completed Before Handover**: 21–30  
-  - **Context Transferred**: Task history from tasks 10–20 and working insights from tasks 21–30  
+- **Handover 3**: Agent_Frontend_3 → Agent_Frontend_4
+  - **Tasks Completed Before Handover**: 21–30
+  - **Context Transferred**: Task history from tasks 10–20 and working insights from tasks 21–30
   - **Handover File**: `Agent_Frontend_Handover_File_3.md` contains user intent and undocumented context from tasks 21–30, plus all prior insights and context from previous handover files
 
 **Context Preservation Strategies and Planning Implications**:

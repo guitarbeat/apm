@@ -1,4 +1,5 @@
 """Regression tests for manuscript asset copy reporting in the Rigorous setup helper."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -86,12 +87,8 @@ def test_copy_returns_false_when_asset_is_unreadable(tmp_path: Path) -> None:
 
     review_dir = tmp_path / "review"
     try:
-        copied = setup_review.copy_manuscript_assets(
-            manuscript_file, review_dir, force=False
-        )
-        assert (
-            copied is False
-        ), "The copy operation should have returned False due to permissions"
+        copied = setup_review.copy_manuscript_assets(manuscript_file, review_dir, force=False)
+        assert copied is False, "The copy operation should have returned False due to permissions"
     finally:
         # Restore permissions so the temp directory can be cleaned up
         unreadable_asset.chmod(0o666)

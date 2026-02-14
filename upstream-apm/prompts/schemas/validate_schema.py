@@ -48,7 +48,7 @@ def load_json_file(file_path):
     """Load and return JSON data from a file."""
 
     try:
-        with open(file_path, 'r', encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     except FileNotFoundError:
@@ -57,8 +57,7 @@ def load_json_file(file_path):
 
     except UnicodeDecodeError as e:
         print(
-            "Error: Could not decode file "
-            f"'{file_path}' as UTF-8 - {e}",
+            "Error: Could not decode file " f"'{file_path}' as UTF-8 - {e}",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -70,13 +69,16 @@ def load_json_file(file_path):
 
 def get_schema_path(artifact_type):
     """Return the full path to the schema file for the given artifact type."""
-    
+
     schema_file = SCHEMA_MAP.get(artifact_type)
-    
+
     if not schema_file:
-        print(f"Error: Schema for artifact type '{artifact_type}' is not defined yet.", file=sys.stderr)
+        print(
+            f"Error: Schema for artifact type '{artifact_type}' is not defined yet.",
+            file=sys.stderr,
+        )
         print_usage_and_exit()
-    
+
     return Path(__file__).parent / schema_file
 
 
@@ -108,37 +110,33 @@ def print_usage_and_exit():
 
 def parse_args():
     """Parse and return command-line arguments."""
-    
+
     parser = argparse.ArgumentParser(
-        description="Validate a JSON file against a predefined APM schema.",
-        add_help=False
+        description="Validate a JSON file against a predefined APM schema.", add_help=False
     )
-    
+
     parser.add_argument(
         "artifact_type",
         choices=SUPPORTED_ARTIFACT_TYPES,
-        help=(
-            "The type of artifact to validate. Choices: "
-            f"{list(SUPPORTED_ARTIFACT_TYPES)}"
-        ),
+        help=("The type of artifact to validate. Choices: " f"{list(SUPPORTED_ARTIFACT_TYPES)}"),
     )
-    
+
+    parser.add_argument("file_path", help="The path to the JSON file to validate.")
+
     parser.add_argument(
-        "file_path",
-        help="The path to the JSON file to validate."
+        "-h",
+        "--help",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="Show this help message and exit.",
     )
-    
-    parser.add_argument(
-        "-h", "--help", action="help", default=argparse.SUPPRESS,
-        help="Show this help message and exit."
-    )
-    
+
     try:
         args = parser.parse_args()
-    
+
     except Exception:
         print_usage_and_exit()
-    
+
     return args
 
 
@@ -148,6 +146,7 @@ def main():
     schema = load_json_file(schema_path)
     instance = load_json_file(args.file_path)
     validate_json(instance, schema, args.file_path, args.artifact_type)
+
 
 if __name__ == "__main__":
     main()

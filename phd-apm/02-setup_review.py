@@ -16,12 +16,8 @@ from typing import Callable, List, Sequence, Tuple
 DEFAULT_COLLECTION_DIR_NAME = "rigorous_apm_reviews"
 AGENT_LIBRARY_ROOT = Path(__file__).resolve().parent / "05-implementation-agents"
 AUTOMATION_SNIPPETS = {
-    "setup": Path(__file__).resolve().parent
-    / "03-review-kickoff"
-    / "share_plan_with_setup.apm",
-    "manager": Path(__file__).resolve().parent
-    / "03-review-kickoff"
-    / "manager_load_plan.apm",
+    "setup": Path(__file__).resolve().parent / "03-review-kickoff" / "share_plan_with_setup.apm",
+    "manager": Path(__file__).resolve().parent / "03-review-kickoff" / "manager_load_plan.apm",
 }
 
 # Version tracking
@@ -184,9 +180,7 @@ def audience_icon(audience: str) -> str:
 def audience_legend_lines() -> List[str]:
     lines: List[str] = []
     for definition in AUDIENCE_DEFINITIONS.values():
-        lines.append(
-            f"- {definition['icon']} {definition['label']} – {definition['description']}"
-        )
+        lines.append(f"- {definition['icon']} {definition['label']} – {definition['description']}")
     return lines
 
 
@@ -305,7 +299,7 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
 
 
 def normalize_path(raw: str) -> Path:
-    return Path(raw.strip().strip("\"").strip("'"))
+    return Path(raw.strip().strip('"').strip("'"))
 
 
 def request_manuscript_path(args: argparse.Namespace) -> Path:
@@ -313,7 +307,9 @@ def request_manuscript_path(args: argparse.Namespace) -> Path:
         return normalize_path(args.manuscript)
 
     if args.non_interactive:
-        print("\033[91mError: --manuscript is required when running in non-interactive mode.\033[0m")
+        print(
+            "\033[91mError: --manuscript is required when running in non-interactive mode.\033[0m"
+        )
         sys.exit(1)
 
     try:
@@ -427,7 +423,9 @@ def determine_review_directory(
     manuscript_dir: Path, manuscript_name: str, args: argparse.Namespace
 ) -> Path:
     output_root = (
-        normalize_path(args.output_root).expanduser() if args.output_root else manuscript_dir / DEFAULT_COLLECTION_DIR_NAME
+        normalize_path(args.output_root).expanduser()
+        if args.output_root
+        else manuscript_dir / DEFAULT_COLLECTION_DIR_NAME
     )
     review_dir_path = output_root / f"{manuscript_name}_review"
     return review_dir_path
@@ -448,9 +446,7 @@ def ensure_workspace(review_dir_path: Path, force: bool) -> None:
     print(f"\033[92mWorkspace ready: {review_dir_path}\033[0m")
 
 
-def copy_manuscript_assets(
-    manuscript_file: Path, review_dir_path: Path, force: bool
-) -> bool:
+def copy_manuscript_assets(manuscript_file: Path, review_dir_path: Path, force: bool) -> bool:
     destination = review_dir_path / "manuscript_assets"
     if destination.exists():
         if force:
@@ -505,10 +501,7 @@ def write_file(
                     path.parent.mkdir(parents=True, exist_ok=True)
                     with open(path, "w", encoding="utf-8") as handle:
                         handle.write(content.rstrip() + "\n")
-                    print(
-                        "\033[92mUpgraded existing file with audience legend: "
-                        f"{path}\033[0m"
-                    )
+                    print("\033[92mUpgraded existing file with audience legend: " f"{path}\033[0m")
                     return "upgraded"
         print(f"\033[93mSkipped existing file (use --force to overwrite): {path}\033[0m")
         return "skipped"
@@ -525,34 +518,36 @@ def check_version_compatibility() -> bool:
     print(f"\033[94mPhD APM Version: {RIGOROUS_APM_VERSION}\033[0m")
     print(f"\033[94mUpstream APM Version: {UPSTREAM_APM_VERSION}\033[0m")
     print(f"\033[94mCombined Version: {COMBINED_VERSION}\033[0m")
-    
+
     # Check if upstream guides exist
     script_dir = Path(__file__).resolve().parent
     upstream_guides_dir = script_dir / "06-guides" / "upstream"
-    
+
     if not upstream_guides_dir.exists():
         print("\033[93mWarning: Upstream guides directory not found at 06-guides/upstream/\033[0m")
-        print("\033[93mSome guide references in generated artifacts may not resolve correctly.\033[0m")
+        print(
+            "\033[93mSome guide references in generated artifacts may not resolve correctly.\033[0m"
+        )
         return False
-    
+
     # Check for key upstream guides
     required_guides = [
         "Context_Synthesis_Guide.md",
         "Implementation_Plan_Guide.md",
         "Memory_Log_Guide.md",
         "Memory_System_Guide.md",
-        "Task_Assignment_Guide.md"
+        "Task_Assignment_Guide.md",
     ]
-    
+
     missing_guides = []
     for guide in required_guides:
         if not (upstream_guides_dir / guide).exists():
             missing_guides.append(guide)
-    
+
     if missing_guides:
         print(f"\033[93mWarning: Missing upstream guides: {', '.join(missing_guides)}\033[0m")
         return False
-    
+
     print("\033[92mVersion compatibility check passed.\033[0m")
     return True
 
@@ -562,11 +557,11 @@ def build_bootstrap_prompt(
     review_dir_path: Path,
     manuscript_type: str = "",
     target_outlet: str = "",
-    research_field: str = ""
+    research_field: str = "",
 ) -> str:
     """Build Manager Agent Bootstrap Prompt in upstream YAML format."""
     workspace_root = str(review_dir_path.resolve())
-    
+
     lines: List[str] = [
         "---",
         f"workspace_root: {workspace_root}",
@@ -684,14 +679,19 @@ def build_bootstrap_prompt(
         "    c. For all tasks in Phase 1, create completely empty `.md` Memory Log files in the phase's directory.",
         "    d. Once all empty logs exist, issue the first Task Assignment Prompt.",
     ]
-    
+
     return "\n".join(lines)
 
 
-def build_metadata_json(manuscript_name: str, manuscript_type: str = "", target_outlet: str = "", research_field: str = "") -> dict:
+def build_metadata_json(
+    manuscript_name: str,
+    manuscript_type: str = "",
+    target_outlet: str = "",
+    research_field: str = "",
+) -> dict:
     """Build metadata.json structure with APM version tracking and manuscript metadata."""
     from datetime import datetime
-    
+
     return {
         "apm_version": COMBINED_VERSION,
         "domain": "manuscript-review",
@@ -699,7 +699,7 @@ def build_metadata_json(manuscript_name: str, manuscript_type: str = "", target_
             "name": manuscript_name,
             "type": manuscript_type or "To be filled by Setup Agent",
             "target_outlet": target_outlet or "To be filled by Setup Agent",
-            "field": research_field or "To be filled by Setup Agent"
+            "field": research_field or "To be filled by Setup Agent",
         },
         "review_started": datetime.now().strftime("%Y-%m-%d"),
         "phases": {
@@ -707,8 +707,8 @@ def build_metadata_json(manuscript_name: str, manuscript_type: str = "", target_
             "rigor_analysis": "pending",
             "writing_analysis": "pending",
             "quality_control": "pending",
-            "executive_summary": "pending"
-        }
+            "executive_summary": "pending",
+        },
     }
 
 
@@ -777,9 +777,7 @@ def format_system_state(system_state: dict, output_format: str) -> tuple[str, st
             "## Audience Legend",
         ]
 
-        legend_entries = (
-            system_state.get("metadata", {}).get("audience_legend") or []
-        )
+        legend_entries = system_state.get("metadata", {}).get("audience_legend") or []
         if legend_entries:
             for entry in legend_entries:
                 lines.append(
@@ -794,7 +792,7 @@ def format_system_state(system_state: dict, output_format: str) -> tuple[str, st
                 "## Manuscript Context",
             ]
         )
-    
+
         manuscript_context = system_state.get("manuscript_context", {})
         lines.extend(
             [
@@ -899,7 +897,9 @@ def collect_agent_templates() -> OrderedDict[str, List[AgentTemplate]]:
     for filename, agent_id in synthesis_map.items():
         file_path = AGENT_LIBRARY_ROOT / filename
         if file_path.exists():
-            synthesis_templates.append(AgentTemplate(agent_id=agent_id, title=extract_agent_title(file_path)))
+            synthesis_templates.append(
+                AgentTemplate(agent_id=agent_id, title=extract_agent_title(file_path))
+            )
     if synthesis_templates:
         groups["Phase 4: Synthesis"] = synthesis_templates
 
@@ -1060,9 +1060,7 @@ def print_post_run_summary(
     ]
 
     if assets_copied:
-        summary_items.append(
-            ("Manuscript assets", review_dir_path / "manuscript_assets", "shared")
-        )
+        summary_items.append(("Manuscript assets", review_dir_path / "manuscript_assets", "shared"))
 
     label_width = max(len(label) for label, _, _ in summary_items)
     for label, path, audience in summary_items:
@@ -1101,9 +1099,7 @@ def print_post_run_summary(
         name for name, snippet in AUTOMATION_SNIPPETS.items() if not snippet.exists()
     ]
     if missing_snippets:
-        missing_list = ", ".join(
-            AUTOMATION_SNIPPETS[name].name for name in missing_snippets
-        )
+        missing_list = ", ".join(AUTOMATION_SNIPPETS[name].name for name in missing_snippets)
         print(
             f"\033[93mWarning: missing automation snippet(s): {missing_list}. Refresh the repository.\033[0m"
         )
@@ -1111,14 +1107,14 @@ def print_post_run_summary(
 
 def main(argv: List[str] | None = None) -> None:
     args = parse_args(argv)
-    
+
     # Check version compatibility
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("PhD APM - Manuscript Review Workspace Setup")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
     check_version_compatibility()
     print("")
-    
+
     manuscript_input = request_manuscript_path(args)
     manuscript_file, manuscript_dir = resolve_manuscript(manuscript_input, args)
     manuscript_name = manuscript_file.stem
@@ -1131,18 +1127,16 @@ def main(argv: List[str] | None = None) -> None:
         manuscript_name,
         manuscript_type=args.manuscript_type or "",
         target_outlet=args.target_outlet or "",
-        research_field=args.research_field or ""
+        research_field=args.research_field or "",
     )
-    
+
     system_state = build_system_state(manuscript_name)
     system_state_filename, system_state_content = format_system_state(
         system_state, args.system_state_format
     )
     assets_copied = False
     if args.copy_manuscript:
-        assets_copied = copy_manuscript_assets(
-            manuscript_file, review_dir_path, force=args.force
-        )
+        assets_copied = copy_manuscript_assets(manuscript_file, review_dir_path, force=args.force)
         if not assets_copied:
             print("\033[91mExiting due to file copy failure.\033[0m")
             sys.exit(1)
@@ -1153,14 +1147,14 @@ def main(argv: List[str] | None = None) -> None:
         assets_copied=assets_copied,
         detail_level=args.plan_detail_level,
     )
-    
+
     # Generate Bootstrap Prompt in upstream format
     bootstrap_prompt_content = build_bootstrap_prompt(
         manuscript_name,
         review_dir_path,
         manuscript_type=args.manuscript_type or "",
         target_outlet=args.target_outlet or "",
-        research_field=args.research_field or ""
+        research_field=args.research_field or "",
     )
 
     legend_upgraded_targets: List[Path] = []
@@ -1189,7 +1183,7 @@ def main(argv: List[str] | None = None) -> None:
     )
     if implementation_plan_status == "upgraded":
         legend_upgraded_targets.append(implementation_plan_path)
-    
+
     # Write Bootstrap Prompt
     bootstrap_prompt_path = review_dir_path / "Manager_Bootstrap_Prompt.md"
     write_file(bootstrap_prompt_path, bootstrap_prompt_content, overwrite=args.force)

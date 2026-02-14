@@ -48,8 +48,10 @@ You can adapt Manager Agent behavior for specific project management and coordin
 **File**: `prompts/Manager_Agent/Manager_Agent_Initiation_Prompt.md`
 
 **Suggested addition to Runtime Duties**:
+
 ```markdown
 ### Quality Gate Management
+
 - **Review Checkpoints**: Include mandatory review points in Task Assignment Prompts for critical implementations
 - **Cross-Agent Validation**: Require validation from multiple agents for architecture-level decisions
 - **Quality Metrics**: Track and report on code quality, test coverage, and documentation completeness
@@ -59,8 +61,10 @@ You can adapt Manager Agent behavior for specific project management and coordin
 #### Example: Dependency-Aware Coordination
 
 **Suggested addition to the Next Action Framework**:
+
 ```markdown
 ### Advanced Dependency Management
+
 - **Blocking Detection**: Proactively identify and communicate when tasks are blocked by dependencies
 - **Parallel Execution**: Identify opportunities for parallel task execution to optimize project timeline
 - **Resource Conflicts**: Detect and resolve conflicts when multiple agents need the same resources
@@ -80,15 +84,19 @@ The Setup Agent's Context Synthesis phase is highly customizable for domain-spec
 **File**: `.apm/guides/Context_Synthesis_Guide.md`
 
 **Original Phase 2 Questions**:
+
 ```markdown
-**Technical and Resource Constraints**  
+**Technical and Resource Constraints**
+
 - Required or prohibited tools, languages, frameworks, or platforms?
 - External resources needed? (data sources, APIs, libraries, references)
 ```
 
 **Example customization for Web Development**:
+
 ```markdown
 **Web Development Technical Stack**
+
 - Frontend framework preference? (React, Vue, Angular, vanilla JS)
 - Backend technology stack? (Node.js, Python, Ruby, PHP, .NET)
 - Database requirements? (PostgreSQL, MongoDB, Redis, etc.)
@@ -102,8 +110,10 @@ The Setup Agent's Context Synthesis phase is highly customizable for domain-spec
 #### Example: Data Science Projects
 
 **Example customization for Data Science**:
+
 ```markdown
 **Data Science Technical Requirements**
+
 - Data sources and formats? (CSV, JSON, APIs, databases, streaming)
 - Analysis framework preference? (pandas, NumPy, Polars, R)
 - Machine learning libraries? (scikit-learn, TensorFlow, PyTorch, XGBoost)
@@ -123,8 +133,10 @@ You can tailor Implementation Agent execution behavior for specific development 
 **File**: `[Your-Assistant-Command-Dir]/apm-3-initiate-implementation.md` (or the equivalent command file)
 
 **Proposed addition to the Interaction Model section**:
+
 ```markdown
 ### Verbose Execution Protocol
+
 - **Step-by-Step Narration**: Explain each action before performing it during task execution
 - **Decision Rationale**: Provide reasoning for technical choices and implementation approaches
 - **Progress Updates**: Give detailed progress updates during long-running tasks
@@ -134,8 +146,10 @@ You can tailor Implementation Agent execution behavior for specific development 
 #### Example: Minimal Interaction Mode
 
 **Proposed addition to the Operating Rules section**:
+
 ```markdown
 ### Streamlined Execution Protocol
+
 - **Efficiency Focus**: Complete tasks with minimal conversation unless clarification is essential
 - **Consolidated Reporting**: Provide comprehensive summaries rather than step-by-step updates
 - **Assumption Documentation**: Document assumptions made during execution in Memory Logs
@@ -145,20 +159,25 @@ You can tailor Implementation Agent execution behavior for specific development 
 ```
 
 **Proposed addition to the Task Execution Patterns section**:
+
 ```markdown
 ### Enhanced Multi-Step Execution for Minimal Interaction
-**Adaptive Step Combination**: 
+
+**Adaptive Step Combination**:
+
 - Analyze multi-step tasks and identify steps that can be logically combined
 - Execute 2-3 related steps together when they share similar context or build upon each other
 - Maintain quality standards while reducing the number of confirmation cycles
 - Document step combinations in the Memory Log for transparency
 
 **Example Step Combinations**:
+
 - Combine "Setup configuration" + "Install dependencies" + "Initialize project structure"
 - Merge "Write function" + "Add error handling" + "Write basic tests" for simple functions
 - Group "Create API endpoint" + "Add validation" + "Update documentation" for straightforward APIs
 
 **Combination Guidelines**:
+
 - Only combine steps that don't require user input or design decisions
 - Preserve step boundaries for complex or architecture-level implementations
 - Fall back to individual steps if any combined execution encounters issues
@@ -167,8 +186,10 @@ You can tailor Implementation Agent execution behavior for specific development 
 #### Example: Collaborative Review Mode
 
 **Proposed addition to the Interaction Model section**:
+
 ```markdown
 ### Collaborative Execution Protocol
+
 - **Checkpoint Confirmations**: Request confirmation at key decision points during single-step tasks
 - **Alternative Proposals**: When multiple implementation approaches exist, present options for user selection
 - **Quality Gates**: Pause for review after completing critical components before proceeding
@@ -184,10 +205,12 @@ Consider modifying how Manager Agents create Task Assignment Prompts to include 
 **File**: `.apm/guides/Task_Assignment_Guide.md`
 
 **Recommended addition to Task Assignment Prompt Format → Detailed Instructions**:
+
 ```markdown
 ## Security Requirements (Include for all tasks involving data handling or user interaction)
+
 - **Input Validation**: Implement comprehensive input validation and sanitization
-- **Authentication Verification**: Ensure proper authentication checks for protected operations  
+- **Authentication Verification**: Ensure proper authentication checks for protected operations
 - **Data Protection**: Follow data protection protocols for sensitive information
 - **Dependency Security**: Verify security of third-party libraries and dependencies
 - **Error Handling**: Implement secure error handling that doesn't expose sensitive information
@@ -196,8 +219,10 @@ Consider modifying how Manager Agents create Task Assignment Prompts to include 
 #### Example: Testing-Integrated Task Assignment
 
 **Recommended addition to the Expected Output section**:
+
 ```markdown
 ## Testing Deliverables (Include for all implementation tasks)
+
 - **Unit Tests**: Create comprehensive unit tests for all new functions and methods
 - **Integration Tests**: Develop integration tests for external API interactions
 - **Test Coverage**: Achieve minimum 80% code coverage for new implementations
@@ -208,8 +233,10 @@ Consider modifying how Manager Agents create Task Assignment Prompts to include 
 #### Example: Documentation-Enhanced Task Assignment
 
 **Recommended addition to the Detailed Instructions section**:
+
 ```markdown
 ## Documentation Requirements (Include for all tasks creating new functionality)
+
 - **Inline Documentation**: Add comprehensive docstrings/comments for all functions and classes
 - **API Documentation**: Update API documentation for any new endpoints or modifications
 - **Usage Examples**: Provide clear usage examples in documentation
@@ -220,8 +247,10 @@ Consider modifying how Manager Agents create Task Assignment Prompts to include 
 #### Example: Performance-Focused Task Assignment
 
 **Recommended new section for the Task Assignment Prompt Format**:
+
 ```markdown
 ## Performance Requirements (Include for performance-critical tasks)
+
 - **Performance Benchmarks**: Establish baseline performance metrics before implementation
 - **Optimization Goals**: Define specific performance improvement targets
 - **Resource Monitoring**: Monitor CPU, memory, and network usage during implementation
@@ -232,8 +261,10 @@ Consider modifying how Manager Agents create Task Assignment Prompts to include 
 #### Example: Accessibility-Focused Task Assignment
 
 Recommended for frontend-related tasks:
+
 ```markdown
 ## Accessibility Requirements (Include for all UI/UX tasks)
+
 - **WCAG Compliance**: Ensure implementation meets WCAG 2.1 AA standards
 - **Keyboard Navigation**: Implement full keyboard navigation support
 - **Screen Reader Compatibility**: Test with screen readers and provide appropriate ARIA labels
@@ -276,6 +307,7 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 #### Development and Documentation
 
 **Context7** - Up-to-date documentation integration
+
 ```json
 {
   "mcpServers": {
@@ -288,13 +320,16 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 ```
 
 **Use Cases in APM**:
+
 - **Setup Agent**: During Context Synthesis, get current documentation for specified tech stacks
 - **Implementation Agents**: Access latest API documentation and code examples during task execution
 - **Ad-Hoc Research Agents**: Gather current information about libraries and frameworks
 
 **Example Integration in Context Synthesis**:
+
 ```markdown
 **Enhanced Technical Discovery Questions**:
+
 - What frameworks and libraries will you use? (I'll verify current documentation and best practices)
 - Any specific versions or compatibility requirements? (I'll check for known issues and updates)
 ```
@@ -302,11 +337,12 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 #### Project Management and Documentation
 
 **Notion MCP** - Workspace integration
+
 ```json
 {
   "mcpServers": {
     "notion": {
-      "command": "npx", 
+      "command": "npx",
       "args": ["-y", "@notionhq/notion-mcp-server"],
       "env": {
         "NOTION_API_TOKEN": "your-integration-token"
@@ -317,17 +353,19 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 ```
 
 **Use Cases**:
+
 - **Manager Agent**: Create project documentation and track progress in Notion
 - **Implementation Agents**: Update task status and document solutions
 - **Setup Agent**: Store Implementation Plans and project requirements
 
 **GitHub MCP** - Repository integration
+
 ```json
 {
   "mcpServers": {
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"], 
+      "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token"
       }
@@ -337,6 +375,7 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 ```
 
 **Use Cases**:
+
 - **Setup Agent**: Analyze existing repository structure during Context Synthesis
 - **Implementation Agents**: Create branches, commits, and pull requests
 - **Manager Agent**: Track development progress and manage releases
@@ -344,12 +383,21 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 #### Database and Data Management
 
 **Database MCP Servers** - Multiple database support
+
 ```json
 {
   "mcpServers": {
     "database": {
       "command": "npx",
-      "args": ["-y", "@executeautomation/database-server", "--postgresql", "--host", "localhost", "--database", "myproject"],
+      "args": [
+        "-y",
+        "@executeautomation/database-server",
+        "--postgresql",
+        "--host",
+        "localhost",
+        "--database",
+        "myproject"
+      ],
       "env": {
         "DB_USER": "username",
         "DB_PASSWORD": "password"
@@ -360,6 +408,7 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 ```
 
 **Use Cases**:
+
 - **Implementation Agents**: Query database schema, test data operations
 - **Ad-Hoc Debug Agents**: Analyze database performance and troubleshoot queries
 - **Setup Agent**: Understand existing data structures during project discovery
@@ -367,6 +416,7 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 #### Web and API Integration
 
 **Browser Automation MCP** - Web interaction capabilities
+
 ```json
 {
   "mcpServers": {
@@ -382,6 +432,7 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 ```
 
 **Use Cases**:
+
 - **Implementation Agents**: Test web applications, verify deployment
 - **Ad-Hoc Testing Agents**: Perform end-to-end testing scenarios
 - **Setup Agent**: Analyze existing web applications during discovery
@@ -395,9 +446,11 @@ Model Context Protocol (MCP) tools can significantly enhance APM agent capabilit
 **File**: `.apm/guides/Context_Synthesis_Guide.md`
 
 **Illustrative addition to Phase 2 questioning**:
+
 ```markdown
 **Documentation and Verification Phase**:
 With MCP tools available, I can:
+
 - Verify current documentation for your specified tech stack (using Context7)
 - Analyze your existing codebase structure (using GitHub MCP)
 - Check database schemas and current data models (using Database MCP)
@@ -411,8 +464,10 @@ Would you like me to analyze any existing systems or verify documentation for yo
 **File**: `[Your-Assistant-Command-Dir]/apm-3-initiate-implementation.md`
 
 **Illustrative addition to core responsibilities**:
+
 ```markdown
 ### MCP Tool Utilization
+
 When MCP tools are available, use them strategically to enhance task execution:
 
 **Documentation Access**: Use Context7 to get current API documentation and code examples
@@ -421,7 +476,8 @@ When MCP tools are available, use them strategically to enhance task execution:
 **Web Testing**: Use Browser MCP for application testing and verification
 **Project Documentation**: Use Notion MCP for task documentation and progress tracking
 
-**MCP Usage Protocol**: 
+**MCP Usage Protocol**:
+
 - Check available MCP tools at task start
 - Use tools to gather current information before implementation
 - Document tool usage and results in Memory Logs
@@ -432,8 +488,10 @@ When MCP tools are available, use them strategically to enhance task execution:
 **File**: `[Your-Assistant-Command-Dir]/apm-2-initiate-manager.md`
 
 **Illustrative addition to runtime duties**:
+
 ```markdown
 ### MCP-Enhanced Coordination
+
 When MCP tools are available, leverage them for enhanced project coordination:
 
 **Project Tracking**: Use Notion MCP to maintain project documentation and progress tracking
@@ -445,22 +503,40 @@ When MCP tools are available, leverage them for enhanced project coordination:
 ### Custom MCP Tool Configuration Examples
 
 #### Multi-Environment Database Setup
+
 ```json
 {
   "mcpServers": {
     "dev-db": {
       "command": "npx",
-      "args": ["-y", "@executeautomation/database-server", "--postgresql", "--host", "dev-db.company.com", "--database", "myapp_dev"]
+      "args": [
+        "-y",
+        "@executeautomation/database-server",
+        "--postgresql",
+        "--host",
+        "dev-db.company.com",
+        "--database",
+        "myapp_dev"
+      ]
     },
     "staging-db": {
-      "command": "npx", 
-      "args": ["-y", "@executeautomation/database-server", "--postgresql", "--host", "staging-db.company.com", "--database", "myapp_staging"]
+      "command": "npx",
+      "args": [
+        "-y",
+        "@executeautomation/database-server",
+        "--postgresql",
+        "--host",
+        "staging-db.company.com",
+        "--database",
+        "myapp_staging"
+      ]
     }
   }
 }
 ```
 
 #### Full Documentation Stack
+
 ```json
 {
   "mcpServers": {
@@ -471,12 +547,12 @@ When MCP tools are available, leverage them for enhanced project coordination:
     "notion": {
       "command": "npx",
       "args": ["-y", "@notionhq/notion-mcp-server"],
-      "env": {"NOTION_API_TOKEN": "your-token"}
+      "env": { "NOTION_API_TOKEN": "your-token" }
     },
     "github": {
-      "command": "npx", 
+      "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {"GITHUB_PERSONAL_ACCESS_TOKEN": "your-token"}
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token" }
     }
   }
 }
@@ -491,8 +567,10 @@ When MCP tools are available, leverage them for enhanced project coordination:
 **Possible tailoring for React Native/Flutter projects**:
 
 **Possible Context Synthesis additions**:
+
 ```markdown
 **Mobile Development Requirements**:
+
 - Target platforms? (iOS, Android, both)
 - Development framework? (React Native, Flutter, native)
 - Device testing strategy? (simulators, physical devices, cloud testing)
@@ -502,8 +580,10 @@ When MCP tools are available, leverage them for enhanced project coordination:
 ```
 
 **Possible Implementation Agent specialization**:
+
 ```markdown
 ### Mobile Development Protocol
+
 - **Platform Testing**: Test on both iOS and Android simulators for cross-platform apps
 - **Performance Monitoring**: Monitor app performance and memory usage during development
 - **Device Compatibility**: Consider different screen sizes and device capabilities
@@ -513,8 +593,10 @@ When MCP tools are available, leverage them for enhanced project coordination:
 ### Machine Learning APM
 
 **Possible Context Synthesis prompts for ML projects**:
+
 ```markdown
 **Machine Learning Project Requirements**:
+
 - Problem type? (classification, regression, clustering, NLP, computer vision)
 - Data availability and quality? (size, cleanliness, labeling requirements)
 - Model complexity requirements? (interpretability vs accuracy trade-offs)
@@ -526,8 +608,10 @@ When MCP tools are available, leverage them for enhanced project coordination:
 ### Enterprise Integration APM
 
 **Possible Manager Agent customization for enterprise environments**:
+
 ```markdown
 ### Enterprise Coordination Protocol
+
 - **Compliance Requirements**: Ensure all tasks meet enterprise security and compliance standards
 - **Change Management**: Follow enterprise change management processes for deployments
 - **Documentation Standards**: Maintain documentation according to enterprise standards

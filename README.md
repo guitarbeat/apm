@@ -1,5 +1,10 @@
 # Agentic Project Management (APM) Monorepo
 
+[![CI](https://github.com/sdi2200262/agentic-project-management/actions/workflows/ci.yml/badge.svg)](https://github.com/sdi2200262/agentic-project-management/actions/workflows/ci.yml)
+[![Code Style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
 This repository hosts two complementary Agentic Project Management systems:
 
 - **`phd-apm/`** – A domain-specific extension of upstream-apm v0.5 for academic manuscript review, featuring 26 specialized agents and Python automation.

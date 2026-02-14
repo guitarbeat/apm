@@ -1,9 +1,9 @@
 /**
  * APM Build Script
- * 
+ *
  * Generates AI assistant-specific command bundles from markdown templates.
  * Supports Markdown (Claude, Copilot, etc.) and TOML (Gemini, Qwen) formats.
- * 
+ *
  * Usage: node build.js
  */
 
@@ -12,6 +12,10 @@ import yaml from 'js-yaml';
 import path from 'path';
 import archiver from 'archiver';
 
+// Run build when executed directly
+// Check if this module is the main module being run
+import { fileURLToPath } from 'url';
+
 /**
  * Loads and parses build-config.json
  * @returns {Promise<Object>} Configuration with build settings and target assistants
@@ -19,11 +23,11 @@ import archiver from 'archiver';
  */
 async function loadConfig() {
   const configPath = 'build-config.json';
-  
-  if (!await fs.pathExists(configPath)) {
+
+  if (!(await fs.pathExists(configPath))) {
     throw new Error('build-config.json not found');
   }
-  
+
   const configContent = await fs.readFile(configPath, 'utf8');
   return JSON.parse(configContent);
 }
@@ -39,9 +43,9 @@ async function findMdFiles(sourceDir) {
 
   for (const item of items) {
     const fullPath = path.join(sourceDir, item.name);
-    
+
     if (item.isDirectory()) {
-      files.push(...await findMdFiles(fullPath));
+      files.push(...(await findMdFiles(fullPath)));
     } else if (item.isFile() && item.name.endsWith('.md') && item.name !== 'README.md') {
       files.push(fullPath);
     }
@@ -55,12 +59,15 @@ async function findMdFiles(sourceDir) {
  * @param {string} content - Markdown content with potential frontmatter
  * @returns {Object} Object with {frontmatter, content} properties
  */
-function parseFrontmatter(content) {
+function parseFrontmatter(inputContent) {
   // Normalize line endings and remove BOM for robustness
-  content = content.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  
+  const content = inputContent
+    .replace(/^\uFEFF/, '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n');
+
   const lines = content.split('\n');
-  
+
   if (lines[0] !== '---') {
     return { frontmatter: {}, content };
   }
@@ -85,14 +92,14 @@ function parseFrontmatter(content) {
 
 /**
  * Replaces template placeholders with target-specific values
- * 
+ *
  * Supported placeholders:
  * - {VERSION}: Package version
  * - {TIMESTAMP}: ISO timestamp
  * - {GUIDE_PATH:filename}: Path to guide file
  * - {COMMAND_PATH:filename}: Path to command file
  * - {ARGS}: $ARGUMENTS (markdown) or {{args}} (toml)
- * 
+ *
  * @param {string} content - Template content with placeholders
  * @param {string} version - Version string
  * @param {Object} targetDirectories - Target directory configuration
@@ -102,13 +109,11 @@ function parseFrontmatter(content) {
  */
 function replacePlaceholders(content, version, targetDirectories, format, options = {}) {
   const { now = new Date(), commandFileMap = {} } = options;
-  let replaced = content
-    .replace(/{VERSION}/g, version)
-    .replace(/{TIMESTAMP}/g, now.toISOString());
+  let replaced = content.replace(/{VERSION}/g, version).replace(/{TIMESTAMP}/g, now.toISOString());
 
-  replaced = replaced.replace(/{GUIDE_PATH:([^}]+)}/g, (_match, filename) => {
-    return path.join(targetDirectories.guides, filename);
-  });
+  replaced = replaced.replace(/{GUIDE_PATH:([^}]+)}/g, (_match, filename) =>
+    path.join(targetDirectories.guides, filename)
+  );
 
   replaced = replaced.replace(/{COMMAND_PATH:([^}]+)}/g, (_match, filename) => {
     // Map referenced template filename to the final built command filename for this target
@@ -191,8 +196,10 @@ async function build(config, version) {
 
       const originalBase = path.basename(templatePath, '.md');
       const priority = frontmatter.priority || 'default';
-      const sanitizedCommandName = String(frontmatter.command_name || '')
-        .replace(/[^a-zA-Z0-9-_]/g, '-');
+      const sanitizedCommandName = String(frontmatter.command_name || '').replace(
+        /[^a-zA-Z0-9-_]/g,
+        '-'
+      );
       const fullCommandName = `apm-${priority}-${sanitizedCommandName}`;
 
       // Determine final extension per target
@@ -217,8 +224,16 @@ async function build(config, version) {
       const isCommand = frontmatter.command_name !== undefined;
       const category = isCommand ? 'command' : 'guide';
 
-      const processedBody = replacePlaceholders(body, version, target.directories, target.format, { commandFileMap });
-      const processedFull = replacePlaceholders(content, version, target.directories, target.format, { commandFileMap });
+      const processedBody = replacePlaceholders(body, version, target.directories, target.format, {
+        commandFileMap,
+      });
+      const processedFull = replacePlaceholders(
+        content,
+        version,
+        target.directories,
+        target.format,
+        { commandFileMap }
+      );
 
       const originalFilename = path.basename(templatePath, '.md');
       let outputFilename;
@@ -255,7 +270,9 @@ async function build(config, version) {
       const outputPath = path.join(outputDirPath, outputFilename);
 
       await fs.writeFile(outputPath, finalContent);
-      console.log(`  ${category}: ${originalFilename}.md → ${path.relative(targetBuildDir, outputPath)}`);
+      console.log(
+        `  ${category}: ${originalFilename}.md → ${path.relative(targetBuildDir, outputPath)}`
+      );
     }
 
     // Handle target-specific post-processing
@@ -277,11 +294,11 @@ async function build(config, version) {
     // Create ZIP archive from build directory
     const zipPath = path.join(outputDir, target.bundleName);
     console.log(`Creating archive: ${target.bundleName}...`);
-    
+
     try {
       await createZipArchive(targetBuildDir, zipPath);
       console.log(`Archive created successfully: ${target.bundleName}`);
-      
+
       // Clean up temporary build directory
       await fs.remove(targetBuildDir);
       console.log(`Cleaned up temporary directory: ${path.basename(targetBuildDir)}`);
@@ -300,13 +317,12 @@ async function build(config, version) {
 async function main() {
   try {
     const config = await loadConfig();
-    
+
     // Read version dynamically from package.json
     const packageJson = await fs.readFile('package.json', 'utf8');
     const { version } = JSON.parse(packageJson);
 
     await build(config, version);
-
   } catch (error) {
     console.error('Build failed:', error.message);
     process.exit(1);
@@ -316,13 +332,8 @@ async function main() {
 // Export functions for testing
 export { loadConfig, findMdFiles, parseFrontmatter, replacePlaceholders, createZipArchive, build };
 
-// Run build when executed directly
-// Check if this module is the main module being run
-import { fileURLToPath } from 'url';
-import { resolve } from 'path';
-
 const currentFile = fileURLToPath(import.meta.url);
-const mainFile = resolve(process.argv[1]);
+const mainFile = path.resolve(process.argv[1]);
 
 if (currentFile === mainFile) {
   main();

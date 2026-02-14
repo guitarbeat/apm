@@ -5,7 +5,10 @@
   "scripts": {
     "build": "node scripts/build.js",
     "test": "vitest run --reporter=basic",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint": "eslint src/ scripts/",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "repository": {
     "type": "git",
@@ -37,8 +40,8 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^7.9.0",
-    "axios": "^1.12.2",
     "adm-zip": "^0.5.16",
+    "axios": "^1.12.2",
     "chalk": "^5.6.2",
     "commander": "^11.1.0",
     "fs-extra": "^11.2.0",
@@ -46,6 +49,11 @@
   },
   "devDependencies": {
     "archiver": "^7.0.1",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "prettier": "^3.8.1",
     "vitest": "^2.1.3"
   }
 }

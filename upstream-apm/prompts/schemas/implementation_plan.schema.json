@@ -4,12 +4,7 @@
   "title": "APM v0.4 Implementation Plan Schema",
   "description": "JSON schema for APM Implementation Plans that enforces structure and validation rules from the Implementation Plan Guide",
   "type": "object",
-  "required": [
-    "projectName",
-    "memoryStrategy", 
-    "lastModification",
-    "projectOverview"
-  ],
+  "required": ["projectName", "memoryStrategy", "lastModification", "projectOverview"],
   "properties": {
     "projectName": {
       "type": "string",
@@ -29,7 +24,7 @@
       "maxLength": 200
     },
     "projectOverview": {
-      "type": "string", 
+      "type": "string",
       "description": "High-level project overview",
       "minLength": 10,
       "maxLength": 500
@@ -59,7 +54,7 @@
       }
     },
     {
-      "description": "Linear project structure without phases", 
+      "description": "Linear project structure without phases",
       "required": ["tasks"],
       "not": {
         "required": ["phases"]
@@ -212,7 +207,7 @@
       }
     },
     "PhaseSummary": {
-      "type": "object", 
+      "type": "object",
       "description": "Summary added by Manager Agent upon phase completion",
       "required": ["delivered", "outstanding", "blockers", "commonIssues", "compatibilityNotes"],
       "properties": {
