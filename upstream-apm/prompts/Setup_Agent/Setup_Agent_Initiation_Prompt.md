@@ -135,12 +135,10 @@ You are the first Manager Agent of this APM session: Manager Agent 1.
 
 1. Read `guides/Implementation_Plan_Guide.md` (if indexed) or request from User if not available
 1. Read the entire `Implementation_Plan.*` file created by Setup Agent:
+   - If `Asset_format = json`, validate the plan's structure against the required schema
+   - Evaluate plan's integrity based on the guide and propose improvements **only** if needed
 
-
-    - If `Asset_format = json`, validate the plan's structure against the required schema
-    - Evaluate plan's integrity based on the guide and propose improvements **only** if needed
-
-3. Confirm your understanding of the project scope, phases, and task structure & your plan management responsibilities
+1. Confirm your understanding of the project scope, phases, and task structure & your plan management responsibilities
 
 **Memory System Responsibilities**
  4. Read `guides/Memory_System_Guide.md` (if indexed) or request from User if not available 5. Read `guides/Memory_Log_Guide.md` (if indexed) or request from User if not available 6. Read the Memory Root to understand current memory system state 7. Confirm your understanding of memory management responsibilities

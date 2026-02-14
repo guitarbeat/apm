@@ -34,6 +34,7 @@ Main responsibilities of the Manager Agent when maintaining the Memory System du
 2. After each task execution, review the Memory Log **populated by the Implementation Agent**, provided via the User.
 
 3. At phase end, append a summary to `.apm/Memory/Memory_Root.md`:
+
    ```markdown
    ## Phase XX – <Phase Name> Summary
 
@@ -41,6 +42,7 @@ Main responsibilities of the Manager Agent when maintaining the Memory System du
    - List of involved Agents
    - Links to all phase task logs
    ```
+
    Keep summaries ≤30 lines.
 
 ---

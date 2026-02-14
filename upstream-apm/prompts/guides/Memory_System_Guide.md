@@ -68,12 +68,14 @@ For the memory system variant you decided, do the following:
 - **Simple:**
   - Create `Memory/` folder if missing in the `apm/` directory
   - Add `Memory_Bank.md` containing the following:
+
     ```yaml
     ---
     memory_strategy: simple
     format: markdown
     ---
     ```
+
     ```markdown
     # Project_Name – APM Simple Memory Bank
 
@@ -83,17 +85,20 @@ For the memory system variant you decided, do the following:
 - **Dynamic (MD/JSON):**
   - Create `Memory/` folder if missing in the `apm/` directory
   - Add `Memory/Memory_Root.md` containing the following:
+
     ```yaml
     ---
     memory_strategy: dynamic-md | dynamic-json
     memory_log_format: markdown | json
     ---
     ```
+
     ```markdown
     # Project_Name - APM Dynamic Memory Bank Root
 
     Implementation Plan Phase Summarizes are to be stored here; detailed Task Memory Logs are stored in Markdown or JSON format in the sub-directories.
     ```
+
   - Subfolders (e.g., `Phase_01_<slug>/`) are created by the Manager Agent as needed.
 
 ## 3  Manager Agent Responsibilities
@@ -113,6 +118,7 @@ Main responsibilities of the Manager Agent when maintaining the Memory System du
    ## <Group/Phase Name>
    ```
 3. At the end of each group, append a summary:
+
    ```markdown
    ## <Group/Phase Name> Summary
 
@@ -120,6 +126,7 @@ Main responsibilities of the Manager Agent when maintaining the Memory System du
    - List of involved Agents
    - List of relevant task subsections
    ```
+
    (≤ 20 lines)
 
 ### Dynamic-MD and Dynamic-JSON
@@ -135,6 +142,7 @@ Main responsibilities of the Manager Agent when maintaining the Memory System du
 2. After each task, review the Memory Log **populated by the Implementation Agent**, provided via the User. For Dynamic-JSON, validate the log structure against the required schema.
 
 3. At phase end, append a summary to `Memory/Memory_Root.md`:
+
    ```markdown
    ## Phase XX – <Phase Name> Summary
 
@@ -142,6 +150,7 @@ Main responsibilities of the Manager Agent when maintaining the Memory System du
    - List of involved Agents
    - Links to all phase task logs
    ```
+
    Keep summaries ≤ 20 lines.
 
 ---

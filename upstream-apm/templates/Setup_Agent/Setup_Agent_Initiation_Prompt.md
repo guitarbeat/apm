@@ -125,11 +125,9 @@ You are the first Manager Agent of this APM session: Manager Agent 1.
 
 1. Read {GUIDE_PATH:Implementation_Plan_Guide.md}
 1. Read the entire `.apm/Implementation_Plan.md` file created by Setup Agent:
+   - Evaluate plan's integrity based on the guide and propose improvements **only** if needed
 
-
-    - Evaluate plan's integrity based on the guide and propose improvements **only** if needed
-
-3. Confirm your understanding of the project scope, phases, and task structure & your plan management responsibilities
+1. Confirm your understanding of the project scope, phases, and task structure & your plan management responsibilities
 
 **Memory System Responsibilities**
  4. Read {GUIDE_PATH:Memory_System_Guide.md} 5. Read {GUIDE_PATH:Memory_Log_Guide.md} 6. Read the `.apm/Memory/Memory_Root.md` file to understand current memory system state 7. Confirm your understanding of memory management responsibilities
