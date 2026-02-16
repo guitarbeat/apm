@@ -1,71 +1,61 @@
 /**
- * Lightweight Chalk replacement for faster CLI startup.
+ * A lightweight, zero-dependency replacement for 'chalk' to improve CLI startup time.
+ * Supports basic colors, modifiers, and chaining (e.g., chalk.red.bold).
  *
- * Optimization:
- * Loading the full `chalk` library takes ~17-20ms.
- * This lightweight implementation provides the subset of functionality needed for
- * the CLI entry point (help text, banner), reducing startup time by ~15%.
- *
- * Functionality:
- * - Supports basic colors and modifiers (bold, underline)
- * - Supports chaining (e.g., chalk.cyan.bold)
- * - Detects TTY and respects NO_COLOR/FORCE_COLOR
- * - Supports variadic arguments
+ * NOTE: This implementation does not support nested styles correctly (resetting inner style
+ * resets everything). It is intended for simple top-level logging during startup.
  */
 
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const UNDERLINE = '\x1b[4m';
-
-const COLORS = {
-  black: '\x1b[30m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m',
+const ANSI_CODES = {
+  reset: 0,
+  bold: 1,
+  dim: 2,
+  italic: 3,
+  underline: 4,
+  inverse: 7,
+  hidden: 8,
+  strikethrough: 9,
+  black: 30,
+  red: 31,
+  green: 32,
+  yellow: 33,
+  blue: 34,
+  magenta: 35,
+  cyan: 36,
+  white: 37,
+  gray: 90,
+  bgBlack: 40,
+  bgRed: 41,
+  bgGreen: 42,
+  bgYellow: 43,
+  bgBlue: 44,
+  bgMagenta: 45,
+  bgCyan: 46,
+  bgWhite: 47,
 };
 
-// Check for color support
-// We enable colors if:
-// 1. We are in a TTY environment (process.stdout.isTTY is true)
-// 2. NO_COLOR environment variable is NOT set
-// 3. FORCE_COLOR environment variable IS set (overrides everything)
-const isColorSupported =
-  (process.stdout && process.stdout.isTTY && !process.env.NO_COLOR) || process.env.FORCE_COLOR;
+const isColorSupported = !process.env.NO_COLOR && (process.stdout.isTTY || process.env.FORCE_COLOR);
 
-function style(str, codes) {
-  if (!isColorSupported) return str;
-  return codes.join('') + str + RESET;
+function style(codes, text) {
+  if (!isColorSupported || codes.length === 0) return text;
+  const startCodes = codes.map((c) => `\x1b[${ANSI_CODES[c]}m`).join('');
+  return `${startCodes}${text}\x1b[0m`;
 }
 
-function createChalk(codes = []) {
-  // Handle variadic arguments and join with space, similar to chalk/console.log
-  const fn = (...args) => {
-    const str = args.join(' ');
-    return style(str, codes);
+function createChalk(activeCodes = []) {
+  const chalkFn = (...args) => {
+    if (args.length === 0) return '';
+    return style(activeCodes, args.join(' '));
   };
 
-  // Add color properties
-  Object.keys(COLORS).forEach((color) => {
-    Object.defineProperty(fn, color, {
-      get: () => createChalk([...codes, COLORS[color]]),
+  Object.keys(ANSI_CODES).forEach((key) => {
+    Object.defineProperty(chalkFn, key, {
+      get: () => createChalk([...activeCodes, key]),
+      enumerable: true,
     });
   });
 
-  // Add modifier properties
-  Object.defineProperty(fn, 'bold', {
-    get: () => createChalk([...codes, BOLD]),
-  });
-
-  Object.defineProperty(fn, 'underline', {
-    get: () => createChalk([...codes, UNDERLINE]),
-  });
-
-  return fn;
+  return chalkFn;
 }
 
 const simpleChalk = createChalk();
