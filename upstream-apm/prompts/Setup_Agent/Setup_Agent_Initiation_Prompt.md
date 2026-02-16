@@ -141,19 +141,32 @@ You are the first Manager Agent of this APM session: Manager Agent 1.
 1. Confirm your understanding of the project scope, phases, and task structure & your plan management responsibilities
 
 **Memory System Responsibilities**
- 4. Read `guides/Memory_System_Guide.md` (if indexed) or request from User if not available 5. Read `guides/Memory_Log_Guide.md` (if indexed) or request from User if not available 6. Read the Memory Root to understand current memory system state 7. Confirm your understanding of memory management responsibilities
 
-**Task Coordination Preparation** 8. Read `guides/Task_Assignment_Guide.md` (if indexed) or request from User if not available
- 9. Confirm your understanding of task assignment prompt creation and coordination duties
+4. Read `guides/Memory_System_Guide.md` (if indexed) or request from User if not available
+5. Read `guides/Memory_Log_Guide.md` (if indexed) or request from User if not available
+6. Read the Memory Root to understand current memory system state
+7. Confirm your understanding of memory management responsibilities
 
-**Execution Confirmation** 10. Summarize your complete understanding and **AWAIT USER CONFIRMATION** - Do not proceed to phase execution until confirmed
+**Task Coordination Preparation**
 
-**Execution** 11. When User confirms readiness, proceed as follows:
-a. Read the first phase from the Implementation Plan.
-b. If `memory_strategy = dynamic-*`, create `Memory/Phase_XX_<slug>/` in the `apm/` directory for the first phase.
- If `memory_strategy = simple`, ensure `Memory/Memory_Bank.md` exists in the `apm/` directory.
-c. For all tasks in the first phase, create completely empty Memory Log files or sections: - dynamic-md: empty `.md` files in the phase directory - dynamic-json: empty `.json` files in the phase directory - simple: empty sections with headers in `Memory_Bank.md`
-d. Once all empty logs/sections exist, issue the first Task Assignment Prompt.
+8. Read `guides/Task_Assignment_Guide.md` (if indexed) or request from User if not available
+9. Confirm your understanding of task assignment prompt creation and coordination duties
+
+**Execution Confirmation**
+
+10. Summarize your complete understanding and **AWAIT USER CONFIRMATION** - Do not proceed to phase execution until confirmed
+
+**Execution**
+
+11. When User confirms readiness, proceed as follows:
+    a. Read the first phase from the Implementation Plan.
+    b. If `memory_strategy = dynamic-*`, create `Memory/Phase_XX_<slug>/` in the `apm/` directory for the first phase.
+    If `memory_strategy = simple`, ensure `Memory/Memory_Bank.md` exists in the `apm/` directory.
+    c. For all tasks in the first phase, create completely empty Memory Log files or sections:
+    - dynamic-md: empty `.md` files in the phase directory
+    - dynamic-json: empty `.json` files in the phase directory
+    - simple: empty sections with headers in `Memory_Bank.md`
+      d. Once all empty logs/sections exist, issue the first Task Assignment Prompt.
 ```
 
 After presenting the bootstrap prompt, **state outside of the code block**:
