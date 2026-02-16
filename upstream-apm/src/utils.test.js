@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { detectLikelyAssistant, displayError } from './utils.js';
+import { detectLikelyAssistant, displayError, displaySuccess } from './utils.js';
 import { existsSync, mkdirSync, rmSync, mkdtempSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
@@ -41,6 +41,23 @@ describe('Utils', () => {
     it('should detect Claude Code', () => {
       mkdirSync(join(tempDir, '.claude'));
       expect(detectLikelyAssistant(tempDir)).toBe('Claude Code');
+    });
+  });
+
+  describe('displaySuccess', () => {
+    let consoleLogSpy;
+
+    beforeEach(() => {
+      consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('should display success message', () => {
+      displaySuccess('Operation successful');
+      expect(consoleLogSpy).toHaveBeenCalled();
     });
   });
 
